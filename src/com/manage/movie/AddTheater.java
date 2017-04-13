@@ -204,6 +204,9 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 				insertTheater();
 				//this.dispose();
 				this.setVisible(false);
+				theaterList.getTheaterList();
+				theaterList.setTheaterList();
+				theaterList.p_theater.updateUI();
 				theaterList.p_theater.setVisible(true);
 			}
 		}

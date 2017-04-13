@@ -201,6 +201,7 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 			System.out.println("확인 누름");
 			setMovieID();
 			this.setVisible(false);
+			
 		}
 
 		

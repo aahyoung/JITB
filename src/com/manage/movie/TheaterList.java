@@ -106,6 +106,8 @@ public class TheaterList extends JPanel implements ActionListener{
 		
 	// 현재 존재하는 영화관을 DB에서 가져오기
 	public void getTheaterList(){
+		theaterList.removeAll(theaterList);
+		
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
@@ -165,6 +167,9 @@ public class TheaterList extends JPanel implements ActionListener{
 	
 	// 영화관 패널 설정 -> 각 Theater에 theater_id를 저장하고 있음
 	public void setTheaterList(){
+		theaters.removeAll(theaters);
+		p_theater.removeAll();
+		
 		for(int i=0; i<theaterList.size(); i++){
 			theater=new Theater();
 			String name=theaterList.get(i).getName();

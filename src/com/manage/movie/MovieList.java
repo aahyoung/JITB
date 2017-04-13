@@ -14,6 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 import com.jitb.db.DBManager;
 
@@ -28,6 +30,8 @@ public class MovieList extends JPanel implements ActionListener{
 	
 	JDesktopPane desktop=new JDesktopPane();
 	
+	JTable table;
+	JScrollPane scroll;
 	
 	DBManager manager;
 	Connection con;
@@ -38,11 +42,22 @@ public class MovieList extends JPanel implements ActionListener{
 	// innerFrame이 켜져있는 상태면 추가 버튼 비활성화
 	boolean inner=false;
 	
+	MovieTableModel model;
+	
 	public MovieList() {
 	
+		// DB 연결
+		connect();
+		model=new MovieTableModel(con);
+		
+		table=new JTable();
+		table.setModel(model);
+		scroll=new JScrollPane(table);
+		
 		p_north=new JPanel();
 		p_content=new JPanel();
 		lb_title=new JLabel("영화 목록");
+		
 		bt_add=new JButton("추가");
 		
 		p_north.setLayout(new BorderLayout());
@@ -50,7 +65,8 @@ public class MovieList extends JPanel implements ActionListener{
 		p_north.add(bt_add, BorderLayout.EAST);
 		
 		//p_content.setBackground(Color.CYAN);
-		p_content.setLayout(new BorderLayout());
+		//p_content.setLayout(new BorderLayout());
+		p_content.add(scroll);
 		
 		bt_add.addActionListener(this);
 		
@@ -60,23 +76,15 @@ public class MovieList extends JPanel implements ActionListener{
 		
 		setBackground(Color.red);
 		
-		// DB 연결
-		connect();
 		
 		// 영화 가져오기
-		getMovieList();
+		// getMovieList();
 	}
 	
 	// DB 연결
 	public void connect(){
 		manager=DBManager.getInstance();
 		con=manager.getConnect();
-	}
-	
-	// 현재 존재하는 영화를 DB에서 가져오기
-	public void getMovieList(){
-		PreparedStatement pstmt=null;
-		ResultSet rs=null;
 	}
 	
 	public void makeInnerFrame(){

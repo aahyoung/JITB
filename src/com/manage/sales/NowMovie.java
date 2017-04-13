@@ -95,7 +95,8 @@ public class NowMovie extends JPanel{
 	}
 	
 	/*---------------------------------------
-	 START_DATE, 현재 날짜(TODAY)를 불러옴
+	 list에 들어있는 movie 객체만큼 MovieItem을 생성해서 화면에 보여준다.
+	 보여줄 때 조건으로 START_DATE, 현재 날짜(TODAY)를 불러옴
 	 상영 중인 영화의 경우 (START_DATE - TODAY)를 기간으로 설정
 	---------------------------------------*/
 	public void init() {

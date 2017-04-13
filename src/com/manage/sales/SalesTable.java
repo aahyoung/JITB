@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+
 public class SalesTable extends AbstractTableModel {
 
 	Connection con;
@@ -22,7 +23,6 @@ public class SalesTable extends AbstractTableModel {
 	public SalesTable(Connection con) {
 		this.con = con;
 		getList();
-
 	}
 
 	public void getList() {
@@ -30,13 +30,19 @@ public class SalesTable extends AbstractTableModel {
 		ResultSet rs = null;
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("select b.name as 상위콤보, c.name as 하위콤보,");
-		sql.append(" d.buy_snack_id, d.sales_qt, d.SALES_TOT, d.SALES_TIME");
-		sql.append(" from TOP_OPT b, SUB_OPT c, buy_snack d");
-		sql.append(" where b.TOP_OPT_ID=c.TOP_OPT_ID");
-		sql.append(" and c.sub_opt_id=d.SUB_OPT_ID");
-		sql.append(" group by b.name, c.name,  d.buy_snack_id,  d.sales_qt,  d.SALES_TOT, d.SALES_TIME");
-		sql.append(" order by d.SALES_TIME asc");
+		sql.append("select a.NAME as 판매상품명, d.BUY_MOVIE_ID as 상품ID, d.SALES_QT, d.sales_tot, d.SALES_TIME");
+		sql.append(" from movie a, START_TIME b, SEAT c, BUY_MOVIE d");
+		sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
+		sql.append(" and b.START_TIME_ID = c.START_TIME_ID");
+		sql.append(" and c.SEAT_ID = d.SEAT_ID");
+		sql.append(" and to_char(d.SALES_TIME, 'yyyymmdd')= 20170410");
+		sql.append(" union all select e.name as 상품명, g.buy_snack_id, g.sales_qt, g.SALES_TOT, g.SALES_TIME");
+		sql.append(" from TOP_OPT e, SUB_OPT f, buy_snack g");
+		sql.append(" where e.TOP_OPT_ID=f.TOP_OPT_ID");
+		sql.append(" and f.sub_opt_id=g.SUB_OPT_ID");
+		sql.append(" and to_char(g.SALES_TIME, 'yyyymmdd')= 20170410");
+		sql.append(" order by sales_time asc");
+
 
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -52,12 +58,11 @@ public class SalesTable extends AbstractTableModel {
 			}
 
 			while (rs.next()) {
-				Vector vec = new Vector();
-				vec.add(rs.getString("상위콤보"));
-				vec.add(rs.getString("하위콤보"));
-				vec.add(rs.getInt("buy_snack_id"));
-				vec.add(rs.getInt("sales_qt"));
-				vec.add(rs.getInt("SALES_TOT"));
+				Vector<String> vec = new Vector<String>();
+				vec.add(rs.getString("판매상품명"));
+				vec.add(rs.getString("상품ID"));
+				vec.add(rs.getString("sales_qt"));
+				vec.add(rs.getString("SALES_TOT"));
 				vec.add(rs.getString("SALES_TIME"));
 
 				data.add(vec);

@@ -53,7 +53,10 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 	DBManager manager;
 	Connection con;
 	
-	public AddTheater(String title, boolean resizable, boolean closable, boolean maximizable) {
+	TheaterList theaterList;
+	
+	public AddTheater(TheaterList theaterList, String title, boolean resizable, boolean closable, boolean maximizable) {
+		this.theaterList=theaterList;
 		this.title=title;
 		this.resizable=resizable;
 		this.closable=closable;
@@ -135,7 +138,7 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 		
 		StringBuffer sql=new StringBuffer();
 		sql.append("insert into theater(theater_id, name, row_line, column_line, branch_id, movie_id)");
-		sql.append(" values(SEQ_THEATER.nextval, ?, ?, ?, 1, null)");
+		sql.append(" values(seq_theater.nextval, ?, ?, ?, 1, null)");
 		
 		try {
 			pstmt=con.prepareStatement(sql.toString());
@@ -201,6 +204,7 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 				insertTheater();
 				//this.dispose();
 				this.setVisible(false);
+				theaterList.p_theater.setVisible(true);
 			}
 		}
 		
@@ -208,6 +212,7 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
+			theaterList.p_theater.setVisible(true);
 		}
 	}
 

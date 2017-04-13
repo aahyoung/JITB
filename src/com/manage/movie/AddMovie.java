@@ -1,5 +1,6 @@
 package com.manage.movie;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Choice;
 import java.awt.Dimension;
@@ -50,7 +51,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 // 영화 추가 레이아웃
-public class AddMovie extends JInternalFrame implements ActionListener, FocusListener, ItemListener{
+public class AddMovie extends JInternalFrame implements ActionListener, FocusListener{
 	JPanel p_outer;
 	
 	JFXPanel p_date;
@@ -72,7 +73,7 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 	JLabel lb_run_time;
 	JTextField t_run_time;
 	
-	Choice ch_theater;
+	//Choice ch_theater;
 	
 	JButton bt_confirm, bt_cancel;
 	
@@ -106,6 +107,12 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
     JTextField[] t_input=new JTextField[5];
     
     ArrayList<TheaterData> theater=new ArrayList<TheaterData>();
+    
+    // 영화관 선택 index
+    int theater_index;
+    
+    // 영화 id
+    int movie_id;
  
 	public AddMovie(String title, boolean resizable, boolean closable, boolean maximizable) {
 		this.title=title;
@@ -144,13 +151,14 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		
 		p_outer=new JPanel();
 		p_date=new JFXPanel();
+		p_date.setLayout(new BorderLayout());
 		
 		t_title=new JTextField(txtDefault[0],20);
 		t_director=new JTextField(txtDefault[1],20);
 		t_actor=new JTextField(txtDefault[2],20);
 		ta_story=new JTextArea(txtDefault[3],4,20);
 		t_run_time=new JTextField(txtDefault[4],20);
-		ch_theater=new Choice();
+		//ch_theater=new Choice();
 		
 		bt_confirm=new JButton("확인");
 		bt_cancel=new JButton("취소");
@@ -174,7 +182,7 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		p_outer.add(ta_story);
 		p_outer.add(p_date);
 		p_outer.add(t_run_time);
-		p_outer.add(ch_theater);
+		//p_outer.add(ch_theater);
 		p_outer.add(bt_confirm);
 		p_outer.add(bt_cancel);
 		add(p_outer);
@@ -185,9 +193,11 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		// DB 연결
 		connect();
 		
+		/*
 		// 사용 가능한 영화관 목록 가져오기
 		getTheaterList();
-		System.out.println(theater);
+		System.out.print("사용 가능한 영화관 : "+theater+" ");
+		*/
 	}
 	
 	// DB 연결
@@ -220,9 +230,6 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		sql.append(" values(seq_movie.nextval, ?, ?, ?, ?, ?, ");
 		sql.append("to_date(?,'YYYY-MM-DD'), ");
 		sql.append("to_date(?,'YYYY-MM-DD'), ?)");
-		
-		StringBuffer sql2=new StringBuffer();
-		sql2.append("update ");
 		
 		// 제약조건(제약조건이 좀 많아유ㅠㅠ)
 		/* 1. 이미지명이 제대로 들어오고
@@ -293,7 +300,7 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		
 		try {
 			fis=new FileInputStream(file);
-			fos=new FileOutputStream("/"+file.getName());
+			fos=new FileOutputStream("res_manager/"+file.getName());
 			
 			byte[] b=new byte[1024];
 			int flag;
@@ -428,6 +435,7 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		}
 	}
 	
+	/*
 	// 영화관 choice 목록 가져오기
 	public void getTheaterList(){
 		PreparedStatement pstmt=null;
@@ -456,29 +464,26 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 				ch_theater.add(theater.get(i).getName()+"관");
 			}
 			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	// 영화관에 movie_id 넘기기
-	public void insertMovieID(){
-		PreparedStatement pstmt;
-		
-	}
-	
+	/*
 	// 관 선택 choice 구현
 	public void itemStateChanged(ItemEvent e) {
 		Object obj=e.getItem();
 		Choice ch=(Choice)obj;
 		
-		int index=ch.getSelectedIndex();
+		theater_index=ch.getSelectedIndex();
+		
 		
 		// 영화관을 선택하면
-		if(index==ch_theater.getSelectedIndex()){
-			insertMovieID();
+		if(theater_index==ch_theater.getSelectedIndex()){
+			insertMovieID(theater_index);
 		}
 		
 	}
-	
+	*/
 }

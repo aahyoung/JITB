@@ -51,9 +51,13 @@ public class ClientMain extends JFrame{
 		screen.add(new NumberCheckScreen(this));
 		//index=3
 		screen.add(new NoTicketScreen(this));
+		//index=4
 		screen.add(new MovieChoiceScreen(this));
+		//index=5
 		screen.add(new PersonsChoiceScreen(this));
+		//index=6
 		screen.add(new SeatsChoiceScreen(this));
+		//index=7
 		screen.add(new ComboChoiceScreen(this));
 		screen.add(new GifticonChoiceScreen(this));
 		screen.add(new OptionChoiceScreen(this));

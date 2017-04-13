@@ -1,4 +1,4 @@
-package com.user.server;
+package com.jitb.server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

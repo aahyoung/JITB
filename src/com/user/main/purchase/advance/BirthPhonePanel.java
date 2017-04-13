@@ -120,7 +120,7 @@ public class BirthPhonePanel extends JPanel{
 					if(btn.index == 10){
 						deleteNum();
 					}else if(btn.index == 11){
-						
+						main.setPage(10);
 					}else{
 						insertNum(btn.index);
 					}

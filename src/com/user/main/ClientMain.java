@@ -18,6 +18,7 @@ import com.user.main.purchase.MenuChoiceScreen;
 import com.user.main.purchase.PaymentChoiceScreen;
 import com.user.main.purchase.advance.NoTicketScreen;
 import com.user.main.purchase.advance.NumberCheckScreen;
+import com.user.main.purchase.advance.TicketConfirmScreen;
 import com.user.main.purchase.combo.ComboChoiceScreen;
 import com.user.main.purchase.combo.GifticonChoiceScreen;
 import com.user.main.purchase.combo.OptionChoiceScreen;
@@ -59,8 +60,12 @@ public class ClientMain extends JFrame{
 		screen.add(new SeatsChoiceScreen(this));
 		//index=7
 		screen.add(new ComboChoiceScreen(this));
+		//index=8
 		screen.add(new GifticonChoiceScreen(this));
+		//index=9
 		screen.add(new OptionChoiceScreen(this));
+		//index=10
+		screen.add(new TicketConfirmScreen(this));
 		screen.add(new ConfirmScreen(this));
 		screen.add(new DiscountChoiceScreen(this));
 		screen.add(new PaymentChoiceScreen(this));

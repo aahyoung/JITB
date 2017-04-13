@@ -1,4 +1,4 @@
-package com.user.server;
+package com.jitb.server;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -55,6 +55,7 @@ public class ServerMain extends JFrame implements ActionListener, Runnable{
 		add(p_north, BorderLayout.NORTH);
 		add(scroll);
 		
+		console.setEditable(false);
 		bt_start.addActionListener(this);
 		
 		setTitle("server");

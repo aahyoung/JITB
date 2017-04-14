@@ -54,7 +54,7 @@ public class TheaterList extends JPanel implements ActionListener{
 	// 선택된 영화관의 id
 	int id;
 	
-	SelectMovie selectMovie;
+	EditTheater selectMovie;
 	
 	public TheaterList() {
 		// DB 연결
@@ -155,7 +155,7 @@ public class TheaterList extends JPanel implements ActionListener{
 	// 영화관 패널을 선택하면 영화를 선택할 수 있는 innerFrame 생성
 	public void makeSelectFrame(){
 		Dimension outerSize=this.getSize();
-		selectMovie=new SelectMovie("영화 선택", true, false, true, id);
+		selectMovie=new EditTheater(this, "영화 선택", true, false, true, id);
 		
 		desktop1.add(selectMovie);
 		

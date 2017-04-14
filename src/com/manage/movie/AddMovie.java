@@ -113,8 +113,11 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
     
     // ¿µÈ­ id
     int movie_id;
+    
+    MovieList movieList;
  
-	public AddMovie(String title, boolean resizable, boolean closable, boolean maximizable) {
+	public AddMovie(MovieList movieList, String title, boolean resizable, boolean closable, boolean maximizable) {
+		this.movieList=movieList;
 		this.title=title;
 		this.resizable=resizable;
 		this.closable=closable;
@@ -378,11 +381,13 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		if(bt==bt_confirm){
 			insertMovie();
 			this.setVisible(false);
+			movieList.p_content.setVisible(true);
 			//this.dispose();
 		}
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
+			movieList.p_content.setVisible(true);
 		}
 	}
 	

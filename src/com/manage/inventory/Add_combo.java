@@ -2,6 +2,7 @@ package com.manage.inventory;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -43,11 +45,12 @@ public class Add_combo extends JFrame implements ActionListener{
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
-	
+
+	ArrayList<TopCategory> topList = new ArrayList<TopCategory>();
 	DBManager manager;
 	Connection con;
 	ComboCategory combocategory;
-	
+	Choice choice; //탑카테고리를 받아올 내용
 	public Add_combo() {
 		init(); //connect 받기
 		
@@ -58,6 +61,7 @@ public class Add_combo extends JFrame implements ActionListener{
 		p_center_center=new JPanel();
 		p_center_south=new JPanel();
 
+		choice =new Choice();
 		la_combo=new JLabel("Combo 추가");
 		la_name=new JLabel("상 품 명 :");
 		la_price=new JLabel("가        격:");
@@ -68,6 +72,7 @@ public class Add_combo extends JFrame implements ActionListener{
 		
 		chooser=new JFileChooser("/JITB/res_manager");
 		
+		choice.add("종류를 골라주세요");
 		try {
 			URL url = this.getClass().getResource("/default.png");
 			image = ImageIO.read(url);
@@ -86,8 +91,8 @@ public class Add_combo extends JFrame implements ActionListener{
 		can.setPreferredSize(new Dimension(135, 135));
 		
 		p_west.add(can);
-		
-		p_center_top.add(la_name);
+		p_center_top.add(choice);
+		p_center_top.add(la_combo);
 		p_center_center.add(la_name);
 		p_center_center.add(t_name);
 		p_center_center.add(la_price);
@@ -113,22 +118,57 @@ public class Add_combo extends JFrame implements ActionListener{
 				select();
 			}
 		});
+
+		setChoice();
 		
 		setSize(400,200);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
-	public void regist() {
+	
+	public void setChoice() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into combo(combo_id,name,img,price)";
-		sql += "values(seq_combo.nextval,?,?,?)";
+		ResultSet rs = null;
+		String sql = "select * from top_opt order by top_opt_id asc";
 		try {
 			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				TopCategory dto = new TopCategory();
+				dto.setTop_opt_id(rs.getInt("top_opt_id"));
+				dto.setName(rs.getString("name"));
+				topList.add(dto);// 리스트에 탑재
+				choice.add(dto.getName());
+			}
 
-			// 바인드 변수에 들어갈 값 설정!
-			pstmt.setString(1, t_name.getText());
-			pstmt.setString(2, file.getName());
-			pstmt.setInt(3, Integer.parseInt(t_price.getText()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	
+	public void regist() {
+		PreparedStatement pstmt = null;
+		String sql = "insert into combo(combo_id,top_opt_id,name,img,price)";
+		sql += "values(seq_combo.nextval,?,?,?,?)";
+		try {
+			pstmt = con.prepareStatement(sql);
+			int index = choice.getSelectedIndex();
+			TopCategory vo = topList.get(index-1);
+			
+			pstmt.setInt(1, vo.getTop_opt_id());
+			pstmt.setString(2, t_name.getText());
+			pstmt.setString(3, file.getName());
+			pstmt.setInt(4, Integer.parseInt(t_price.getText()));
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -143,7 +183,6 @@ public class Add_combo extends JFrame implements ActionListener{
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -175,5 +214,8 @@ public class Add_combo extends JFrame implements ActionListener{
 	public void init() {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
+	}
+	public static void main(String[] args) {
+		new Add_combo();
 	}
 }

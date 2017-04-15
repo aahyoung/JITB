@@ -33,6 +33,9 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 	boolean isDragged = false;
 	int offY;
 	
+	Image buffrImg;
+	Graphics2D buffr;
+	
 	public TicketConfirmScreen(ClientMain main) {
 		super(main);
 		
@@ -45,27 +48,36 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 		canvasFrame = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
-				Graphics2D g2 = (Graphics2D)g;
+				buffrImg = createImage(800, 1150);
+				buffr = (Graphics2D)buffrImg.getGraphics();
+				//Graphics2D g2 = (Graphics2D)g;
 				if(color == false){
-					g2.setColor(Color.WHITE);
+					buffr.setColor(Color.WHITE);
 				}else{
-					g2.setColor(Color.YELLOW);
+					buffr.setColor(Color.YELLOW);
 				}
-				g2.draw(rect);
-				g2.setFont(new Font("Malgun Gothic", Font.BOLD, 40));
-				g2.drawString(rect.movie_name, rect.x+10, rect.y+50);
-				g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-				g2.drawString(rect.branch+"("+rect.theater+")", rect.x+10, rect.y+100);
-				g2.drawString(rect.persons, rect.x+10, rect.y+150);
-				g2.drawString(rect.movie_time, rect.x+10, rect.y+230);
+				buffr.draw(rect);
+				buffr.setFont(new Font("Malgun Gothic", Font.BOLD, 40));
+				buffr.drawString(rect.movie_name, rect.x+10, rect.y+50);
+				buffr.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+				buffr.drawString(rect.branch+"("+rect.theater+")", rect.x+10, rect.y+100);
+				buffr.drawString(rect.persons, rect.x+10, rect.y+150);
+				buffr.drawString(rect.movie_time, rect.x+10, rect.y+230);
 				
 				URL url = getClass().getResource("/"+rect.img);
 				try {
 					Image img = ImageIO.read(url);
-					g2.drawImage(img, rect.x+550, rect.y, 200, 250, this);
+					buffr.drawImage(img, rect.x+550, rect.y, 200, 250, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
+				g.drawImage(buffrImg, 0, 0, 800, 1150, this);
+			}
+			
+			@Override
+			public void update(Graphics g) {
+				paint(g);
 			}
 		};
 		
@@ -107,6 +119,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 		if(isDragged){
 			//데이터베이스에서 불러온 객체들의 총 y값을 합해서 화면 크기보다 클 경우 가장 마지막 y값만큼만 드래그 되게 하기
 			rect.y = e.getY()-offY;
+			rect.translate(0, 10);
 		}
 		canvasFrame.repaint();
 	}

@@ -13,6 +13,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -45,6 +50,9 @@ public class BirthPhonePanel extends JPanel{
 	StringBuffer birth = new StringBuffer();
 	StringBuffer phone = new StringBuffer();
 	boolean flag = false;
+	
+	ArrayList<Ticket> ticket = new ArrayList<Ticket>();
+	String[] days = {"일", "월", "화", "수", "목", "금", "토"};
 
 	public BirthPhonePanel(ClientMain main, Image btnImg[]) {
 		this.main = main;
@@ -120,7 +128,13 @@ public class BirthPhonePanel extends JPanel{
 					if(btn.index == 10){
 						deleteNum();
 					}else if(btn.index == 11){
-						main.setPage(10);
+						selectBookingNum();
+						if(ticket.size() == 0){
+							main.setPage(3);
+						}else{
+							ticketProcessiong();
+							main.setPage(10);
+						}
 					}else{
 						insertNum(btn.index);
 					}
@@ -290,5 +304,118 @@ public class BirthPhonePanel extends JPanel{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void selectBookingNum(){
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("select m.name as 영화이름, b.name as 지점, t.name as 관, sd.screening_date as 날짜, time.start_time as 시작시간, buy.type as 타입, count(*) as 인원, m.poster as 포스터");
+		sql.append(" from birth_phone bp");
+		sql.append(" inner join order_movie o on bp.order_id = o.order_id");
+		sql.append(" inner join buy_movie buy on o.order_id = buy.order_id");
+		sql.append(" inner join seat s on buy.seat_id = s.seat_id");
+		sql.append(" inner join theater_operate toper on toper.theater_operate_id = s.theater_operate_id");
+		sql.append(" inner join theater t on t.theater_id = toper.theater_id");
+		sql.append(" inner join branch b on b.branch_id = t.branch_id");
+		sql.append(" inner join start_time time on toper.start_time_id = time.start_time_id");
+		sql.append(" inner join screening_date sd on time.screening_date_id = sd.screening_date_id");
+		sql.append(" inner join movie m on sd.movie_id = m.movie_id");
+		sql.append(" where bp.birth = "+birth.toString());
+		sql.append(" and bp.phone = "+phone.toString());
+		sql.append(" group by m.name, b.name, t.name, sd.screening_date, buy.type, time.start_time, m.poster");
+		
+		try {
+			pstmt = main.con.prepareStatement(sql.toString());
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				Ticket dto = new Ticket();
+				dto.setBranch(rs.getString("지점"));
+				dto.setTheater(rs.getString("관"));
+				dto.setMovie_name(rs.getString("영화이름"));
+				dto.setPersons(rs.getString("인원"));
+				dto.setType(rs.getString("타입"));
+				dto.setDate(rs.getString("날짜"));
+				dto.setTime(rs.getString("시작시간"));
+				dto.setPoster(rs.getString("포스터"));
+				
+				ticket.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(rs != null){
+					rs.close();
+				}
+				if(pstmt != null){
+					pstmt.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void ticketProcessiong(){
+		AdvancedTicket at = ((TicketConfirmScreen)main.screen.get(10)).rect;
+		
+		Calendar cal = Calendar.getInstance();
+		
+		StringBuffer persons = new StringBuffer();
+		StringBuffer dateTime = new StringBuffer();
+		
+		String s_yy = ticket.get(0).getDate().substring(0,4);
+		String s_mm = ticket.get(0).getDate().substring(5,7);
+		String s_dd = ticket.get(0).getDate().substring(8,10);
+		
+		int yy = Integer.parseInt(s_yy);
+		int mm = Integer.parseInt(s_mm);
+		int dd = Integer.parseInt(s_dd);
+		
+		String time = ticket.get(0).getTime();
+		String[] timeSplit = ticket.get(0).getTime().split(":");
+		String am_pm = null;
+		
+		for(int i=0; i<ticket.size(); i++){
+			if(i>0){
+				persons.append(" / ");
+			}
+			persons.append(ticket.get(i).getType());
+			persons.append(" ");
+			persons.append(ticket.get(i).getPersons());
+			persons.append("명");
+		}
+		
+		if(Integer.parseInt(timeSplit[0]) < 12){
+			am_pm = "오전";
+		}else{
+			am_pm = "오후";
+		}
+		
+		cal.set(yy, mm-1, dd);
+		int day = cal.get(Calendar.DAY_OF_WEEK);
+		dateTime.append(s_yy);
+		dateTime.append(".");
+		dateTime.append(s_mm);
+		dateTime.append(".");
+		dateTime.append(s_dd);
+		dateTime.append("(");
+		dateTime.append(days[day-1]);
+		dateTime.append(") ");
+		dateTime.append(am_pm);
+		dateTime.append(time);
+		
+		System.out.println(dateTime.toString());
+		
+		at.setBranch(ticket.get(0).getBranch());
+		at.setTheater(ticket.get(0).getTheater()+"관");
+		at.setMovie_name(ticket.get(0).getMovie_name());
+		at.setPersons(persons.toString());
+		at.setMovie_time(dateTime.toString());
+		at.setPoster(ticket.get(0).getPoster());
 	}
 }

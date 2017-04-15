@@ -28,8 +28,8 @@ import com.user.main.purchase.ticket.SeatsChoiceScreen;
 
 public class ClientMain extends JFrame{
 	private DBManager manager;
-	private Connection con;
-	ArrayList<JPanel> screen;
+	public Connection con;
+	public ArrayList<JPanel> screen;
 	
 	private int port = 7777; //사용자에게 노출되지 않고 바로 실행됨
 	private String ip = "localhost"; //추후 네트워크상 다른 계정과도 테스트 해볼 것

@@ -14,6 +14,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -27,7 +28,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 	JLabel label;
 	Canvas canvasFrame;
 	AdvancedTicket rect;
-	ArrayList<AdvancedTicket> boxs = new ArrayList<AdvancedTicket>();
+	Canvas print;
 	
 	boolean color = false;
 	boolean isDragged = false;
@@ -48,7 +49,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 		canvasFrame = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
-				buffrImg = createImage(800, 1150);
+				buffrImg = createImage(800, 800);
 				buffr = (Graphics2D)buffrImg.getGraphics();
 				//Graphics2D g2 = (Graphics2D)g;
 				if(color == false){
@@ -64,7 +65,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 				buffr.drawString(rect.persons, rect.x+10, rect.y+150);
 				buffr.drawString(rect.movie_time, rect.x+10, rect.y+230);
 				
-				URL url = getClass().getResource("/"+rect.img);
+				URL url = getClass().getResource("/"+rect.poster);
 				try {
 					Image img = ImageIO.read(url);
 					buffr.drawImage(img, rect.x+550, rect.y, 200, 250, this);
@@ -72,7 +73,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 					e.printStackTrace();
 				}
 				
-				g.drawImage(buffrImg, 0, 0, 800, 1150, this);
+				g.drawImage(buffrImg, 0, 0, 800, 800, this);
 			}
 			
 			@Override
@@ -81,17 +82,34 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 			}
 		};
 		
+		print = new Canvas(){
+			@Override
+			public void paint(Graphics g) {
+				URL url = getClass().getResource("/print.png");
+				try {
+					Image img = ImageIO.read(url);
+					g.drawImage(img, 280, 5, 250, 120, this);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
 		label.setForeground(Color.WHITE);
 		label.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
 		
 		panel.setPreferredSize(new Dimension(800, 50));
-		canvasFrame.setPreferredSize(new Dimension(800, 1150));
+		canvasFrame.setPreferredSize(new Dimension(800, 800));
+		print.setPreferredSize(new Dimension(800, 150));
+		
+		print.setBackground(new Color(33,33,33));
 		panel.setBackground(new Color(33,33,33));
 		
 		panel.add(label);
 		
 		add(panel);
 		add(canvasFrame);
+		add(print);
 		
 		canvasFrame.addMouseListener(new MouseAdapter() {
 			@Override

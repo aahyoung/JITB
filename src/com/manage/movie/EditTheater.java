@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import com.jitb.db.DBManager;
 
 // 영화관 추가 레이아웃
-public class SelectMovie extends JInternalFrame implements ActionListener, ItemListener{
+public class EditTheater extends JInternalFrame implements ActionListener, ItemListener{
 	JPanel p_outer;
 	JPanel p_title;
 	JPanel p_select;
@@ -41,7 +41,13 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 	
 	ArrayList<MovieData> movie=new ArrayList<MovieData>();
 	
-	public SelectMovie(String title, boolean resizable, boolean closable, boolean maximizable, int index) {
+	TheaterList theaterList;
+	
+	// 표시하기 위한 string 변환
+	String[] start_time=new String[7];
+	
+	public EditTheater(TheaterList theaterList, String title, boolean resizable, boolean closable, boolean maximizable, int index) {
+		this.theaterList=theaterList;
 		this.title=title;
 		this.resizable=resizable;
 		this.closable=closable;
@@ -103,6 +109,9 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			
+			movie.removeAll(movie);
+			ch_movie.removeAll();
+			
 			while(rs.next()){
 				MovieData movieData=new MovieData();
 				movieData.setMovie_id(rs.getInt("movie_id"));
@@ -160,6 +169,7 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 			// 성공적으로 insert문 반환시 무조건 1 반환
 			int result=pstmt.executeUpdate();
 			if(result!=0){
+				setStartTime();
 				System.out.println("movie_id 변경 성공");
 			}
 			else{
@@ -174,6 +184,85 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 					pstmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	// 다음 상영시간을 구하는 메소드
+	public void calculateTime(){
+		int run_time;
+		int hour;		// 시작 시간을 분 단위로 계산
+		int min;		// 시작 분
+		int result;		// 다음 시작 시간 : 분 단위의 시작시간 + 상영시간 + 30
+
+		// 표시하기 위한 string 변환
+		//String[] start_time=new String[7];
+		start_time[0]="09:00";	// 항상 영화의 첫번째 상영 시간은 오전 9시
+		
+		// 상영 시간을 7개로 나눔
+		for(int i=1; i<7; i++){
+			for(int j=0; j<movie.size(); j++){
+				// 선택된 영화의 id를 이용해서 start_time테이블에 값을 저장해야 함
+				// 현재 영화 choice에서 선택된 index번째의 movie 상영시간 가져오기
+				//movie.get(ch_movie.getSelectedIndex()).getMovie_id()
+				run_time=movie.get(ch_movie.getSelectedIndex()).getRun_time();
+				/*
+				 * 현재 시작 시간 - 09:32
+				 * 영화 러닝 타임 - 165분
+				 * 다음 시작 시간 - 09:32 + 135분 => 
+				 * -> 시작시간*60 + 시작시간 분 => 9*60+32=572
+				 * -> 분단위로 변환한 시작시간 + 상영시간 + 30분 쉬는시간 = 다음 시작시간 => 767분
+				 * -> 분단위의 다음 시작시간/60 => 12(시)
+				 * -> 분단위의 다음 시작시간%60 => 47(분)
+				 * => 다음 시작 시간은 12시 47분
+				 * */
+				String[] divide=start_time[i-1].split(":");
+				hour=Integer.parseInt(divide[0])*60;
+				min=Integer.parseInt(divide[1]);
+				result=hour+min+run_time+30;
+				
+				start_time[i]=result/60+":"+result%60;
+				System.out.println(start_time);
+			}
+		}
+	}
+	
+	// 관에 영화가 지정되면 start_time 테이블에 정보 저장
+	public void setStartTime(){
+		calculateTime();
+		
+		PreparedStatement pstmt=null;
+		
+		// 영화 시작 시간의 길이만큼(7번)
+		for(int i=0; i<start_time.length; i++){
+			StringBuffer sql=new StringBuffer();
+			sql.append("insert into start_time(start_time_id, start_time, movie_id)");
+			sql.append(" values(seq_start_time.nextval, ?, ?)");
+			
+			String id=Integer.toString(movie.get(ch_movie.getSelectedIndex()).getMovie_id());
+			
+			try {
+				pstmt=con.prepareStatement(sql.toString());
+				pstmt.setString(1, start_time[i]);
+				pstmt.setString(2, id);
+				
+				int result=pstmt.executeUpdate();
+				if(result!=0){
+					System.out.println("start_time 저장 성공");
+				}
+				else{
+					System.out.println("start_time 저장 실패");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally{
+				if(pstmt!=null){
+					try {
+						pstmt.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -201,6 +290,7 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 			System.out.println("확인 누름");
 			setMovieID();
 			this.setVisible(false);
+			theaterList.p_theater.setVisible(true);
 			
 		}
 
@@ -209,6 +299,7 @@ public class SelectMovie extends JInternalFrame implements ActionListener, ItemL
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
+			theaterList.p_theater.setVisible(true);
 		}
 	}
 

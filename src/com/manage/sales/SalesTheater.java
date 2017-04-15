@@ -88,6 +88,7 @@ public class SalesTheater extends JPanel implements ItemListener {
 
 	public void init() {
 		con = manager.getConnect();
+		//((DailySales)p_daily).setConnection(con);
 		((WeeklySales)p_weekly).setConnection(con);
 		((MonthlySales)p_monthly).setConnection(con);
 	}
@@ -95,5 +96,4 @@ public class SalesTheater extends JPanel implements ItemListener {
 	public static void main(String[] args) {
 		new SalesTheater();
 	}
-
 }

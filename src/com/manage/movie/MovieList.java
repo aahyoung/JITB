@@ -22,7 +22,7 @@ import com.jitb.db.DBManager;
 // 영화 목록 레이아웃
 public class MovieList extends JPanel implements ActionListener{
 
-	JPanel p_north, p_content;
+	JPanel p_north, p_table, p_content;
 	JLabel lb_title;
 	JButton bt_add;
 	
@@ -55,6 +55,7 @@ public class MovieList extends JPanel implements ActionListener{
 		scroll=new JScrollPane(table);
 		
 		p_north=new JPanel();
+		p_table=new JPanel();
 		p_content=new JPanel();
 		lb_title=new JLabel("영화 목록");
 		
@@ -66,7 +67,7 @@ public class MovieList extends JPanel implements ActionListener{
 		
 		//p_content.setBackground(Color.CYAN);
 		//p_content.setLayout(new BorderLayout());
-		p_content.add(scroll);
+		p_table.add(scroll);
 		
 		bt_add.addActionListener(this);
 		
@@ -91,7 +92,7 @@ public class MovieList extends JPanel implements ActionListener{
 		//JDesktopPane desktop=new JDesktopPane();
 		Dimension outerSize=this.getSize();
 		
-		addMovie=new AddMovie("영화 추가", true, false, true);
+		addMovie=new AddMovie(this, "영화 추가", true, false, true);
 		//addTheater.setBounds(outerSize.width/2, outerSize.height/2, 300, 200);
 		
 		desktop.add(addMovie);

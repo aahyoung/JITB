@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.manage.inventory.InventoryMain;
-import com.manage.movie.Movie;
+import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
 
 
@@ -25,7 +25,7 @@ public class Main extends JFrame implements ActionListener{
 	String[] title={"홈","영화 관리","재고 관리","할인 관리","매출 관리"};
 	
 	// 각 메뉴 패널(여기에 각자 만든 패널을 가져와주시면 됩니다!)
-	Movie movie;
+	MovieTheaterTab movie;
 	SalesMain salesMain;
 	
 	// 메뉴에 따른 여러 페이지 배열로 저장
@@ -68,7 +68,7 @@ public class Main extends JFrame implements ActionListener{
 		 * 3 : 할인 관리
 		 * 4 : 매출 관리
 		 * */
-		page[1]=new Movie();
+		page[1]=new MovieTheaterTab();
 		page[2]=new InventoryMain();
 		page[4]=new SalesMain();
 		

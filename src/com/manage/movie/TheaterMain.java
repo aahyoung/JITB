@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,6 +43,9 @@ public class TheaterMain extends JPanel implements ActionListener{
 	// 영화관 추가 Dialog
 	AddTheater addTheater;
 	
+	// 영화관 수정/삭제/영화 선택 Dialog
+	EditTheater editTheater;
+	
 	// 각 영화관 패널
 	TheaterItem theaterItem;
 	
@@ -56,6 +61,9 @@ public class TheaterMain extends JPanel implements ActionListener{
 	
 	// 영화관 패널을 담아놓을 collection framework
 	ArrayList<TheaterItem> theaters=new ArrayList<TheaterItem>();
+	
+	// 선택된 영화관의 id
+	int id;
 	
 	public TheaterMain() {
 		// DB 연동
@@ -153,6 +161,23 @@ public class TheaterMain extends JPanel implements ActionListener{
 			
 			theaters.add(theaterItem);
 		}
+		
+		for(int j=0; j<theaters.size(); j++){
+			theaters.get(j).addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					Object obj=e.getSource();
+					
+					for(int k=0; k<theaters.size(); k++){
+						if(obj==theaters.get(k)){
+							System.out.println(theaters.get(k).theater_id+"관 선택");
+							id=theaters.get(k).theater_id;
+							editTheater=new EditTheater(TheaterMain.this);
+						}
+					}
+				}
+			});
+		}
+		
 		System.out.println("영화관 세팅");
 	}
 	

@@ -30,56 +30,49 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
 
 import javafx.scene.layout.Border;
 
-public class Add_sub extends JFrame implements ActionListener {
-	JPanel p_west, p_center; // 기본 창
+public class Add_comboList extends JFrame implements ActionListener, ItemListener {
+	JPanel p_center; // 기본 창
 	JPanel p_center_top, p_center_center, p_center_south;// 센터에 상세 분류
 	JLabel la_sub;
-	JLabel la_name, la_price, la_stock;
-	JTextField t_name, t_price, t_stock;
+	JLabel la_name;
+	JTextField t_name;
 	JButton bt_add;
-	Canvas can;
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
 	Choice choice;
+	Choice subchoice;
 
 	DBManager manager;
 	Connection con;
-	ArrayList<TopSizeCategory> topList = new ArrayList<TopSizeCategory>();
+	ArrayList<ComboCategory> topList = new ArrayList<ComboCategory>();
+	ArrayList<TopSizeCategory> subList = new ArrayList<TopSizeCategory>();
 	ComboCategory combocategory;
-	JTable table_up;
-	TablePanel tablepanel;
-	public Add_sub(JTable table_up) {
-		this.table_up=table_up;
+
+	TopSizeCategory dto = new TopSizeCategory();
+	
+	public Add_comboList() {
 		init();
 
-		p_west = new JPanel();// 이미지 넣어둘 패널
 		p_center = new JPanel();// 각종 옵션 넣어둘 패널
 
 		p_center_top = new JPanel();
 		p_center_center = new JPanel();
 		p_center_south = new JPanel();
 
-		la_sub = new JLabel("상품옵션 추가");
-		la_name = new JLabel("상 품 명 :");
-		la_price = new JLabel("가        격:");
-		la_stock = new JLabel("재        고:");
+		la_sub = new JLabel("콤보옵션갯수");
+		la_name = new JLabel("수  량  입  력 :");
 
 		choice = new Choice();
+		subchoice=new Choice();
 		t_name = new JTextField(15);
-		t_price = new JTextField(15);
-		t_stock = new JTextField(15);
 		bt_add = new JButton("추가");
-
-		chooser = new JFileChooser("/JITB/res_manager");
-
 		try {
 			URL url = this.getClass().getResource("/default.png");
 			image = ImageIO.read(url);
@@ -89,24 +82,11 @@ public class Add_sub extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 
-		can = new Canvas() {
-			@Override
-			public void paint(Graphics g) {
-				g.drawImage(image, 0, 0, 135, 135, this);
-			}
-		};
-		can.setPreferredSize(new Dimension(135, 135));
-
-		p_west.add(can);
-
 		p_center_top.add(choice);
+		p_center_top.add(subchoice);
 		p_center_top.add(la_sub);
 		p_center_center.add(la_name);
 		p_center_center.add(t_name);
-		p_center_center.add(la_price);
-		p_center_center.add(t_price);
-		p_center_center.add(la_stock);
-		p_center_center.add(t_stock);
 		p_center_south.add(bt_add);
 
 		p_center_center.setBackground(Color.red);
@@ -115,39 +95,34 @@ public class Add_sub extends JFrame implements ActionListener {
 		p_center.add(p_center_top, BorderLayout.NORTH);
 		p_center.add(p_center_center);
 		p_center.add(p_center_south, BorderLayout.SOUTH);
-
-		add(p_west, BorderLayout.WEST);
 		add(p_center);
 
 		bt_add.addActionListener(this);
-
-		can.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				select();
-			}
-		});
-
+		
+		choice.addItemListener(this);
+		
 		setSize(400, 200);
 		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		choice.add("종류를 선택하세요");
+		subchoice.add("사이즈를 골라주세요");
+		subchoice.add("상위옵션을 선택해주세요");
 		setChoice();
 	}
 	
 	public void setChoice() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "select * from top_opt_size order by top_opt_size_id asc";
+		String sql = "select * from combo order by combo_id asc";
 		try {
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				TopSizeCategory dto = new TopSizeCategory();
-				dto.setTop_opt_size_id(rs.getInt("top_opt_size_id"));
-				dto.setOpt_size(rs.getString("opt_size"));
+				ComboCategory dto = new ComboCategory();
+				dto.setCombo_id(rs.getInt("combo_id"));
+				dto.setName(rs.getString("name"));
 				topList.add(dto);// 리스트에 탑재
-				choice.add(dto.getOpt_size());
+				choice.add(dto.getName());
 			}
 
 		} catch (SQLException e) {
@@ -166,30 +141,25 @@ public class Add_sub extends JFrame implements ActionListener {
 
 	public void regist() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into sub_opt(sub_opt_id,top_opt_size_id,name,price,img,stock)";
-		sql += "values(seq_sub_opt.nextval,?,?,?,?,?)";
+		String sql = "insert into combo_list(combo_list_id,amount,combo_id,top_opt_size_id)";
+		sql += "values(seq_combo_list.nextval,?,?,?)";
 
 		try {
 			pstmt = con.prepareStatement(sql);
 
 			int index = choice.getSelectedIndex()-1;
-			TopSizeCategory vo = topList.get(index);
+			int subindex =subchoice.getSelectedIndex()-1;
+			ComboCategory vo = topList.get(index);
+			dto=subList.get(subindex);
 			// 바인드 변수에 들어갈 값 설정!
-			pstmt.setInt(1, vo.getTop_opt_size_id());
-			System.out.println(vo.getTop_opt_id());
 			
-			pstmt.setString(2, t_name.getText());
-			System.out.println(t_name.getText());
+			pstmt.setInt(1,Integer.parseInt(t_name.getText()));
 			
-			pstmt.setInt(3, Integer.parseInt(t_price.getText()));
-			System.out.println(t_price.getText());
+			pstmt.setInt(2, vo.getCombo_id());
 			
-			pstmt.setString(4, file.getName());
-			System.out.println(file.getName());
+			pstmt.setInt(3, dto.getTop_opt_id());
 			
-			pstmt.setInt(5, Integer.parseInt(t_stock.getText()));
-			System.out.println(t_stock.getText());
-
+			
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
 				JOptionPane.showMessageDialog(this, "등록성공");
@@ -208,25 +178,39 @@ public class Add_sub extends JFrame implements ActionListener {
 				}
 			}
 		}
-		table_up.setModel(tablepanel=new TablePanel(con,"sub_opt"));
 	}
+	
+	public void setSubChoice() {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select * from top_opt_size order by top_opt_size_id asc";
+		try {
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			subchoice.removeAll();
+			subchoice.add("사이즈를 골라주세요");
+			while (rs.next()) {
+				dto.setTop_opt_size_id(rs.getInt("Top_opt_size_id"));
+				dto.setOpt_size(rs.getString("opt_size"));
+				subList.add(dto);// 리스트에 탑재
+				subchoice.add(dto.getOpt_size());
+			}
 
-	public void select() {
-		int result = chooser.showOpenDialog(this);
-		if (result == JFileChooser.APPROVE_OPTION) {
-			// 캔버스에 이미지 그리자!
-			file = chooser.getSelectedFile();
-
-			// 얻어진 파일을 기존의 이미지로 대체하기
-			try {
-				image = ImageIO.read(file);
-				can.repaint();
-			} catch (IOException e) {
-				e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-	}
 
+
+	}
+	
 	// 추가 버튼
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -238,5 +222,12 @@ public class Add_sub extends JFrame implements ActionListener {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
 	}
-	
+
+	public void itemStateChanged(ItemEvent e) {
+		/// 하위 카테고리 구하기!
+		setSubChoice();
+	}
+	public static void main(String[] args){
+		new Add_comboList();
+	}
 }

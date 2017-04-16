@@ -2,7 +2,6 @@ package com.manage.inventory;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
@@ -45,15 +47,16 @@ public class Add_combo extends JFrame implements ActionListener{
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
-
-	ArrayList<TopCategory> topList = new ArrayList<TopCategory>();
+	JTable table_up;
 	DBManager manager;
+	
+	TablePanel tablepanel;
+	
 	Connection con;
 	ComboCategory combocategory;
-	Choice choice; //탑카테고리를 받아올 내용
-	public Add_combo() {
+	public Add_combo(JTable table_up) {
 		init(); //connect 받기
-		
+		this.table_up=table_up;
 		p_west=new JPanel();//이미지 넣어둘 패널
 		p_center=new JPanel();//각종 옵션 넣어둘 패널
 		
@@ -61,7 +64,6 @@ public class Add_combo extends JFrame implements ActionListener{
 		p_center_center=new JPanel();
 		p_center_south=new JPanel();
 
-		choice =new Choice();
 		la_combo=new JLabel("Combo 추가");
 		la_name=new JLabel("상 품 명 :");
 		la_price=new JLabel("가        격:");
@@ -72,7 +74,6 @@ public class Add_combo extends JFrame implements ActionListener{
 		
 		chooser=new JFileChooser("/JITB/res_manager");
 		
-		choice.add("종류를 골라주세요");
 		try {
 			URL url = this.getClass().getResource("/default.png");
 			image = ImageIO.read(url);
@@ -81,6 +82,7 @@ public class Add_combo extends JFrame implements ActionListener{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		
 		can = new Canvas(){
 			@Override
@@ -91,7 +93,6 @@ public class Add_combo extends JFrame implements ActionListener{
 		can.setPreferredSize(new Dimension(135, 135));
 		
 		p_west.add(can);
-		p_center_top.add(choice);
 		p_center_top.add(la_combo);
 		p_center_center.add(la_name);
 		p_center_center.add(t_name);
@@ -118,57 +119,20 @@ public class Add_combo extends JFrame implements ActionListener{
 				select();
 			}
 		});
-
-		setChoice();
-		
 		setSize(400,200);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	public void setChoice() {
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "select * from top_opt order by top_opt_id asc";
-		try {
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				TopCategory dto = new TopCategory();
-				dto.setTop_opt_id(rs.getInt("top_opt_id"));
-				dto.setName(rs.getString("name"));
-				topList.add(dto);// 리스트에 탑재
-				choice.add(dto.getName());
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 	}
 
-	
 	public void regist() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into combo(combo_id,top_opt_id,name,img,price)";
-		sql += "values(seq_combo.nextval,?,?,?,?)";
+		String sql = "insert into COMBO(combo_id,name,img,price)";
+		sql += "values(seq_combo.nextval,?,?,?)";
 		try {
 			pstmt = con.prepareStatement(sql);
-			int index = choice.getSelectedIndex();
-			TopCategory vo = topList.get(index-1);
 			
-			pstmt.setInt(1, vo.getTop_opt_id());
-			pstmt.setString(2, t_name.getText());
-			pstmt.setString(3, file.getName());
-			pstmt.setInt(4, Integer.parseInt(t_price.getText()));
+			pstmt.setString(1, t_name.getText());
+			pstmt.setString(2, file.getName());
+			pstmt.setInt(3, Integer.parseInt(t_price.getText()));
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -179,7 +143,7 @@ public class Add_combo extends JFrame implements ActionListener{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (pstmt != null) {
+			if(pstmt != null) {
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -187,6 +151,7 @@ public class Add_combo extends JFrame implements ActionListener{
 				}
 			}
 		}
+		table_up.setModel(tablepanel=new TablePanel(con,"combo"));
 	}
 	
 	public void select(){
@@ -214,8 +179,5 @@ public class Add_combo extends JFrame implements ActionListener{
 	public void init() {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
-	}
-	public static void main(String[] args) {
-		new Add_combo();
 	}
 }

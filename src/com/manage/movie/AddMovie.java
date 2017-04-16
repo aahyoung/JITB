@@ -2,7 +2,6 @@ package com.manage.movie;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -12,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -24,15 +21,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -49,9 +46,9 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import oracle.jdbc.OraclePreparedStatement;
 
-// 영화 추가 레이아웃
-public class AddMovie extends JInternalFrame implements ActionListener, FocusListener{
+public class AddMovie extends JDialog implements ActionListener, FocusListener{
 	JPanel p_outer;
 	
 	JFXPanel p_date;
@@ -106,7 +103,7 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
     
     JTextField[] t_input=new JTextField[5];
     
-    ArrayList<TheaterData> theater=new ArrayList<TheaterData>();
+    ArrayList<TheaterItem> theater=new ArrayList<TheaterItem>();
     
     // 영화관 선택 index
     int theater_index;
@@ -114,14 +111,13 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
     // 영화 id
     int movie_id;
     
-    MovieList movieList;
+    // 부모 패널
+    MovieMain movieMain;
+    
+    String[] start_time=new String[7];
  
-	public AddMovie(MovieList movieList, String title, boolean resizable, boolean closable, boolean maximizable) {
-		this.movieList=movieList;
-		this.title=title;
-		this.resizable=resizable;
-		this.closable=closable;
-		this.maximizable=maximizable;
+	public AddMovie(MovieMain movieMain) {
+		this.movieMain=movieMain;
 		
 		URL url=this.getClass().getResource("/shrek.jpg");
 		
@@ -195,12 +191,6 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		
 		// DB 연결
 		connect();
-		
-		/*
-		// 사용 가능한 영화관 목록 가져오기
-		getTheaterList();
-		System.out.print("사용 가능한 영화관 : "+theater+" ");
-		*/
 	}
 	
 	// DB 연결
@@ -229,10 +219,11 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		
 		// movie_id, poster, name, director, main_actor, story, start_date, end_date, run_time
 		StringBuffer sql=new StringBuffer();
-		sql.append("insert into movie(movie_id, poster, name, director, main_actor, story, start_date, end_date, run_time)");
-		sql.append(" values(seq_movie.nextval, ?, ?, ?, ?, ?, ");
-		sql.append("to_date(?,'YYYY-MM-DD'), ");
-		sql.append("to_date(?,'YYYY-MM-DD'), ?)");
+		sql.append("insert into movie(movie_id, poster, name, director, main_actor, story, run_time)");
+		sql.append(" values(seq_movie.nextval, ?, ?, ?, ?, ?, ?)");
+		//sql.append(" values(seq_movie.nextval, ?, ?, ?, ?, ?, ?) returning movie_id into :movie_id");
+		//sql.append("to_date(?,'YYYY-MM-DD'), ");
+		//sql.append("to_date(?,'YYYY-MM-DD'), ?)");
 		
 		// 제약조건(제약조건이 좀 많아유ㅠㅠ)
 		/* 1. 이미지명이 제대로 들어오고
@@ -251,9 +242,11 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 				pstmt.setString(3, t_director.getText());
 				pstmt.setString(4, t_actor.getText());
 				pstmt.setString(5, ta_story.getText());
-				pstmt.setString(6, startDatePicker.getValue().toString());
-				pstmt.setString(7, endDatePicker.getValue().toString());
-				pstmt.setInt(8, Integer.parseInt(t_run_time.getText()));
+				//pstmt.setString(6, startDatePicker.getValue().toString());
+				//pstmt.setString(7, endDatePicker.getValue().toString());
+				pstmt.setInt(6, Integer.parseInt(t_run_time.getText()));
+				// returning 변수는 어떻게?
+				
 				
 				// 성공적으로 insert했다면 반환값은 1
 				int result=pstmt.executeUpdate();
@@ -262,6 +255,12 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 					
 					// 등록 완료했으면 포스터 파일 저장
 					copyPoster();
+					
+					// screening_date 테이블 저장
+					setScreeningDate(start_date, end_date);
+					
+					// start_time 테이블 저장
+					setStartTime();
 				}
 				else{
 					JOptionPane.showMessageDialog(this, "영화 추가 실패");
@@ -373,6 +372,80 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
         root.getChildren().add(gridPane);
         p_date.setScene(scene);
 	}
+	
+	// 영화 등록과 동시에 screening_date에 movie_id와 screening_date 생성
+	public void setScreeningDate(LocalDate start_date, LocalDate end_date){
+		PreparedStatement pstmt=null;
+		
+		StringBuffer sql=new StringBuffer();
+		sql.append("insert into screening_date(screnning_id, movie_id, screening_date)");
+		sql.append(" values(seq_screening_id.nextval, ?, ?)");
+		
+		Period period=Period.between(start_date, end_date);
+		int run_date=period.getDays();
+		
+		try {
+			
+			for(int i=0; i<run_date; i++){
+				pstmt=con.prepareStatement(sql.toString());
+				pstmt.setInt(1, movie_id);
+				pstmt.setString(2, start_date.plusDays(i).toString());
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	// 영화 등록과 동시에 start_time 테이블에 start_time을 계산하고 screening_date_id를 받아 저장
+	public void setStartTime(){
+		
+	}
+	
+	// 다음 상영시간을 구하는 메소드
+	// screening_date, 상영일자만큼 생성되므로 for문 횟수는 movie_id로 불러온 screening_date 테이블 레코드 수
+	public void calStartTime(){
+		int run_time;
+		int hour;		// 시작 시간을 분 단위로 계산
+		int min;		// 시작 분
+		int result;		// 다음 시작 시간 : 분 단위의 시작시간 + 상영시간 + 30
+
+		// 표시하기 위한 string 변환
+		//String[] start_time=new String[7];
+		start_time[0]="09:00";	// 항상 영화의 첫번째 상영 시간은 오전 9시
+		
+		/*
+		
+		// 상영 시간을 7개로 나눔
+		for(int i=1; i<7; i++){
+			for(int j=0; j<movie.size(); j++){
+				// screening_date id를 이용해서 start_time테이블에 값을 저장해야 함
+				// 현재 영화 choice에서 선택된 index번째의 movie 상영시간 가져오기
+				//movie.get(ch_movie.getSelectedIndex()).getMovie_id()
+				run_time=movie.get(ch_movie.getSelectedIndex()).getRun_time();
+				/*
+				 * 현재 시작 시간 - 09:32
+				 * 영화 러닝 타임 - 165분
+				 * 다음 시작 시간 - 09:32 + 135분 => 
+				 * -> 시작시간*60 + 시작시간 분 => 9*60+32=572
+				 * -> 분단위로 변환한 시작시간 + 상영시간 + 30분 쉬는시간 = 다음 시작시간 => 767분
+				 * -> 분단위의 다음 시작시간/60 => 12(시)
+				 * -> 분단위의 다음 시작시간%60 => 47(분)
+				 * => 다음 시작 시간은 12시 47분
+				 * 
+				String[] divide=start_time[i-1].split(":");
+				hour=Integer.parseInt(divide[0])*60;
+				min=Integer.parseInt(divide[1]);
+				result=hour+min+run_time+30;
+				
+				start_time[i]=result/60+":"+result%60;
+				System.out.println(start_time);
+			}
+		}
+
+		*/
+	}
 
 	// 확인 버튼을 누르면
 	public void actionPerformed(ActionEvent e) {
@@ -380,14 +453,17 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		
 		if(bt==bt_confirm){
 			insertMovie();
-			this.setVisible(false);
-			movieList.p_content.setVisible(true);
-			//this.dispose();
+			setVisible(false);
+			movieMain.getMovieList();
+			movieMain.p_list.updateUI();
+			movieMain.p_list.setVisible(true);
+			System.out.println("영화 추가 확인");
 		}
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
-			movieList.p_content.setVisible(true);
+			movieMain.p_list.setVisible(true);
+			System.out.println("영화 추가 취소");
 		}
 	}
 	
@@ -440,55 +516,4 @@ public class AddMovie extends JInternalFrame implements ActionListener, FocusLis
 		}
 	}
 	
-	/*
-	// 영화관 choice 목록 가져오기
-	public void getTheaterList(){
-		PreparedStatement pstmt=null;
-		ResultSet rs=null;
-		String sql="select * from theater where movie_id is null";
-		
-		try {
-			pstmt=con.prepareStatement(sql);
-			rs=pstmt.executeQuery();
-			
-			while(rs.next()){
-				TheaterData theaterData=new TheaterData();
-				theaterData.setTheater_id(rs.getInt("theater_id"));
-				theaterData.setName(rs.getString("name"));
-				theaterData.setRow_line(rs.getInt("row_line"));
-				theaterData.setColumn_line(rs.getInt("column_line"));
-				theaterData.setBranch_id(rs.getInt("branch_id"));
-				theaterData.setMovie_id(rs.getString("movie_id"));
-				
-				theater.add(theaterData);
-			}
-			
-			// 레코드 수만큼 영화관 목록 받아오기
-			for(int i=0; i<theater.size(); i++){
-				System.out.println(theater.get(i).getName());
-				ch_theater.add(theater.get(i).getName()+"관");
-			}
-			
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/*
-	// 관 선택 choice 구현
-	public void itemStateChanged(ItemEvent e) {
-		Object obj=e.getItem();
-		Choice ch=(Choice)obj;
-		
-		theater_index=ch.getSelectedIndex();
-		
-		
-		// 영화관을 선택하면
-		if(theater_index==ch_theater.getSelectedIndex()){
-			insertMovieID(theater_index);
-		}
-		
-	}
-	*/
 }

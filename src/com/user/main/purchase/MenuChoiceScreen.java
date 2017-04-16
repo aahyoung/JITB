@@ -19,22 +19,15 @@ import javax.swing.JPanel;
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
 
-public class MenuChoiceScreen extends ScreenFrame implements Runnable{
+public class MenuChoiceScreen extends ScreenFrame {
 	JPanel p_date;
 	JPanel p_time;
-	JLabel la_date;
-	JLabel la_time;
+	public JLabel la_date;
+	public JLabel la_time;
 	JPanel ticket_print;
 	JPanel ticket_purchase;
 	JPanel combo_purchase;
 	Canvas poster;
-	
-	String[] days = {"일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"};
-	
-	Calendar cal;
-	int mm, dd, h, m, day;
-	String ap;
-	Thread thread;
 	
 	public MenuChoiceScreen(ClientMain main) {
 		super(main);
@@ -97,9 +90,6 @@ public class MenuChoiceScreen extends ScreenFrame implements Runnable{
 			}
 		};
 		
-		thread = new Thread(this);
-		thread.start();
-		
 		p_date.setPreferredSize(new Dimension(750, 65));
 		p_time.setPreferredSize(new Dimension(750, 135));
 		ticket_print.setPreferredSize(new Dimension(250, 350));
@@ -144,52 +134,5 @@ public class MenuChoiceScreen extends ScreenFrame implements Runnable{
 				main.setPage(7);
 			}
 		});
-	}
-	
-	public void setTime(){
-		cal = Calendar.getInstance();
-		String str_h;
-		String str_m;
-		
-		mm = cal.get(Calendar.MONTH);
-		dd = cal.get(Calendar.DATE);
-		h = cal.get(Calendar.HOUR);
-		m = cal.get(Calendar.MINUTE);
-		day = cal.get(Calendar.DAY_OF_WEEK);
-		
-		if(cal.get(Calendar.AM_PM)==Calendar.AM){
-			ap = "am";
-		}else{
-			ap = "pm";
-		}
-		
-		if(h<10){
-			str_h = "0"+Integer.toString(h);
-		}else{
-			str_h = Integer.toString(h);
-		}
-		if(m<10){
-			str_m = "0"+Integer.toString(m);
-		}else{
-			str_m = Integer.toString(m);
-		}
-		
-		String date = mm+"월 "+dd+"일 "+days[day-1];
-		String time = str_h+":"+str_m+ap;
-		
-		la_date.setText(date);
-		la_time.setText(time);
-	}
-	
-	@Override
-	public void run() {
-		while(true){
-			setTime();
-			try {
-				thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

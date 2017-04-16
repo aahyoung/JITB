@@ -1,25 +1,45 @@
 package com.manage.movie;
 
-import java.awt.Color;
-import java.awt.Dimension;
+/*
+ * Theater 테이블 저장 DTO
+ * */
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-public class Theater extends JPanel{
-	JLabel lb_name, lb_number, lb_movie;
-	int theater_id;
+public class Theater {
+	private int theater_id;
+	private int branch_id;
+	private String name;
+	private int row_line;
+	private int column_line;
 	
-	public Theater() {
-		lb_name=new JLabel();
-		lb_number=new JLabel();
-		lb_movie=new JLabel();
-		
-		add(lb_name);
-		add(lb_number);
-		add(lb_movie);
-		
-		setPreferredSize(new Dimension(50, 80));
-		setBackground(Color.pink);
+	public int getTheater_id() {
+		return theater_id;
 	}
+	public void setTheater_id(int theater_id) {
+		this.theater_id = theater_id;
+	}
+	public int getBranch_id() {
+		return branch_id;
+	}
+	public void setBranch_id(int branch_id) {
+		this.branch_id = branch_id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getRow_line() {
+		return row_line;
+	}
+	public void setRow_line(int row_line) {
+		this.row_line = row_line;
+	}
+	public int getColumn_line() {
+		return column_line;
+	}
+	public void setColumn_line(int column_line) {
+		this.column_line = column_line;
+	}
+
 }

@@ -1,24 +1,15 @@
-/*
- * 영화관 추가 클래스
- * 규칙) 영화관 이름은 무조건 1-2자리 숫자로 입력할 것!
- * 현재 상황)
- * 데이터 연동 완료
- * - 영화관 리스트를 보여주는 디자인적 구현 필요
- * */
 package com.manage.movie;
 
 import java.awt.Choice;
-import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,8 +18,12 @@ import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
 
-// 영화관 추가 레이아웃
-public class AddTheater extends JInternalFrame implements ActionListener, ItemListener{
+/*
+ * 영화관 추가 Dialog
+ * 규칙) 영화관 이름은 무조건 1-2자리 숫자로 입력
+ * */
+
+public class AddTheater extends JDialog implements ActionListener{
 	JPanel p_outer;
 	JPanel p_title;
 	JPanel p_input;
@@ -47,20 +42,14 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 	
 	JButton bt_cancel, bt_confirm;
 	
-	int row, col;
+	// 부모 패널
+	TheaterMain theaterMain;
 	
-	// DB연동에 필요
 	DBManager manager;
 	Connection con;
 	
-	TheaterList theaterList;
-	
-	public AddTheater(TheaterList theaterList, String title, boolean resizable, boolean closable, boolean maximizable) {
-		this.theaterList=theaterList;
-		this.title=title;
-		this.resizable=resizable;
-		this.closable=closable;
-		this.maximizable=maximizable;
+	public AddTheater(TheaterMain theaterMain) {
+		this.theaterMain=theaterMain;
 		
 		p_outer=new JPanel();
 		p_title=new JPanel();
@@ -88,10 +77,6 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 			ch_col.add(Integer.toString(i+1));
 		}
 		
-		// choice와 ItemListener 연결
-		ch_row.addItemListener(this);
-		ch_col.addItemListener(this);
-		
 		p_title.add(lb_title);
 		p_input.add(lb_name);
 		p_input.add(t_name);
@@ -116,9 +101,7 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 		bt_cancel.addActionListener(this);
 		
 		setBounds(370, 220, 300, 200);
-		//setSize(300, 200);
 		setVisible(true);
-		setBackground(Color.YELLOW);
 		
 		// DB 연결
 		connect();
@@ -130,19 +113,17 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 		con=manager.getConnect();
 	}
 	
-	// 설정한 관 정보 저장
-	// -> theater 테이블에 데이터 저장
+	// 입력한 관 정보를 theater 테이블에 저장
 	public void insertTheater(){
-		
 		PreparedStatement pstmt=null;
 		
 		StringBuffer sql=new StringBuffer();
-		sql.append("insert into theater(theater_id, name, row_line, column_line, branch_id, movie_id)");
-		sql.append(" values(seq_theater.nextval, ?, ?, ?, 1, null)");
+		sql.append("insert into theater(theater_id, branch_id, name, row_line, column_line)");
+		sql.append(" values(seq_theater.nextval, 1, ?, ?, ?)");
 		
 		try {
 			pstmt=con.prepareStatement(sql.toString());
-			pstmt.setString(1, t_name.getText());
+			pstmt.setString(1, t_name.getText());		// branch_id는 임의로 1 설정
 			pstmt.setString(2, Integer.toString(ch_row.getSelectedIndex()+1));
 			pstmt.setString(3, Integer.toString(ch_col.getSelectedIndex()+1));
 			
@@ -168,55 +149,33 @@ public class AddTheater extends JInternalFrame implements ActionListener, ItemLi
 		}
 	}
 	
-	// 하나의 frame을 가지고 사용하므로 기존 값으로 항상 초기화
+	// 하나의 internalFrame을 사용하기 때문에 기존 값으로 항상 초기화
 	public void setDefault(){
 		t_name.setText("");
 		ch_row.select(0);
 		ch_col.select(0);
 	}
-	
-	// choice 선택(지금 사용 안함)
-	public void itemStateChanged(ItemEvent e) {
-		Object obj=e.getSource();
-		Choice ch=(Choice)obj;
-		//int index=ch.getSelectedIndex();
-		int row_index=ch_row.getSelectedIndex();
-		int col_index=ch_col.getSelectedIndex();
-	}
 
-	// 확인 버튼을 누르면
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
-		JButton bt=(JButton)(obj);
 		
-		// 확인 버튼을 누르면 
-		if(bt==bt_confirm){
-			System.out.println("확인 누름");
-			//this.setDefaultCloseOperation(AddTheater.DISPOSE_ON_CLOSE);
-			
-			// 영화관 이름을 제대로 입력하지 않은 경우
-			if(t_name.getText().equals("")){
-				JOptionPane.showMessageDialog(this, "영화관 이름을 제대로 입력해주세요.");
-				return;
-			}
-			else{
-				// 확인 버튼을 누르면 데이터가 theater 테이블에 저장되고 창 종료
-				insertTheater();
-				//this.dispose();
-				this.setVisible(false);
-				theaterList.getTheaterList();
-				theaterList.setTheaterList();
-				theaterList.p_theater.updateUI();
-				theaterList.p_theater.setVisible(true);
-			}
+		// 영화관 추가 확인
+		if(obj==bt_confirm){
+			insertTheater();
+			setVisible(false);
+			theaterMain.getTheaterList();
+			theaterMain.setTheaterList();
+			theaterMain.p_list.updateUI();
+			theaterMain.p_list.setVisible(true);
+			System.out.println("영화관 추가 확인");
 		}
 		
-		// 취소 버튼을 누르면
-		else if(bt==bt_cancel){
-			//this.dispose();
-			this.setVisible(false);
-			theaterList.p_theater.setVisible(true);
+		// 영화관 추가 취소
+		else if(obj==bt_cancel){
+			setVisible(false);
+			theaterMain.p_list.setVisible(true);
+			System.out.println("영화관 추가 취소");
 		}
+		
 	}
-
 }

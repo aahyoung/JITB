@@ -6,5 +6,7 @@ import com.user.main.ClientMain;
 public class MovieChoiceScreen extends ScreenFrame{
 	public MovieChoiceScreen(ClientMain main) {
 		super(main);
+		
+		
 	}
 }

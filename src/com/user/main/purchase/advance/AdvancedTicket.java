@@ -5,12 +5,12 @@ import java.awt.Rectangle;
 
 //예매된 정보들이 출력되는 객체
 public class AdvancedTicket extends Rectangle{
-	String branch = "신촌점";
-	String theater = "1관";
-	String movie_name = "킹스맨";
-	String persons ="성인 1명";
-	String movie_time = "07:00";
-	String poster = "kingsman.png";
+	String branch = "지점";
+	String theater = "관";
+	String movie_name = "영화이름";
+	String persons ="타입 및 인원수";
+	String movie_time = "영화 날짜 및 시간";
+	String poster = "포스터 이미지";
 	
 	public AdvancedTicket(int x, int y, int width, int height) {
 		super(x, y, width, height);

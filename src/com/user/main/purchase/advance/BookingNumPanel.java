@@ -218,10 +218,13 @@ public class BookingNumPanel extends JPanel{
 		
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append("select m.name as 영화이름, b.name as 지점, t.name as 관, sd.screening_date as 날짜, time.start_time as 시작시간, buy.type as 타입, count(*) as 인원, m.poster as 포스터");
+		sql.append("select m.name as 영화이름, b.name as 지점, t.name as 관,");
+		sql.append(" sd.screening_date as 날짜, time.start_time as 시작시간,");
+		sql.append(" mp.type as 타입, m.poster as 포스터,count(*) as 인원");
 		sql.append(" from booking_number bn");
 		sql.append(" inner join order_movie o on bn.order_id = o.order_id");
 		sql.append(" inner join buy_movie buy on o.order_id = buy.order_id");
+		sql.append(" inner join movie_price mp on buy.type_id = mp.type_id");
 		sql.append(" inner join seat s on buy.seat_id = s.seat_id");
 		sql.append(" inner join theater_operate toper on toper.theater_operate_id = s.theater_operate_id");
 		sql.append(" inner join theater t on t.theater_id = toper.theater_id");
@@ -230,7 +233,7 @@ public class BookingNumPanel extends JPanel{
 		sql.append(" inner join screening_date sd on time.screening_date_id = sd.screening_date_id");
 		sql.append(" inner join movie m on sd.movie_id = m.movie_id");
 		sql.append(" where bn.booking_number = "+num.toString());
-		sql.append(" group by m.name, b.name, t.name, sd.screening_date, buy.type, time.start_time, m.poster");
+		sql.append(" group by m.name, b.name, t.name, sd.screening_date, time.start_time, mp.type, m.poster");
 		
 		try {
 			pstmt = main.con.prepareStatement(sql.toString());

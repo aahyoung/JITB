@@ -3,6 +3,7 @@
  */
 package com.manage.sales;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +27,8 @@ public class SalesTable extends AbstractTableModel {
 
 	Vector<String> columName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
+	
+	int total;
 
 	public SalesTable(Connection con, DatePicker today) {
 		this.con = con;
@@ -42,20 +45,27 @@ public class SalesTable extends AbstractTableModel {
 		//System.out.println(con);
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("select a.NAME as 상품명, d.BUY_MOVIE_ID as 상품ID, d.SALES_QT, d.sales_tot, d.SALES_TIME");
-		sql.append(" from movie a, START_TIME b, SEAT c, BUY_MOVIE d");
-		sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
-		sql.append(" and b.START_TIME_ID = c.START_TIME_ID");
-		sql.append(" and c.SEAT_ID = d.SEAT_ID");
-		sql.append(" and to_char(d.SALES_TIME, 'yyyy-mm-dd')=?");
-		sql.append(" union all select f.name as 상품명, g.buy_snack_id as 상품ID, g.sales_qt, g.SALES_TOT, g.SALES_TIME");
-		sql.append(" from SUB_OPT f, buy_snack g ");
-		sql.append(" where f.sub_opt_id=g.SUB_OPT_ID");
-		sql.append(" and to_char(g.SALES_TIME, 'yyyy-mm-dd')=?");
-		sql.append(" order by sales_time asc");
+		sql.append("select a.name as 상품명, g.PRICE as total, h.ORDER_TIME");
+		sql.append(" from movie a, SCREENING_DATE b, START_TIME c, THEATER_OPERATE d");
+		sql.append(" ,SEAT e, BUY_MOVIE f, movie_price g, ORDER_MOVIE h");
+		sql.append(" where a.MOVIE_ID=b.MOVIE_ID");
+		sql.append(" and b.SCREENING_DATE_ID=c.SCREENING_DATE_ID");
+		sql.append(" and c.START_TIME_ID=d.START_TIME_ID");
+		sql.append(" and d.THEATER_OPERATE_ID=e.THEATER_OPERATE_ID");
+		sql.append(" and e.SEAT_ID=f.SEAT_ID");
+		sql.append(" and f.TYPE_ID=g.TYPE_ID");
+		sql.append(" and f.ORDER_ID = h.ORDER_ID");
+		sql.append(" and to_char(h.order_time, 'yyyy-mm-dd')= ?");
+		sql.append(" union all select i.NAME as 상품명, i.PRICE as price, k.ORDER_TIME");
+		sql.append(" from SUB_OPT i, BUY_SNACK j, ORDER_SNACK k");
+		sql.append(" where k.ORDER_ID= j.ORDER_ID");
+		sql.append(" and j.SUB_OPT_ID=i.SUB_OPT_ID");
+		sql.append(" and to_char(k.order_time, 'yyyy-mm-dd')= ?");
+		sql.append(" order by order_time");
+		
 
 		//System.out.println(today.getValue().toString());
-		System.out.println(sql.toString());
+		//System.out.println(sql.toString());
 		String day = today.getValue().toString();
 		System.out.println("출력"+day);
 
@@ -65,7 +75,7 @@ public class SalesTable extends AbstractTableModel {
 			pstmt.setString(2, day);
 			
 			rs = pstmt.executeQuery();
-			System.out.println(rs);
+			
 
 			// 요일 바꿀 때마다 테이블 초기화 할 것임 현재는 x
 			columName.removeAll(columName);
@@ -76,20 +86,18 @@ public class SalesTable extends AbstractTableModel {
 				columName.add(meta.getColumnName(i));
 				System.out.println(meta.getColumnName(i));
 			}
-			
-			System.out.println(rs);
 
 			while(rs.next()) {
 				System.out.println(rs.next());
 				Vector<String> vec = new Vector<String>();
 				vec.add(rs.getString("상품명"));
-				vec.add(rs.getString("상품ID"));
-				vec.add(rs.getString("sales_qt"));
-				vec.add(rs.getString("SALES_TOT"));
-				vec.add(rs.getString("SALES_TIME"));
+				vec.add(rs.getString("total"));
+				total+= rs.getInt("total");
+				vec.add(rs.getString("ORDER_TIME"));
 
 				data.add(vec);
 			}
+			System.out.println(total);
 
 		} catch (SQLException e) {
 			e.printStackTrace();

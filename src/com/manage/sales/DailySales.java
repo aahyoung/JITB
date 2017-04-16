@@ -59,8 +59,8 @@ public class DailySales extends JPanel implements ActionListener {
 		table = new JTable();
 		bt = new JButton("조회");
 		scroll = new JScrollPane(table);
-		movie = new JLabel();
-		snack = new JLabel();
+		movie = new JLabel("총 영화 매출 : "+"\n");
+		snack = new JLabel("총 식품 매출 : ");
 
 		p_south.add(movie);
 		p_south.add(snack);
@@ -120,6 +120,13 @@ public class DailySales extends JPanel implements ActionListener {
 			table.updateUI();
 			salesTable.getTable();
 		}
+	}
+	
+	public void getTotal() {
+		movie = new JLabel("영화 총 매출: "+ movie+" 원 \n");
+		snack = new JLabel("식품 총 매출 : "+ snack+" 원");
+		
+		
 	}
 
 	public void createCalendar() {

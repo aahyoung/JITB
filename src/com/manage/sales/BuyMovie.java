@@ -7,70 +7,113 @@ package com.manage.sales;
 public class BuyMovie {
 	
 	private int buy_movie_id;
+	private int price;
+	private int type_id;
+	private String type;
+	
 	private int movie_id;
-	private int sales_qt;
-	private int sales_time;
-	private String date;
-	private int sales_tot;
+	private String name;
 	private String poster;
+
+	private String screening_date;
+	
+	private String order_time;
+	
+
 	private String start_date;
 	private String end_date;
+	
+
+
 
 	public int getBuy_movie_id() {
 		return buy_movie_id;
 	}
+
 	public void setBuy_movie_id(int buy_movie_id) {
 		this.buy_movie_id = buy_movie_id;
 	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public int getType_id() {
+		return type_id;
+	}
+
+	public void setType_id(int type_id) {
+		this.type_id = type_id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public int getMovie_id() {
 		return movie_id;
 	}
+
 	public void setMovie_id(int movie_id) {
 		this.movie_id = movie_id;
 	}
-	public int getSales_qt() {
-		return sales_qt;
+
+	public String getName() {
+		return name;
 	}
-	public void setSales_qt(int sales_qt) {
-		this.sales_qt = sales_qt;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public int getSales_time() {
-		return sales_time;
-	}
-	public void setSales_time(int sales_time) {
-		this.sales_time = sales_time;
-	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
-	}
-	public int getSales_tot() {
-		return sales_tot;
-	}
-	public void setSales_tot(int sales_tot) {
-		this.sales_tot = sales_tot;
-	}
+
 	public String getPoster() {
 		return poster;
 	}
+
 	public void setPoster(String poster) {
 		this.poster = poster;
 	}
+
+	public String getScreening_date() {
+		return screening_date;
+	}
+
+	public void setScreening_date(String screening_date) {
+		this.screening_date = screening_date;
+	}
+
+	public String getOrder_time() {
+		return order_time;
+	}
+
+	public void setOrder_time(String order_time) {
+		this.order_time = order_time;
+	}
+
+	
 	public String getStart_date() {
 		return start_date;
 	}
+
 	public void setStart_date(String start_date) {
 		this.start_date = start_date;
 	}
-	
+
 	public String getEnd_date() {
 		return end_date;
 	}
+
 	public void setEnd_date(String end_date) {
 		this.end_date = end_date;
 	}
-	
-	
+
+
 }

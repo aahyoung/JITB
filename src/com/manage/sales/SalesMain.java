@@ -13,6 +13,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -89,7 +90,7 @@ public class SalesMain extends JPanel implements ItemListener{
 		System.out.println(index);
 		
 		if(index==1) {
-			p_nowMovie.setVisible(true);	
+			p_nowMovie.setVisible(true);
 			p_pastMovie.setVisible(false);
 			p_default.setVisible(false);
 		} else if(index==2) {

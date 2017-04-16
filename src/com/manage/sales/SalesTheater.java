@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import com.jitb.db.DBManager;
 
-public class SalesTheater extends JFrame implements ItemListener{
+public class SalesTheater extends JPanel implements ItemListener{
 
 	DBManager manager = DBManager.getInstance();
 	Connection con;

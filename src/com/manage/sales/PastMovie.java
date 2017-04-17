@@ -50,10 +50,12 @@ public class PastMovie extends JPanel {
 	 현재 날짜를 불러오는 오라클 함수를 사용해
 	 현재 날짜와 영화의 EndDate 비교해서 상영이 끝난 영화 데이터만을 출력
 	---------------------------------------*/
+	
 	public void loadData() {
 		
 		String sql = "select a.poster, a.name as 상품명, sum(g.PRICE) as total"
-				+ " ,MAX(b.SCREENING_DATE) as 상영일 ,MIN(b.SCREENING_DATE) as 종영일"
+				+ ", MIN(b.SCREENING_DATE) as 상영시작일, MAX(b.SCREENING_DATE) as 종영일"
+				+ ", count(f.buy_movie_id) as 구매건수"
 				+ " from movie a, SCREENING_DATE b, START_TIME c, THEATER_OPERATE d"
 				+ " , SEAT e, BUY_MOVIE f, movie_price g"
 				+ " where a.MOVIE_ID=b.MOVIE_ID"
@@ -64,30 +66,33 @@ public class PastMovie extends JPanel {
 				+ " group by a.poster, a.name"
 				+ " having max(screening_date) < TO_CHAR(SYSDATE, 'YYYY-MM-DD')";
 				
-		PreparedStatement pstmt = null;
+
+		PreparedStatement pstmt= null;
 		ResultSet rs = null;
 
 		try {
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery(); // 쿼리 실행!!
+			pstmt= con.prepareStatement(sql);
+			rs = pstmt.executeQuery(); //쿼리 실행!!
 
-			while (rs.next()) {
+			while(rs.next()){
 				BuyMovie dto = new BuyMovie();
 
 				dto.setPoster(rs.getString("poster"));
 				dto.setName(rs.getString("상품명"));
 				dto.setPrice(rs.getInt("total"));
-				dto.setStart_date(rs.getString("상영일"));
+				dto.setStart_date(rs.getString("상영시작일"));
 				dto.setEnd_date(rs.getString("종영일"));
+				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);
+				System.out.println(list);
 			}
-			//init();
+			init();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (rs != null) {
+			if(rs!=null){
 				try {
 					rs.close();
 				} catch (SQLException e) {
@@ -95,7 +100,7 @@ public class PastMovie extends JPanel {
 				}
 			}
 
-			if (pstmt != null) {
+			if(pstmt!=null){
 				try {
 					pstmt.close();
 				} catch (SQLException e) {
@@ -104,8 +109,7 @@ public class PastMovie extends JPanel {
 			}
 		}
 	}
-
-
+	
 	/*---------------------------------------
 	 END_DATE, START_DATE를 불러옴
 	 상영이 끝난 영화의 경우 (END_DATE - START_DATE)를 기간으로 설정
@@ -118,24 +122,28 @@ public class PastMovie extends JPanel {
 				String name = buyMovie.getName();
 				int price = buyMovie.getPrice();
 				
-				//영화 시작하는 날짜 구하기
 				String str = buyMovie.getStart_date();
 				String end = buyMovie.getEnd_date();
 				
-				int str_year = Integer.parseInt(str.substring(0, 4));
-				int str_month = Integer.parseInt(str.substring(5,7))-1;
-				int str_date = Integer.parseInt(str.substring(8,10))-1;
+				int count = buyMovie.getCountBuy();
+
+				int str_year = Integer.parseInt(str.substring(0, 4));		
+				int str_month = Integer.parseInt(str.substring(5,7));
+				int str_date = Integer.parseInt(str.substring(8,10));
 				
-				int end_year = Integer.parseInt(end.substring(0, 4));
-				int end_month = Integer.parseInt(end.substring(5,7))-1;
-				int end_date = Integer.parseInt(end.substring(8,10))-1;
+				int end_year = Integer.parseInt(end.substring(0, 4));		
+				int end_month = Integer.parseInt(end.substring(5,7));
+				int end_date = Integer.parseInt(end.substring(8,10));
+				
+				System.out.println(str_year+","+str_month+","+str_date);
+				System.out.println(end_year+","+end_month+","+end_date);
 				
 				//영화 여러번 돌리기 때문에 startDate가 달라 초기화 시키기
 				int period = 0;
 
 				//startDate에 영화 개봉일, endDate에 영화 끝난 날 넣어줌
 				strDate.set(str_year, str_month, str_date);
-				//endDate.set(end_year, end_month, end_date);
+				endDate.set(end_year, end_month, end_date);
 				
 				//end-date에서 영화 개봉일을 뺀 상영기간을 구해줌
 				//오늘날짜에서 끝난 날짜를 빼줘야한다.
@@ -143,7 +151,9 @@ public class PastMovie extends JPanel {
 				System.out.println(period);
 				
 				String sales = String.format("%.1f", (double)price/period);
-				String booking = String.format("%.1f", (double)price/period*100);
+				System.out.println(sales);
+				String booking = String.format("%.1f", (double)count/period);
+				System.out.println(booking);
 				
 				MovieItem item = new MovieItem(poster, sales, booking);
 				add(item);

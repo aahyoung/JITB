@@ -28,7 +28,9 @@ public class SalesTable extends AbstractTableModel {
 	Vector<String> columName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
 	
-	int total;
+	//total을 DailySales에 보내기위한 변수 선언
+	int salesTotal;
+	
 
 	public SalesTable(Connection con, DatePicker today) {
 		this.con = con;
@@ -67,7 +69,7 @@ public class SalesTable extends AbstractTableModel {
 		//System.out.println(today.getValue().toString());
 		//System.out.println(sql.toString());
 		String day = today.getValue().toString();
-		System.out.println("출력"+day);
+		//System.out.println("출력"+day);
 
 		try {
 			pstmt=con.prepareStatement(sql.toString());
@@ -75,7 +77,6 @@ public class SalesTable extends AbstractTableModel {
 			pstmt.setString(2, day);
 			
 			rs = pstmt.executeQuery();
-			
 
 			// 요일 바꿀 때마다 테이블 초기화 할 것임 현재는 x
 			columName.removeAll(columName);
@@ -84,21 +85,22 @@ public class SalesTable extends AbstractTableModel {
 			ResultSetMetaData meta = rs.getMetaData();
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
 				columName.add(meta.getColumnName(i));
-				System.out.println(meta.getColumnName(i));
 			}
+			
+			int total=0;
 
 			while(rs.next()) {
-				System.out.println(rs.next());
+				//System.out.println(rs.next());
 				Vector<String> vec = new Vector<String>();
 				vec.add(rs.getString("상품명"));
 				vec.add(rs.getString("total"));
-				total+= rs.getInt("total");
 				vec.add(rs.getString("ORDER_TIME"));
-
-				data.add(vec);
+				
+				total+= rs.getInt("total");
+				salesTotal=total;
+				System.out.println(total);
+				data.add(vec);		
 			}
-			System.out.println(total);
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -121,7 +123,6 @@ public class SalesTable extends AbstractTableModel {
 	}
 
 	public int getRowCount() {
-		System.out.println("레코드의 갯수는"+data.size());
 		return data.size();
 	}
 

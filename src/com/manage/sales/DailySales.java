@@ -43,7 +43,7 @@ public class DailySales extends JPanel implements ActionListener {
 	private JTable table;
 	private JButton bt;
 	private JScrollPane scroll;
-	private JLabel movie, snack;
+	private JLabel sales;
 	private DatePicker today;
 	private JFXPanel p_date;
 
@@ -59,14 +59,12 @@ public class DailySales extends JPanel implements ActionListener {
 		table = new JTable();
 		bt = new JButton("조회");
 		scroll = new JScrollPane(table);
-		movie = new JLabel("총 영화 매출 : "+"\n");
-		snack = new JLabel("총 식품 매출 : ");
-
-		p_south.add(movie);
-		p_south.add(snack);
+		
+		sales = new JLabel("총 당일 매출 : "+"\n");
 
 		p_north.setBackground(Color.yellow);
 		p_south.setBackground(Color.orange);
+		p_south.add(sales);
 
 		// size조정
 		p_north.setPreferredSize(new Dimension(1000, 50));
@@ -119,14 +117,11 @@ public class DailySales extends JPanel implements ActionListener {
 			table.setModel(salesTable = new SalesTable(con, today));
 			table.updateUI();
 			salesTable.getTable();
+			
+			int salesTotal = salesTable.salesTotal;
+			sales.setText("총 당일 매출: "+ salesTotal+" 원 \n");
+			
 		}
-	}
-	
-	public void getTotal() {
-		movie = new JLabel("영화 총 매출: "+ movie+" 원 \n");
-		snack = new JLabel("식품 총 매출 : "+ snack+" 원");
-		
-		
 	}
 
 	public void createCalendar() {

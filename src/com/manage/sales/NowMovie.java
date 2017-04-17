@@ -14,8 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -25,10 +25,10 @@ public class NowMovie extends JPanel{
 	String path = "C:/project/JITB/res_manager/";
 	ArrayList <BuyMovie> list = new ArrayList<BuyMovie>();
 	
+	GregorianCalendar date = new GregorianCalendar ( );
 	Calendar strDate = Calendar.getInstance();
 	Calendar today = Calendar.getInstance();
-	//Calendar endDate = Calendar.getInstance();
-	
+
 	public NowMovie() {
 		this.setVisible(true);
 		this.setBackground(Color.orange);
@@ -45,7 +45,8 @@ public class NowMovie extends JPanel{
 	public void loadData() {
 		
 		String sql = "select a.poster, a.name as 상품명, sum(g.PRICE) as total"
-				+ " ,MAX(b.SCREENING_DATE) as 상영일 ,MIN(b.SCREENING_DATE) as 종영일"
+				+ ", MIN(b.SCREENING_DATE) as 상영시작일, MAX(b.SCREENING_DATE) as 종영일"
+				+ ", count(f.buy_movie_id) as 구매건수"
 				+ " from movie a, SCREENING_DATE b, START_TIME c, THEATER_OPERATE d"
 				+ " , SEAT e, BUY_MOVIE f, movie_price g"
 				+ " where a.MOVIE_ID=b.MOVIE_ID"
@@ -70,8 +71,9 @@ public class NowMovie extends JPanel{
 				dto.setPoster(rs.getString("poster"));
 				dto.setName(rs.getString("상품명"));
 				dto.setPrice(rs.getInt("total"));
-				dto.setStart_date(rs.getString("상영일"));
+				dto.setStart_date(rs.getString("상영시작일"));
 				dto.setEnd_date(rs.getString("종영일"));
+				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);
 				System.out.println(list);
@@ -114,25 +116,37 @@ public class NowMovie extends JPanel{
 				
 				String str = buyMovie.getStart_date();
 				String end = buyMovie.getEnd_date();
+				
+				int count = buyMovie.getCountBuy();
 
-				int year = Integer.parseInt(str.substring(0, 4));
-				int month = Integer.parseInt(str.substring(5,7))-1;
-				int date = Integer.parseInt(str.substring(8,10))-1;
-				System.out.println(year+month+date);
+				int str_year = Integer.parseInt(str.substring(0, 4));	
+				int str_month = Integer.parseInt(str.substring(5,7));
+				int str_date = Integer.parseInt(str.substring(8,10));
+
+				System.out.println(str_year+","+str_month+","+str_date);
+				
 				//영화 여러번 돌리기 때문에 startDate가 달라 초기화 시키기
 				int period = 0; 
-				System.out.println(period);
 
-				//today에 현재 일자 넣기
-				today.setTime(new Date());
 				
-				//strDate 영화 개봉일 넣어줌
-				strDate.set(year, month, date);
-				period = (int)((today.getTimeInMillis() - strDate.getTimeInMillis())/(60*60*24*1000))+1;
+				//현재 날짜 구하기
+				int year = date.get ( date.YEAR );
+				int month = date.get ( date.MONTH ) + 1;
+				int yoil = date.get ( date.DAY_OF_MONTH ); 
+				
+				//today.setTime(new Date());
+				//today에 현재 날짜 넣기
+				today.set(year, month, yoil);
+				
+				//strDate 영화 개봉일 넣기
+				strDate.set(str_year, str_month, str_date);
+
+				period = (int)((today.getTimeInMillis()-strDate.getTimeInMillis())/(60*60*24*1000))+1;
+				
 				System.out.println(period);
 
 				String sales = String.format("%.1f", (double)price/period);
-				String booking = String.format("%.1f", (double)price/period*100);
+				String booking = String.format("%.1f", (double)count/period);
 				
 				MovieItem item = new MovieItem(poster, sales, booking);
 				add(item);

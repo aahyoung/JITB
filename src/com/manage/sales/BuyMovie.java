@@ -22,8 +22,9 @@ public class BuyMovie {
 
 	private String start_date;
 	private String end_date;
-	
 
+
+	private int countBuy;
 
 
 	public int getBuy_movie_id() {
@@ -113,6 +114,14 @@ public class BuyMovie {
 
 	public void setEnd_date(String end_date) {
 		this.end_date = end_date;
+	}
+	
+	public int getCountBuy() {
+		return countBuy;
+	}
+
+	public void setCountBuy(int countBuy) {
+		this.countBuy = countBuy;
 	}
 
 

@@ -63,7 +63,6 @@ public class SalesTheater extends JPanel implements ItemListener{
 		setLayout(new FlowLayout());
 		setVisible(true);
 		setSize(1000, 650);
-
 	}
 
 	// 일별, 주별, 월별 선택 choice

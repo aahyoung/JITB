@@ -39,7 +39,7 @@ public class ClientMain extends JFrame implements Runnable{
 	String[] days = {"일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"};
 	
 	Calendar cal;
-	int mm, dd, h, m, day;
+	public int yy, mm, dd, h, m, day;
 	String ap;
 	Thread thread;
 	
@@ -139,6 +139,7 @@ public class ClientMain extends JFrame implements Runnable{
 		String str_h;
 		String str_m;
 		
+		yy = cal.get(Calendar.YEAR);
 		mm = cal.get(Calendar.MONTH);
 		dd = cal.get(Calendar.DATE);
 		h = cal.get(Calendar.HOUR);

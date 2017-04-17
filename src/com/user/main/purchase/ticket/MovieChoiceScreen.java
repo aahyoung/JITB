@@ -7,14 +7,17 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -28,18 +31,18 @@ public class MovieChoiceScreen extends ScreenFrame{
 	JPanel p_north;
 	JLabel la_branch;
 	JLabel la_date;
+	Canvas bt_prev;
 	Canvas bt_next;
 	public JLabel la_time;
 	
 	Calendar cal = Calendar.getInstance();
 	String[] days = {"일", "월", "화", "수", "목", "금", "토"};
-	int yy;
-	int mm;
-	int dd;
-	int day;
+	int yy, mm, dd, day;
 	
+	ArrayList<Canvas> canvas = new ArrayList<Canvas>();
 	ArrayList<MovieRate> movieRate = new ArrayList<MovieRate>();
 	ArrayList<MovieTime> movieTime = new ArrayList<MovieTime>();
+	ArrayList<TimeCard> cards = new ArrayList<TimeCard>();
 	
 	public MovieChoiceScreen(ClientMain main) {
 		super(main);
@@ -48,6 +51,19 @@ public class MovieChoiceScreen extends ScreenFrame{
 		la_branch = new JLabel("신촌점");
 		la_date = new JLabel("2017년 4월");
 		la_time = new JLabel("10:00");
+		
+		bt_prev = new Canvas(){
+			@Override
+			public void paint(Graphics g) {
+				URL url = getClass().getResource("/bt_prev.png");
+				try {
+					Image img = ImageIO.read(url);
+					g.drawImage(img, 0, 26, 10, 35, this);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}	
+			}
+		};
 		bt_next = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
@@ -57,16 +73,17 @@ public class MovieChoiceScreen extends ScreenFrame{
 					g.drawImage(img, 0, 26, 10, 35, this);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}	
+				}
 			}
 		};
 		
-		setDate();
+		setToday();
 		
 		p_north.setPreferredSize(new Dimension(800, 80));
 		la_branch.setPreferredSize(new Dimension(250, 80));
 		la_date.setPreferredSize(new Dimension(250, 80));
 		la_time.setPreferredSize(new Dimension(250, 80));
+		bt_prev.setPreferredSize(new Dimension(10, 80));
 		bt_next.setPreferredSize(new Dimension(10, 80));
 		
 		la_branch.setForeground(Color.WHITE);
@@ -83,20 +100,149 @@ public class MovieChoiceScreen extends ScreenFrame{
 		
 		p_north.setBackground(new Color(33,33,33));
 		
+		bt_prev.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				Date date = new Date();
+				cal.setTime(date);
+				String today = sdf.format(cal.getTime());
+				
+				cal.set(yy, mm, dd-1);
+				String select = sdf.format(cal.getTime());
+				
+				System.out.println(select);
+				System.out.println(today);
+				
+				if(Integer.parseInt(today) < Integer.parseInt(select)){
+					cal.set(yy, mm+1, 0);
+					int lastDate = cal.get(Calendar.DATE);
+					
+					if(dd == 1){
+						mm--;
+						dd = lastDate;
+					}else dd--;
+					
+					if(day == 1){
+						day = 7;
+					}else day--;
+					
+					for(int i=0; i<canvas.size(); i++){
+						remove(canvas.get(i));
+					}
+					setDate();
+					cards.removeAll(cards);
+					createMovie();
+				}
+			}
+		});
+		
+		bt_next.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				Date date = new Date();
+				cal.setTime(date);
+				cal.add(Calendar.DATE, 7);
+				String sevenAfter = sdf.format(cal.getTime());
+				
+				cal.set(yy, mm, dd);
+				String select = sdf.format(cal.getTime());
+				
+				System.out.println(select);
+				System.out.println(sevenAfter);
+				
+				if(Integer.parseInt(select) < Integer.parseInt(sevenAfter)){ 
+					cal.set(yy, mm+1, 0);
+					int lastDate = cal.get(Calendar.DATE);
+					
+					if(dd == lastDate){
+						mm++;
+						dd = 1;
+					}else dd++;
+					
+					if(day == 7){
+						day = 1;
+					}else day++;
+					
+					for(int i=0; i<canvas.size(); i++){
+						remove(canvas.get(i));
+					}
+					setDate();
+					cards.removeAll(cards);
+					createMovie();
+				}
+			}
+		});
+		
 		p_north.add(la_branch);
+		p_north.add(bt_prev);
 		p_north.add(la_date);
 		p_north.add(bt_next);
 		p_north.add(la_time);
 		
 		add(p_north);
 		
+		//예매율 순으로 영화 아이디를 얻어온다
 		selectMovieRateOrder();
+		createMovie();
 		
+		//캔버스에 이벤트감지를 한다
+		eventView();
+	}
+	
+	public void setToday(){
+		yy = cal.get(Calendar.YEAR);
+		mm = cal.get(Calendar.MONTH);
+		dd = cal.get(Calendar.DATE);
+		day = cal.get(Calendar.DAY_OF_WEEK);
+		setDate();
+	}
+	
+	public void setDate(){
+		StringBuffer date = new StringBuffer();
+		
+		date.append(mm+1);
+		date.append("월");
+		date.append(dd);
+		date.append("일");
+		date.append("(");
+		date.append(days[day-1]);
+		date.append(")");
+		
+		la_date.setText(date.toString());
+	}
+	
+	public void createMovie(){		
 		for(int i=0; i<movieRate.size(); i++){
+			//각 영화의 상영시간을 얻어온다
 			selectMovieTime(movieRate.get(i).getMovie_id());
-			String poster = movieTime.get(i).getPoster();
-			String name = movieTime.get(i).getMovie_name();
 			
+			String poster = movieTime.get(i).getPoster();
+			String movie_name = movieTime.get(i).getMovie_name();
+			
+			int x = 0;
+			int y = 0;
+			
+			for(int j=0; j<movieTime.size(); j++){
+				if(x == 3){
+					x = 0;
+					y++;
+				}
+				
+				TimeCard card = new TimeCard(250+(x*150), 50+(y*100)+25, 150, 100);
+				card.setId(movieRate.get(i).getMovie_id());
+				card.setTime(movieTime.get(j).getStart_time());
+				card.setRemaining_seat(movieTime.get(j).getRemaining_seat());
+				card.setTotal_seat(movieTime.get(j).getTotal_seat());
+				x++;
+				
+				cards.add(card);
+			}
+			
+			final int index = i;
+			
+			//영화 갯수만큼 캔버스 생성
 			Canvas can_movie = new Canvas(){
 				@Override
 				public void paint(Graphics g) {
@@ -109,44 +255,30 @@ public class MovieChoiceScreen extends ScreenFrame{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					
 					g2.setColor(Color.WHITE);
 					g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-					g2.drawString(name, 250, 50);
-					
-					for(int j=0; j<movieTime.size(); j++){
-						Rectangle rect = new Rectangle(250+(j*160), 80, 150, 100);
-						g2.draw(rect);
-						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 50));
-						g2.drawString(movieTime.get(j).getStart_time(), 250+(j*160)+10, 130);
-						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
-						g2.drawString(movieTime.get(j).getRemaining_seat()+"/"+movieTime.get(j).getTotal_seat(), 
-								250+(j*160)+60, 160);
+					g2.drawString(movie_name, 250, 50);
+					for(int k=0; k<cards.size(); k++){
+						if(movieRate.get(index).getMovie_id() == cards.get(k).getId()){
+							g2.draw(cards.get(k));
+							TimeCard card = cards.get(k);
+							g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
+							g2.drawString(card.getTime(), card.x+30, card.y+40);
+							g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+							g2.drawString(card.getRemaining_seat()+"/"+card.getTotal_seat(), card.x+50, card.y+70);
+						}
 					}
 				}
 			};
 			
 			can_movie.setPreferredSize(new Dimension(800, 300));
-			
+			canvas.add(can_movie);
 			add(can_movie);
 		}
 	}
 	
-	public void setDate(){
-		yy = cal.get(Calendar.YEAR);
-		mm = cal.get(Calendar.MONTH);
-		dd = cal.get(Calendar.DATE);
-		day = cal.get(Calendar.DAY_OF_WEEK);
-		StringBuffer date = new StringBuffer();
-		
-		date.append(mm+1);
-		date.append("월");
-		date.append(dd);
-		date.append("일");
-		date.append("(");
-		date.append(days[day-1]);
-		date.append(")");
-		
-		la_date.setText(date.toString());
+	public void eventView(){
 	}
 	
 	public void selectMovieRateOrder(){
@@ -205,11 +337,10 @@ public class MovieChoiceScreen extends ScreenFrame{
 		sql.append("-");
 		sql.append(mm+1);
 		sql.append("-");
-		sql.append(dd-2);
+		sql.append(dd);
 		sql.append("' and s.status=1");
 		sql.append(" group by m.poster, m.name, sd.screening_date, st.start_time, t.row_line, t.column_line");
-		
-		System.out.println(sql.toString());
+		sql.append(" order by to_number(substr(상영시간,1,(instr(상영시간,':')-1)))");
 		
 		movieTime.removeAll(movieTime);
 		

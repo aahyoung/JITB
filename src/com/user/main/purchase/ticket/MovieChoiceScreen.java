@@ -205,7 +205,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 		sql.append("-");
 		sql.append(mm+1);
 		sql.append("-");
-		sql.append(dd-1);
+		sql.append(dd-2);
 		sql.append("' and s.status=1");
 		sql.append(" group by m.poster, m.name, sd.screening_date, st.start_time, t.row_line, t.column_line");
 		

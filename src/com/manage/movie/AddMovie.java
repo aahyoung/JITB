@@ -51,10 +51,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-// sequence SEQ_SCREENING_DATE.CURRVAL is not yet defined in this session 문제 해결해야 함
-// -> 여러번 insert해야 하는 문제는 반복문을 밖으로 빼면 해결될 수 있지 않을까 생각됨
+
 /*
- * 
+ * 영화 추가 레이아웃
+ * 영화 추가 시 DB 연동
+ * 1. getTheaterList()		: 현재 할당 가능한 영화관 목록 choice에 대입
+ * 2. insertMovie()			: 현재 레이아웃에서 입력한 정보를 movie테이블에 저장
+ * 3. getMovieId()			: 가장 최근에 저장된 레코드의 movie_id 얻기
+ * 4. setScreeningDate()	: movie_id를 이용해 screening_date테이블에 상영일자 저장
+ * 5. getScreeningDateId()	: 가장 최근에 저장된 레코드의 screening_date_id 얻기(반복문으로 돌려 영화 추가 시 insert된 모든 screening_date_id 저장)
+ * 6. calStartTime()		: 가장 최근에 저장된 영화 레코드의 run_time을 이용하여 상영 시작 시간 계산
+ * 7. setStartTime()		: screening_date_id를 이용해 계산된 상영 시작 시간을 start_time테이블에 저장
+ * 8. getStartTimeId()		: 가장 최근에 저장된 레코드의 start_time_id 얻기(반복문으로 돌려 영화 추가 시 insert된 모든 start_time_id 저장)
+ * 9. setTheaterOperate()	: start_time_id를 이용해 할당된 상영관 정보를 theater_operate테이블에 저장
+ * 10. getTheaterOperateId(): 가장 최근에 저장된 레코드의 theater_opearate_id 얻기(반복문으로 돌려 영화 추가 시 insert된 모든 theater_operate_id 저장)
+ * 11. setSeat()			: theater_operate_id를 이용해 상영일-상영시간-상영관-이름-상태 seat테이블에 저장
  * */
 
 public class AddMovie extends JDialog implements ActionListener, FocusListener{
@@ -344,12 +355,18 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 					// 등록 완료했으면 포스터 파일 저장
 					copyPoster();
 					
-					setScreeningDate(start_date, end_date);
-					
-					/*
 					// screening_date 테이블 저장
 					setScreeningDate(start_date, end_date);
 					
+					// start_time 테이블 저장
+					setStartTime();
+					
+					// theater_operate 테이블 저장
+					setTheaterOperate();
+					
+					// seat 테이블 저장
+					setSeat();
+					/*
 					// start_time 테이블 저장
 					setStartTime();
 					
@@ -478,12 +495,12 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		ResultSet rs=null;
 		
 		StringBuffer sql=new StringBuffer();
-		sql.append("insert into screening_date(screnning_id, movie_id, screening_date)");
+		sql.append("insert into screening_date(screening_date_id, movie_id, screening_date)");
 		sql.append(" values(seq_screening_date.nextval, ?, ");
-		sql.append("to_date(?, 'YYYY-MM-DD')");
+		sql.append("to_date(?, 'YYYY-MM-DD'))");
 		
 		Period period=Period.between(start_date, end_date);
-		run_date=period.getDays();
+		run_date=period.getDays()+1;
 		
 		String sql2="select seq_screening_date.currval from dual";
 		
@@ -493,6 +510,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 				pstmt_insert=con.prepareStatement(sql.toString());
 				pstmt_insert.setInt(1, movie_id);
 				pstmt_insert.setString(2, start_date.plusDays(i).toString());
+				pstmt_insert.executeQuery();
 				
 				pstmt_select=con.prepareStatement(sql2);
 				rs=pstmt_select.executeQuery();
@@ -555,7 +573,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		// 영화별 상영시작시간만큼 insert
 		StringBuffer sql=new StringBuffer();
 		sql.append("insert into start_time(start_time_id, screening_date_id, start_time)");
-		sql.append(" values(seq_start_time.nextval, ?, ?");
+		sql.append(" values(seq_start_time.nextval, ?, ?)");
 		
 		try {
 			// 영화 상영 날짜 하나당 start_time배열 길이만큼
@@ -564,6 +582,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 					pstmt=con.prepareStatement(sql.toString());
 					pstmt.setInt(1, (Integer)screening_date_id.get(i));
 					pstmt.setString(2, start_time[j]);
+					pstmt.executeQuery();
 					
 					// start_time_id값 얻기
 					getStartTimeId();
@@ -622,9 +641,16 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 				String[] divide=start_time[i-1].split(":");
 				hour=Integer.parseInt(divide[0])*60;
 				min=Integer.parseInt(divide[1]);
-				result=hour+min+run_time+30;
+				result=hour+min+run_time+20;
 				
-				start_time[i]=result/60+":"+result%60;
+				// 분 단위가 10보다 작아서 14:2 이렇게 될 때는
+				if(result%60<10){
+					start_time[i]=result/60+":0"+result%60;
+				}
+				else{
+					start_time[i]=result/60+":"+result%60;
+				}
+
 				System.out.println(start_time);
 			}
 		} catch (SQLException e) {
@@ -698,6 +724,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 				pstmt=con.prepareStatement(sql.toString());
 				pstmt.setInt(1, theater_id);
 				pstmt.setInt(2, (Integer)start_time_id.get(i));
+				pstmt.executeQuery();
 				
 				getTheaterOperateId();
 			}
@@ -722,7 +749,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select seq_theater_operate from dual";
+		String sql="select seq_theater_operate.currval from dual";
 		
 		try {
 			pstmt=con.prepareStatement(sql);
@@ -730,6 +757,8 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 			
 			rs.next();
 			theater_operate_id.add(rs.getInt("currval"));
+			
+			System.out.print(theater_operate_id+" ");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -751,6 +780,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		}	
 	}
 	
+	//cannot insert NULL into ("JITB"."SEAT"."NAME") 에러 발생
 	// 좌석 테이블 지정
 	public void setSeat(){
 		PreparedStatement pstmt=null;
@@ -770,21 +800,27 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		// B1 B2 B3
 		// C1 C2 C3
 		// D1 D2 D3
+		// seatName[i][j]=Character.toString((char)(65+i));
+		// seatName[i][j]+=Integer.toString(j+1);
+		int count=0;
+
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
-				seatName[i]=Character.toString((char)(65+j));
-				seatName[i]+=Integer.toString(i+1);
+				seatName[count]=Character.toString((char)(65+i))+Integer.toString(j+1);
+				count++;
 			}
 		}
 		
-		
 		try {
-			for(int k=0; k<seatName.length; k++){
-				pstmt=con.prepareStatement(sql.toString());
-				pstmt.setInt(1, (Integer)theater_operate_id.get(k));
-				pstmt.setString(2, seatName[k]);
+			// theater_operate_id 하나당 row*col 개의 seat 할당
+			for(int i=0; i<theater_operate_id.size(); i++){
+				for(int j=0; j<seatName.length; j++){
+					pstmt=con.prepareStatement(sql.toString());
+					pstmt.setInt(1, (Integer)theater_operate_id.get(i));
+					pstmt.setString(2, seatName[j]);
+					pstmt.executeQuery();
+				}
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{

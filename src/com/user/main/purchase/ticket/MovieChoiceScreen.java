@@ -186,9 +186,6 @@ public class MovieChoiceScreen extends ScreenFrame{
 		//예매율 순으로 영화 아이디를 얻어온다
 		selectMovieRateOrder();
 		createMovie();
-		
-		//캔버스에 이벤트감지를 한다
-		eventView();
 	}
 	
 	public void setToday(){
@@ -244,6 +241,8 @@ public class MovieChoiceScreen extends ScreenFrame{
 			
 			//영화 갯수만큼 캔버스 생성
 			Canvas can_movie = new Canvas(){
+				public int id = movieRate.get(index).getMovie_id();
+						
 				@Override
 				public void paint(Graphics g) {
 					Graphics2D g2 = (Graphics2D)g;
@@ -273,12 +272,40 @@ public class MovieChoiceScreen extends ScreenFrame{
 			};
 			
 			can_movie.setPreferredSize(new Dimension(800, 300));
+			
+			can_movie.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Canvas obj = (Canvas)e.getSource();
+					int offX = e.getX();
+					int offY = e.getY();
+					
+					for(int i=0; i<canvas.size(); i++){
+						if(canvas.get(i) == obj){
+							for(int j=0; j<cards.size(); j++){
+								if(movieRate.get(i).getMovie_id() == cards.get(j).id 
+										&& cards.get(j).x <= offX 
+										&& cards.get(j).x+cards.get(j).width >= offX
+										&& cards.get(j).y <= offY
+										&& cards.get(j).y+cards.get(j).height >= offY){
+									//사용자가 어떤 영화를 선택했는지 이부분에서 값을 넘겨줌
+									//이후 인원수 선택과 좌석 선택단계로 넘어감
+									main.setPage(5);
+									
+									//인원수 선택 >> 인원수만큼 buy_movie테이블에 insert
+									//좌석 선택 >> buy_movie테이블에 선택한 좌석의 seat_id가 들어감
+						
+								}
+							}
+						}
+					}
+	
+				}
+			});
+			
 			canvas.add(can_movie);
 			add(can_movie);
 		}
-	}
-	
-	public void eventView(){
 	}
 	
 	public void selectMovieRateOrder(){

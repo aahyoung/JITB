@@ -39,6 +39,8 @@ public class MovieChoiceScreen extends ScreenFrame{
 	String[] days = {"일", "월", "화", "수", "목", "금", "토"};
 	int yy, mm, dd, day;
 	
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	
 	ArrayList<Canvas> canvas = new ArrayList<Canvas>();
 	ArrayList<MovieRate> movieRate = new ArrayList<MovieRate>();
 	ArrayList<MovieTime> movieTime = new ArrayList<MovieTime>();
@@ -103,7 +105,6 @@ public class MovieChoiceScreen extends ScreenFrame{
 		bt_prev.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				Date date = new Date();
 				cal.setTime(date);
 				String today = sdf.format(cal.getTime());
@@ -114,7 +115,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 				System.out.println(select);
 				System.out.println(today);
 				
-				if(Integer.parseInt(today) < Integer.parseInt(select)){
+				if(Integer.parseInt(today) <= Integer.parseInt(select)){
 					cal.set(yy, mm+1, 0);
 					int lastDate = cal.get(Calendar.DATE);
 					
@@ -131,8 +132,10 @@ public class MovieChoiceScreen extends ScreenFrame{
 						remove(canvas.get(i));
 					}
 					setDate();
+					canvas.removeAll(canvas);
 					cards.removeAll(cards);
 					createMovie();
+					System.out.println("prev cards.size()="+cards.size());
 				}
 			}
 		});
@@ -140,7 +143,6 @@ public class MovieChoiceScreen extends ScreenFrame{
 		bt_next.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 				Date date = new Date();
 				cal.setTime(date);
 				cal.add(Calendar.DATE, 7);
@@ -169,6 +171,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 						remove(canvas.get(i));
 					}
 					setDate();
+					canvas.removeAll(canvas);
 					cards.removeAll(cards);
 					createMovie();
 				}
@@ -227,7 +230,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 					y++;
 				}
 				
-				TimeCard card = new TimeCard(250+(x*150), 50+(y*100)+25, 150, 100);
+				TimeCard card = new TimeCard(250+(x*150), 50+(y*100)+25, 130, 80);
 				card.setId(movieRate.get(i).getMovie_id());
 				card.setTime(movieTime.get(j).getStart_time());
 				card.setRemaining_seat(movieTime.get(j).getRemaining_seat());
@@ -260,12 +263,24 @@ public class MovieChoiceScreen extends ScreenFrame{
 					g2.drawString(movie_name, 250, 50);
 					for(int k=0; k<cards.size(); k++){
 						if(movieRate.get(index).getMovie_id() == cards.get(k).getId()){
-							g2.draw(cards.get(k));
+							g2.setColor(Color.WHITE);
 							TimeCard card = cards.get(k);
 							g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));
-							g2.drawString(card.getTime(), card.x+30, card.y+40);
+							
+							String time = card.getTime();
+							String[] splitTime = time.split(":");
+							if(Integer.parseInt(splitTime[0]) < 10){
+								time = 0+time;
+							}
+							
+							g2.drawString(time, card.x+30, card.y+40);
 							g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+							g2.setColor(new Color(217,65,140));
+							g2.fillRect(card.x, card.y+50, card.width, 30);
+							g2.setColor(Color.BLACK);
 							g2.drawString(card.getRemaining_seat()+"/"+card.getTotal_seat(), card.x+50, card.y+70);
+							g2.setColor(Color.WHITE);
+							g2.draw(cards.get(k));
 						}
 					}
 				}
@@ -288,12 +303,12 @@ public class MovieChoiceScreen extends ScreenFrame{
 										&& cards.get(j).x+cards.get(j).width >= offX
 										&& cards.get(j).y <= offY
 										&& cards.get(j).y+cards.get(j).height >= offY){
-									//사용자가 어떤 영화를 선택했는지 이부분에서 값을 넘겨줌
-									//이후 인원수 선택과 좌석 선택단계로 넘어감
-									main.setPage(5);
 									
-									//인원수 선택 >> 인원수만큼 buy_movie테이블에 insert
-									//좌석 선택 >> buy_movie테이블에 선택한 좌석의 seat_id가 들어감
+									cal.set(yy, mm, dd);
+									String selectDate = sdf.format(cal.getTime());
+									
+									selectUserChoiceId(cards.get(j).id, selectDate, cards.get(j).time);
+									main.setPage(5);
 						
 								}
 							}
@@ -357,15 +372,8 @@ public class MovieChoiceScreen extends ScreenFrame{
 		sql.append(" inner join theater_operate toper on st.start_time_id = toper.start_time_id");
 		sql.append(" inner join theater t on toper.theater_id = t.theater_id");
 		sql.append(" inner join seat s on toper.theater_operate_id = s.theater_operate_id");
-		sql.append(" where m.movie_id = ");
-		sql.append(movie_id);
-		sql.append(" and sd.screening_date = '");
-		sql.append(yy);
-		sql.append("-");
-		sql.append(mm+1);
-		sql.append("-");
-		sql.append(dd);
-		sql.append("' and s.status=1");
+		sql.append(" where m.movie_id = ?");
+		sql.append(" and sd.screening_date = ? and s.status=1");
 		sql.append(" group by m.poster, m.name, sd.screening_date, st.start_time, t.row_line, t.column_line");
 		sql.append(" order by to_number(substr(상영시간,1,(instr(상영시간,':')-1)))");
 		
@@ -373,23 +381,60 @@ public class MovieChoiceScreen extends ScreenFrame{
 		
 		try {
 			pstmt = main.con.prepareStatement(sql.toString());
+			pstmt.setInt(1, movie_id);
+			pstmt.setString(2, yy+"-"+(mm+1)+"-"+dd);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
 				MovieTime dto = new MovieTime();
 				dto.setMovie_name(rs.getString("영화이름"));
 				dto.setScreening_date(rs.getString("상영날짜"));
-				String time = rs.getString("상영시간");
-				String[] splitTime = time.split(":");
-				if(Integer.parseInt(splitTime[0]) < 10){
-					time = 0+time;
-				}
-				dto.setStart_time(time);
+				dto.setStart_time(rs.getString("상영시간"));
 				dto.setPoster(rs.getString("포스터"));
 				dto.setRemaining_seat(rs.getString("좌석수"));
 				dto.setTotal_seat(rs.getString("총좌석수"));
 				
 				movieTime.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(rs!=null){
+					rs.close();
+				}
+				if(pstmt!=null){
+					pstmt.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void selectUserChoiceId(int movie_id, String screening_date, String start_time){
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("select st.start_time_id, sd.screening_date_id");
+		sql.append(" from movie m");
+		sql.append(" inner join screening_date sd on m.movie_id = sd.movie_id");
+		sql.append(" inner join start_time st on sd.screening_date_id = st.screening_date_id");
+		sql.append(" where m.movie_id = ? and sd.screening_date = ? and st.start_time=?");
+		
+		try {
+			pstmt = main.con.prepareStatement(sql.toString());
+			pstmt.setInt(1, movie_id);
+			pstmt.setString(2, screening_date);
+			pstmt.setString(3, start_time);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				main.selectList.setScreening_date_id(rs.getInt("screening_date_id"));
+				main.selectList.setStart_time_id(rs.getInt("start_time_id"));
+				main.selectList.setMovie_id(movie_id);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

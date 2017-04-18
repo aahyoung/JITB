@@ -34,7 +34,7 @@ public class ClientMain extends JFrame implements Runnable{
 	
 	private int port = 7777; //사용자에게 노출되지 않고 바로 실행됨
 	private String ip = "localhost"; //추후 네트워크상 다른 계정과도 테스트 해볼 것
-	private Socket socket;
+	Socket socket;
 	
 	String[] days = {"일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"};
 	
@@ -42,6 +42,8 @@ public class ClientMain extends JFrame implements Runnable{
 	public int yy, mm, dd, h, m, day;
 	String ap;
 	Thread thread;
+	
+	public SelectList selectList = new SelectList();
 	
 	/*
 	 * 생성자

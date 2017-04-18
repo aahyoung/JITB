@@ -787,7 +787,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		
 		StringBuffer sql=new StringBuffer();
 		sql.append("insert into seat(seat_id, theater_operate_id, name, status)");
-		sql.append(" values(seq_seat.nextval, ?, ?, -1)");
+		sql.append(" values(seq_seat.nextval, ?, ?, 1)");
 		
 		// 행열 구하고 그 행과 열마다 좌석번호 새기기
 		int row=theaterList.get(ch_theater.getSelectedIndex()).getRow_line();
@@ -868,6 +868,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
         gridPane.add(endDatePicker, 1, 1);
         root.getChildren().add(gridPane);
         p_date.setScene(scene);
+        
 	}
 	
 	// 확인 버튼을 누르면
@@ -878,14 +879,14 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 			insertMovie();
 			setVisible(false);
 			movieMain.getMovieList();
-			movieMain.p_list.updateUI();
-			movieMain.p_list.setVisible(true);
+			movieMain.p_present.updateUI();
+			movieMain.p_present.setVisible(true);
 			System.out.println("영화 추가 확인");
 		}
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
-			movieMain.p_list.setVisible(true);
+			movieMain.p_present.setVisible(true);
 			System.out.println("영화 추가 취소");
 		}
 	}

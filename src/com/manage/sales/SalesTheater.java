@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 
 import com.jitb.db.DBManager;
 
+import javafx.scene.control.DatePicker;
+
 public class SalesTheater extends JPanel implements ItemListener{
 
 	DBManager manager = DBManager.getInstance();
@@ -42,7 +44,7 @@ public class SalesTheater extends JPanel implements ItemListener{
 		choice.add("Monthly, ¿ù º°");
 		choice.setPreferredSize(new Dimension(130, 30));
 
-		p_north.setBackground(Color.pink);
+		p_north.setBackground(Color.ORANGE);
 		p_north.add(choice);
 		p_north.setPreferredSize(new Dimension(1000, 50));
 
@@ -88,9 +90,10 @@ public class SalesTheater extends JPanel implements ItemListener{
 	public void init() {
 		con = manager.getConnect();
 		//((DailySales)p_daily).setConnection(con);
-		((WeeklySales)p_weekly).setConnection(con);
+		//((WeeklySales)p_weekly).setConnection(con);
 		((MonthlySales)p_monthly).setConnection(con);
 	}
+	
 	public static void main(String[] args) {
 		new SalesTheater();
 	}

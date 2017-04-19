@@ -47,7 +47,7 @@ public class DailySales extends JPanel implements ActionListener {
 	private DatePicker today;
 	private JFXPanel p_date;
 
-	SalesTable salesTable;
+	DailySalesTable salesTable;
 
 	public DailySales() {
 
@@ -114,7 +114,7 @@ public class DailySales extends JPanel implements ActionListener {
 		Object obj = e.getSource();
 		if(obj==bt){
 			//getTable();
-			table.setModel(salesTable = new SalesTable(con, today));
+			table.setModel(salesTable = new DailySalesTable(con, today));
 			table.updateUI();
 			salesTable.getTable();
 			

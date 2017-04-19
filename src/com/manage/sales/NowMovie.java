@@ -40,23 +40,21 @@ public class NowMovie extends JPanel{
 		loadData();
 	}
 
-	/*---------------------------------------
-	---------------------------------------*/
 	public void loadData() {
 		
-		String sql = "select a.poster, a.name as 상품명, sum(g.PRICE) as total"
-				+ ", MIN(b.SCREENING_DATE) as 상영시작일, MAX(b.SCREENING_DATE) as 종영일"
+		String sql = "select a.name as 상품명, a.poster as poster, sum(g.price) as total, "
+				+ " MAX(b.SCREENING_DATE) as 종영일, MIN(b.SCREENING_DATE) as 상영시작일"
 				+ ", count(f.buy_movie_id) as 구매건수"
-				+ " from movie a, SCREENING_DATE b, START_TIME c, THEATER_OPERATE d"
-				+ " , SEAT e, BUY_MOVIE f, movie_price g"
-				+ " where a.MOVIE_ID=b.MOVIE_ID"
-				+ " and b.SCREENING_DATE_ID=c.SCREENING_DATE_ID"
-				+ " and c.START_TIME_ID=d.START_TIME_ID"
-				+ " and d.THEATER_OPERATE_ID=e.THEATER_OPERATE_ID"
-				+ " and e.SEAT_ID=f.SEAT_ID and f.TYPE_ID=g.TYPE_ID"
-				+ " group by a.poster, a.name"
+				+ " from movie a full outer join SCREENING_DATE b on a.MOVIE_ID=b.MOVIE_ID"
+				+ " full outer join start_time c on b.SCREENING_DATE_ID=c.SCREENING_DATE_ID"
+				+ " full outer join theater_operate d on d.START_TIME_ID=c.START_TIME_ID"
+				+ " full outer join seat e on e.THEATER_OPERATE_ID=d.THEATER_OPERATE_ID"
+				+ " full outer join buy_movie f on f.seat_id = e.SEAT_ID"
+				+ " full outer join movie_price g on g.TYPE_ID=f.TYPE_ID"
+				+ " group by a. name, a.poster"
 				+ " having max(screening_date) >= TO_CHAR(SYSDATE, 'YYYY-MM-DD')";
-				
+		
+		System.out.println(sql);
 
 		PreparedStatement pstmt= null;
 		ResultSet rs = null;
@@ -68,11 +66,11 @@ public class NowMovie extends JPanel{
 			while(rs.next()){
 				BuyMovie dto = new BuyMovie();
 
-				dto.setPoster(rs.getString("poster"));
 				dto.setName(rs.getString("상품명"));
+				dto.setPoster(rs.getString("poster"));
 				dto.setPrice(rs.getInt("total"));
-				dto.setStart_date(rs.getString("상영시작일"));
 				dto.setEnd_date(rs.getString("종영일"));
+				dto.setStart_date(rs.getString("상영시작일"));
 				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);
@@ -111,7 +109,7 @@ public class NowMovie extends JPanel{
 			BuyMovie buyMovie = list.get(i);
 			try {
 				Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
-				String name = buyMovie.getName();
+				//String name = buyMovie.getName();
 				int price = buyMovie.getPrice();
 				
 				String str = buyMovie.getStart_date();

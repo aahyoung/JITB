@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -34,7 +36,10 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	int rowLine;
 	int colLine;
 	
+	int totalPersons;
+	
 	ArrayList<Seat> seatInfo = new ArrayList<Seat>();
+	ArrayList<SeatButton> selectSeat = new ArrayList<SeatButton>();
 	
 	String[] locationImg = {
 			"A.png", "B.png", "C.png", "D.png", "E.png", "F.png", "G.png", "H.png", "I.png", "J.png"
@@ -122,6 +127,32 @@ public class SeatsChoiceScreen extends ScreenFrame{
 					SeatButton row_panel = new SeatButton(seat.getSeat_id(), seat.getName(), seat.getStatus());
 					row_panel.setPreferredSize(new Dimension(50, 50));
 					col_panel.add(row_panel);
+					
+					//좌석을 인원수 만큼 선택할 수 있다.
+					//좌석을 한 번 누르면 해당 좌석의 status가 0이 된다.
+					row_panel.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							if(row_panel.status == 1){
+								//5    5
+								if(selectSeat.size() < totalPersons){
+									if(row_panel.index == 0){
+										row_panel.index = 1;
+										selectSeat.remove(row_panel);
+									}else if(row_panel.index == 1){
+										row_panel.index = 0;
+										selectSeat.add(row_panel);
+									}
+								}else if(selectSeat.size() == totalPersons){
+									if(row_panel.index == 0){
+										row_panel.index = 1;
+										selectSeat.remove(row_panel);
+									}
+								}
+								row_panel.statusColor();
+							}
+						}
+					});
 				}
 			}
 		}

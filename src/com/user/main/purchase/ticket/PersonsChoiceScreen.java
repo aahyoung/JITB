@@ -225,6 +225,7 @@ public class PersonsChoiceScreen extends ScreenFrame{
 					seatScreen.theaterRowColumn();
 					seatScreen.selectSeat();
 					seatScreen.createSeatBtn();
+					seatScreen.totalPersons = nomalIndex + studentIndex;
 					
 					main.setPage(6);
 				}

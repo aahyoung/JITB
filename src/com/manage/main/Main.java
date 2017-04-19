@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.manage.discount.DiscountMain;
 import com.manage.inventory.InventoryMain;
 import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
@@ -27,7 +28,6 @@ public class Main extends JFrame implements ActionListener{
 	// 각 메뉴 패널(여기에 각자 만든 패널을 가져와주시면 됩니다!)
 	MovieTheaterTab movie;
 	SalesMain salesMain;
-	
 	// 메뉴에 따른 여러 페이지 배열로 저장
 	JPanel[] page=new JPanel[5];
 	
@@ -70,11 +70,13 @@ public class Main extends JFrame implements ActionListener{
 		 * */
 		page[1]=new MovieTheaterTab();
 		page[2]=new InventoryMain();
+		page[3]=new DiscountMain();
 		page[4]=new SalesMain();
 		
 		// Movie Panel 부착
 		p_content.add(page[1]);
 		p_content.add(page[2]);
+		p_content.add(page[3]);
 		p_content.add(page[4]);
 		
 		// JTabbedPane을 사용하기 위해 GridLayout 1행1열 사용
@@ -94,6 +96,7 @@ public class Main extends JFrame implements ActionListener{
 		//초기화면 세팅
 		page[1].setVisible(false);
 		page[2].setVisible(false);
+		page[3].setVisible(false);
 		page[4].setVisible(false);
 	}
 
@@ -117,23 +120,35 @@ public class Main extends JFrame implements ActionListener{
 			System.out.println("Movie 누름");
 			page[1].setVisible(true);
 			page[2].setVisible(false);
+			page[3].setVisible(false);
 			page[4].setVisible(false);
 		}else if(bt==menu[2]){
 			System.out.println("재고 누름");
 			page[1].setVisible(false);
 			page[2].setVisible(true);
+			page[3].setVisible(false);
 			page[4].setVisible(false);
+		}
+		else if(bt==menu[3]) {
+			System.out.println("discount 누름");			
+			page[1].setVisible(false);
+			page[2].setVisible(false);
+			page[3].setVisible(true);
+			page[4].setVisible(false);
+			
 		}
 		else if(bt==menu[4]) {
 			System.out.println("Sales 누름");			
 			page[1].setVisible(false);
 			page[2].setVisible(false);
+			page[3].setVisible(false);
 			page[4].setVisible(true);
 			
 		}
 		else{
 			page[1].setVisible(false);
 			page[2].setVisible(false);
+			page[3].setVisible(false);
 			page[4].setVisible(false);
 		}
 	}

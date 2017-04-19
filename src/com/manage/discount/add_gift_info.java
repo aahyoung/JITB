@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
@@ -48,15 +49,16 @@ public class add_gift_info extends JFrame implements ActionListener, ItemListene
 	BufferedImage image = null;
 	File file;
 	Choice choice;
-	
+	table_model tablemodel;
 	DBManager manager;
 	Connection con;
 	ArrayList<gift_typeCategory> topList = new ArrayList<gift_typeCategory>();
 	gift_infoCategory giftinfoCategory;
-
-	public add_gift_info() {
+	JTable table_up;
+	
+	public add_gift_info(JTable table_up) {
 		init();
-
+		this.table_up=table_up;
 		p_west = new JPanel();// 이미지 넣어둘 패널
 		p_center = new JPanel();// 각종 옵션 넣어둘 패널
 
@@ -126,7 +128,6 @@ public class add_gift_info extends JFrame implements ActionListener, ItemListene
 
 		setSize(400, 200);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		choice.add("회사를 선택하세요");
 		setChoice();
 	}
@@ -171,20 +172,21 @@ public class add_gift_info extends JFrame implements ActionListener, ItemListene
 			int index = choice.getSelectedIndex();
 			gift_typeCategory vo = topList.get(index);
 			// 바인드 변수에 들어갈 값 설정!
-			pstmt.setInt(1, vo.getgift_type_id()-1);
+			pstmt.setInt(1, vo.getgift_type_id());
 			System.out.println(vo.getgift_type_id());
 			
-			pstmt.setString(2, t_name.getText());
-			System.out.println(t_name.getText());
+			pstmt.setInt(2, Integer.parseInt(t_no.getText()));
+			System.out.println(t_no.getText());
+
 			
 			pstmt.setInt(3, Integer.parseInt(t_price.getText()));
 			System.out.println(t_price.getText());
+
+			pstmt.setInt(4,1);
 			
-			pstmt.setString(4, file.getName());
+			pstmt.setString(5, file.getName());
 			System.out.println(file.getName());
 			
-			pstmt.setInt(5, Integer.parseInt(t_no.getText()));
-			System.out.println(t_no.getText());
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -204,6 +206,8 @@ public class add_gift_info extends JFrame implements ActionListener, ItemListene
 				}
 			}
 		}
+
+		table_up.setModel(tablemodel=new table_model(con,"gift_info"));
 	}
 
 	public void select() {

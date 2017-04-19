@@ -30,6 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
@@ -40,23 +41,24 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 	JPanel p_west, p_center; // 기본 창
 	JPanel p_center_top, p_center_center, p_center_south;// 센터에 상세 분류
 	JLabel la_sub;
-	JLabel la_name, la_price, la_stock;
-	JTextField t_name, t_price, t_stock;
+	JLabel la_name, la_price;
+	JTextField t_name, t_price;
 	JButton bt_add;
 	Canvas can;
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
 	Choice choice;
-
+	table_model tablemodel;
 	DBManager manager;
 	Connection con;
-	ArrayList<Discount_typeCategory> topList = new ArrayList<Discount_typeCategory>();
+	ArrayList<Discount_infoCategory> topList = new ArrayList<Discount_infoCategory>();
+	ArrayList<Discount_typeCategory> subList = new ArrayList<Discount_typeCategory>();
 	Discount_infoCategory discountinfo;
-
-	public Add_Discount_info() {
+	JTable table_up;
+	public Add_Discount_info(JTable table_up) {
 		init();
-
+		this.table_up=table_up;
 		p_west = new JPanel();// 이미지 넣어둘 패널
 		p_center = new JPanel();// 각종 옵션 넣어둘 패널
 
@@ -66,13 +68,11 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 
 		la_sub = new JLabel("상품옵션 추가");
 		la_name = new JLabel("상 품 명 :");
-		la_price = new JLabel("가        격:");
-		la_stock = new JLabel("재        고:");
+		la_price = new JLabel("할 인 율:");
 
 		choice = new Choice();
 		t_name = new JTextField(15);
 		t_price = new JTextField(15);
-		t_stock = new JTextField(15);
 		bt_add = new JButton("추가");
 
 		chooser = new JFileChooser("/JITB/res_manager");
@@ -102,8 +102,6 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 		p_center_center.add(t_name);
 		p_center_center.add(la_price);
 		p_center_center.add(t_price);
-		p_center_center.add(la_stock);
-		p_center_center.add(t_stock);
 		p_center_south.add(bt_add);
 
 		p_center_center.setBackground(Color.red);
@@ -128,7 +126,6 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 
 		setSize(400, 200);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		choice.add("종류를 선택하세요");
 		setChoice();
 	}
@@ -136,15 +133,15 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 	public void setChoice() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "select * from top_opt order by top_opt_id asc";
+		String sql = "select * from discount_type order by discount_type_id asc";
 		try {
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Discount_typeCategory dto = new Discount_typeCategory();
-				dto.setdiscount_id(rs.getInt("top_opt_id"));
+				dto.setdiscount_id(rs.getInt("discount_type_id"));
 				dto.setName(rs.getString("name"));
-				topList.add(dto);// 리스트에 탑재
+				subList.add(dto);// 리스트에 탑재
 				choice.add(dto.getName());
 			}
 
@@ -164,14 +161,15 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 
 	public void regist() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into sub_opt(sub_opt_id,top_opt_id,name,price,img,stock)";
-		sql += "values(seq_sub_opt.nextval,?,?,?,?,?)";
+		String sql = "insert into discount_info(discount_info_id,discount_type_id,name,rate,img)";
+		sql += "values(seq_discount_info.nextval,?,?,?,?)";
 
 		try {
 			pstmt = con.prepareStatement(sql);
 
 			int index = choice.getSelectedIndex();
-			Discount_typeCategory vo = topList.get(index);
+			Discount_typeCategory vo = subList.get(index);
+			
 			// 바인드 변수에 들어갈 값 설정!
 			pstmt.setInt(1, vo.getdiscount_id()-1);
 			System.out.println(vo.getdiscount_id());
@@ -184,9 +182,6 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 			
 			pstmt.setString(4, file.getName());
 			System.out.println(file.getName());
-			
-			pstmt.setInt(5, Integer.parseInt(t_stock.getText()));
-			System.out.println(t_stock.getText());
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -206,6 +201,7 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 				}
 			}
 		}
+		table_up.setModel(tablemodel=new table_model(con,"discount_type"));
 	}
 
 	public void select() {
@@ -222,6 +218,7 @@ public class Add_Discount_info extends JFrame implements ActionListener, ItemLis
 				e.printStackTrace();
 			}
 		}
+		table_up.setModel(tablemodel=new table_model(con,"discount_info"));
 	}
 
 	// 추가 버튼

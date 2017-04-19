@@ -20,9 +20,7 @@ public class TablePanel extends AbstractTableModel{
 	Connection con;
 	String name;
 	Inventory inventory;
-	
 	public TablePanel(Connection con,String name){
-		this.inventory=inventory;
 		this.con=con;
 		this.name=name;
 		getList(name);
@@ -144,7 +142,8 @@ public class TablePanel extends AbstractTableModel{
 		//층,호수를 변경한다.
 		Vector vec=data.get(row);//row한 레코드를 반환!
 		vec.setElementAt(value, col);
-		
+		int id=Integer.parseInt(vec.elementAt(0).toString());
+		new Update_Model(con, name, row,col,value,id);
 		this.fireTableCellUpdated(row, col);
 	}
 }

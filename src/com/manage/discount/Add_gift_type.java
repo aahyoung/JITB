@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
@@ -43,14 +44,14 @@ public class Add_gift_type extends JFrame implements ActionListener{
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
-	
+	table_model tablemodel;
 	DBManager manager;
 	Connection con;
 	gift_infoCategory gift_info;
-	
-	public Add_gift_type() {
+	JTable table_up;
+	public Add_gift_type(JTable table_up) {
 		init(); //connect 받기
-		
+		this.table_up=table_up;
 		p_west=new JPanel();//이미지 넣어둘 패널
 		p_center=new JPanel();//각종 옵션 넣어둘 패널
 		
@@ -112,18 +113,16 @@ public class Add_gift_type extends JFrame implements ActionListener{
 		
 		setSize(400,200);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	public void regist() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into gift_type(seq_gift_type,name,img)";
-		sql += "values(seq_gift_type.nextval,?,?)";
+		String sql = "insert into gift_type(gift_type_id,name)";
+		sql += "values(seq_gift_type.nextval,?)";
 		try {
 			pstmt = con.prepareStatement(sql);
 
 			// 바인드 변수에 들어갈 값 설정!
 			pstmt.setString(1, t_name.getText());
-			pstmt.setString(2, file.getName());
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -143,6 +142,7 @@ public class Add_gift_type extends JFrame implements ActionListener{
 				}
 			}
 		}
+		table_up.setModel(tablemodel=new table_model(con,"discount_type"));
 	}
 	
 	public void select(){
@@ -170,8 +170,5 @@ public class Add_gift_type extends JFrame implements ActionListener{
 	public void init() {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
-	}
-	public static void main(String[] args){
-		new Add_gift_type();
 	}
 }

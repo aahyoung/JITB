@@ -179,6 +179,7 @@ public class Add_top_size extends JFrame implements ActionListener {
 				}
 			}
 		}
+		table_up.setModel(tablepanel=new TablePanel(con,"top_opt_size"));
 	}
 
 	// 추가 버튼

@@ -12,6 +12,7 @@ import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -29,12 +30,14 @@ public class Inventory extends JPanel implements ActionListener,ItemListener{
 	TablePanel tablepanel;
 	Connection con;
 	JTable table_up;
+	JScrollPane scroll;
 	DBManager manager = DBManager.getInstance();
 	String name=null;
 	public Inventory() {
 		init();
 		tablepanel=new TablePanel(con, "combo");
 		table_up=new JTable(tablepanel);
+		scroll=new JScrollPane(table_up);
 		p_north=new JPanel();
 		bt_add=new JButton("추가");
 		bt_del=new JButton("삭제");
@@ -71,7 +74,7 @@ public class Inventory extends JPanel implements ActionListener,ItemListener{
 	public void getList(String name){
 		table_up.setModel(tablepanel=new TablePanel(con,name));
 		table_up.updateUI();
-		this.add(table_up,BorderLayout.CENTER);
+		this.add(scroll,BorderLayout.CENTER);
 		this.setPreferredSize(new Dimension(1000, 650));
 	}
 	//초이스용

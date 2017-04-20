@@ -170,7 +170,6 @@ public class ClientMain extends JFrame implements Runnable{
 		
 		((MenuChoiceScreen)screen.get(1)).la_date.setText(date);
 		((MenuChoiceScreen)screen.get(1)).la_time.setText(time);
-		
 		((MovieChoiceScreen)screen.get(4)).la_time.setText(time);
 	}
 	

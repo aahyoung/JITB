@@ -106,7 +106,7 @@ public class BookingNumPanel extends JPanel{
 						if(ticket.size() == 0){
 							main.setPage(3);
 						}else{
-							ticketProcessiong();
+							ticketProcessing();
 							main.setPage(10);
 						}
 					}else{
@@ -268,7 +268,7 @@ public class BookingNumPanel extends JPanel{
 		}
 	}
 	
-	public void ticketProcessiong(){
+	public void ticketProcessing(){
 		AdvancedTicket at = ((TicketConfirmScreen)main.screen.get(10)).rect;
 		
 		Calendar cal = Calendar.getInstance();

@@ -172,7 +172,7 @@ public class Add_sub extends JFrame implements ActionListener {
 		try {
 			pstmt = con.prepareStatement(sql);
 
-			int index = choice.getSelectedIndex()-1;
+			int index = choice.getSelectedIndex();
 			TopSizeCategory vo = topList.get(index);
 			// 바인드 변수에 들어갈 값 설정!
 			pstmt.setInt(1, vo.getTop_opt_size_id());

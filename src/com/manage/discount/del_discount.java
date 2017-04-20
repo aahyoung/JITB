@@ -11,18 +11,18 @@ package com.manage.discount;
 
 	public class del_discount{
 		String name;
-		int row;
+		int row,id;
 		Connection con;
 		DBManager manager;
 		JTable table_up;
 		table_model tablemodel;
 		
-		public del_discount(Connection con,JTable table_up, String name, int row){
+		public del_discount(Connection con,JTable table_up, String name, int row,int id){
+			this.id=id;
 			this.con=con;
 			this.name=name;
 			this.row=row;
 			this.table_up=table_up;
-			init();
 			delete();
 		}
 		public void delete(){
@@ -31,11 +31,11 @@ package com.manage.discount;
 		sql.append("delete from ");
 		sql.append(name);
 		sql.append(" where ");
-		sql.append(name+"_id="+row);
+		sql.append(name+"_id="+id);
 		System.out.println(sql);
 		try {
 			pstmt = con.prepareStatement(sql.toString());
-			int rs = pstmt.executeUpdate();
+			pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -50,11 +50,6 @@ package com.manage.discount;
 			}
 		}
 		table_up.setModel(tablemodel=new table_model(con,name));
-		}
-		
-		public void init() {
-			manager = DBManager.getInstance();
-			con = manager.getConnect();
 		}
 	}
 

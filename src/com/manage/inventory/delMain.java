@@ -11,18 +11,18 @@ import com.jitb.db.DBManager;
 
 public class delMain{
 	String name;
-	int row;
+	int row,id;
 	Connection con;
 	DBManager manager;
-	JTable table_up;
+	JTable table;
 	TablePanel tablepanel;
 	
-	public delMain(Connection con,JTable table_up, String name, int row){
+	public delMain(Connection con,JTable table, String name, int row,int id){
 		this.con=con;
+		this.id=id;
 		this.name=name;
 		this.row=row;
-		this.table_up=table_up;
-		init();
+		this.table=table;
 		delete();
 	}
 	public void delete(){
@@ -31,7 +31,7 @@ public class delMain{
 	sql.append("delete from ");
 	sql.append(name);
 	sql.append(" where ");
-	sql.append(name+"_id="+row);
+	sql.append(name+"_id="+id);
 	System.out.println(sql);
 	try {
 		pstmt = con.prepareStatement(sql.toString());
@@ -49,11 +49,6 @@ public class delMain{
 			}
 		}
 	}
-	table_up.setModel(tablepanel=new TablePanel(con,name));
-	}
-	
-	public void init() {
-		manager = DBManager.getInstance();
-		con = manager.getConnect();
+	table.setModel(tablepanel=new TablePanel(con,name));
 	}
 }

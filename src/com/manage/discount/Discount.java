@@ -121,24 +121,26 @@ import javax.swing.JTable;
 		public void del(){
 			int row=table_up.getSelectedRow()+1;
 			int index=choice.getSelectedIndex();
+			int id=Integer.parseInt(table_up.getValueAt(row-1, 0).toString());
 			System.out.println(row);
 			if(index==1){
 				name="discount_info";
-				new del_discount(con, table_up, name, row);
+				new del_discount(con, table_up, name, row,id);
 			}
 			else if(index==2){
 				name="discount_type";
-				new del_discount(con, table_up, name, row);
+				System.out.println(name);
+				new del_discount(con, table_up, name, row,id);
 				
 			}
 			else if(index==3){
 				name="gift_type";
-				new del_discount(con, table_up, name, row);
+				new del_discount(con, table_up, name, row,id);
 				
 			}
 			else if(index==4){
 				name="gift_info";
-				new del_discount(con, table_up, name, row);
+				new del_discount(con, table_up, name, row,id);
 				
 			}
 		}

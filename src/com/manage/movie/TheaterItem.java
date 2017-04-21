@@ -11,29 +11,28 @@ import javax.swing.JPanel;
  * */
 
 public class TheaterItem extends JPanel{
-	JLabel lb_name, lb_number, lb_movie;
-	int theater_id;
+	JLabel lb_name, lb_count;
 	
 	String name;
-	int row, col;
+	int theater_id;
+	int count;
 	
-	public TheaterItem(String name, int row, int col) {
+	public TheaterItem(String name, int count) {
 		this.name=name;
-		this.row=row;
-		this.col=col;
+		this.count=count;
 
 		lb_name=new JLabel();
-		lb_number=new JLabel();
-		lb_movie=new JLabel();
+		lb_count=new JLabel();
 		
 		lb_name.setText(name);
-		lb_number.setText(Integer.toString(row)+" Çà "+Integer.toString(col)+" ¿­");	
+		lb_count.setText("ÃÑ ÁÂ¼®¼ö : "+count);
+		//lb_count.setText("ÇöÀç ¿µÈ­°üÀÇ ÃÑ ÁÂ¼®¼ö´Â "+count+" ÁÂ¼® ÀÔ´Ï´Ù.");	
 		
 		add(lb_name);
-		add(lb_number);
-		//add(lb_movie);
+		add(lb_count);
 		
-		setPreferredSize(new Dimension(50, 80));
+		setPreferredSize(new Dimension(100, 50));
 		setBackground(Color.orange);
 	}
+
 }

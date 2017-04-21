@@ -2,6 +2,7 @@ package com.manage.movie;
 
 import java.awt.Choice;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -28,7 +29,6 @@ public class AddTheater extends JDialog implements ActionListener{
 	JPanel p_title;
 	JPanel p_input;
 	JPanel p_content;
-	JPanel p_select;
 	JPanel p_button;
 	
 	JLabel lb_title;
@@ -36,9 +36,7 @@ public class AddTheater extends JDialog implements ActionListener{
 	JLabel lb_content;
 	JLabel lb_row, lb_col;
 	
-	JTextField t_name;
-	
-	Choice ch_row, ch_col;
+	JTextField t_name, t_count;
 	
 	JButton bt_cancel, bt_confirm;
 	
@@ -51,40 +49,29 @@ public class AddTheater extends JDialog implements ActionListener{
 	public AddTheater(TheaterMain theaterMain) {
 		this.theaterMain=theaterMain;
 		
+		// DB 연결
+		connect();
+		
 		p_outer=new JPanel();
 		p_title=new JPanel();
 		p_input=new JPanel();
 		p_content=new JPanel();
-		p_select=new JPanel();
 		p_button=new JPanel();
 		
 		lb_title=new JLabel("영화관 크기 설정");
 		lb_name=new JLabel("영화관 이름 입력");
 		t_name=new JTextField(10);
-		lb_content=new JLabel("추가할 영화관의 행, 열을 선택해주세요.");
-		
-		lb_row=new JLabel("행");
-		lb_col=new JLabel("열");
-		
-		ch_row=new Choice();
-		ch_col=new Choice();
+		t_count=new JTextField(5);
+		lb_content=new JLabel("총 좌석수를 입력해주세요.");
 		
 		bt_confirm=new JButton("확인");
 		bt_cancel=new JButton("취소");
-		
-		for(int i=0; i<10; i++){
-			ch_row.add(Integer.toString(i+1));
-			ch_col.add(Integer.toString(i+1));
-		}
 		
 		p_title.add(lb_title);
 		p_input.add(lb_name);
 		p_input.add(t_name);
 		p_content.add(lb_content);
-		p_select.add(lb_row);
-		p_select.add(ch_row);
-		p_select.add(lb_col);
-		p_select.add(ch_col);
+		p_content.add(t_count);		
 		
 		p_button.add(bt_confirm);
 		p_button.add(bt_cancel);
@@ -92,7 +79,6 @@ public class AddTheater extends JDialog implements ActionListener{
 		p_outer.add(p_title);
 		p_outer.add(p_input);
 		p_outer.add(p_content);
-		p_outer.add(p_select);
 		p_outer.add(p_button);
 		
 		add(p_outer);
@@ -100,11 +86,11 @@ public class AddTheater extends JDialog implements ActionListener{
 		bt_confirm.addActionListener(this);
 		bt_cancel.addActionListener(this);
 		
-		setBounds(370, 220, 300, 200);
+		//setBounds(370, 220, 300, 200);
+		setSize(new Dimension(300, 200));
 		setVisible(true);
-		
-		// DB 연결
-		connect();
+		setLocationRelativeTo(theaterMain);
+	
 	}
 	
 	// DB 연결
@@ -118,14 +104,13 @@ public class AddTheater extends JDialog implements ActionListener{
 		PreparedStatement pstmt=null;
 		
 		StringBuffer sql=new StringBuffer();
-		sql.append("insert into theater(theater_id, branch_id, name, row_line, column_line)");
-		sql.append(" values(seq_theater.nextval, 1, ?, ?, ?)");
+		sql.append("insert into theater(theater_id, branch_id, name, count)");
+		sql.append(" values(seq_theater.nextval, 1, ?, ?)");
 		
 		try {
 			pstmt=con.prepareStatement(sql.toString());
 			pstmt.setString(1, t_name.getText());		// branch_id는 임의로 1 설정
-			pstmt.setString(2, Integer.toString(ch_row.getSelectedIndex()+1));
-			pstmt.setString(3, Integer.toString(ch_col.getSelectedIndex()+1));
+			pstmt.setInt(2, Integer.parseInt(t_count.getText()));
 			
 			// 성공적으로 insert문 반환시 무조건 1 반환
 			int result=pstmt.executeUpdate();
@@ -152,8 +137,7 @@ public class AddTheater extends JDialog implements ActionListener{
 	// 하나의 internalFrame을 사용하기 때문에 기존 값으로 항상 초기화
 	public void setDefault(){
 		t_name.setText("");
-		ch_row.select(0);
-		ch_col.select(0);
+		t_count.setText("");
 	}
 
 	public void actionPerformed(ActionEvent e) {

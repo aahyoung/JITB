@@ -8,8 +8,7 @@ public class Theater {
 	private int theater_id;
 	private int branch_id;
 	private String name;
-	private int row_line;
-	private int column_line;
+	private int count;
 	
 	public int getTheater_id() {
 		return theater_id;
@@ -29,17 +28,11 @@ public class Theater {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getRow_line() {
-		return row_line;
+	public int getCount() {
+		return count;
 	}
-	public void setRow_line(int row_line) {
-		this.row_line = row_line;
-	}
-	public int getColumn_line() {
-		return column_line;
-	}
-	public void setColumn_line(int column_line) {
-		this.column_line = column_line;
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }

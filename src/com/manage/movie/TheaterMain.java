@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -52,6 +53,9 @@ public class TheaterMain extends JPanel implements ActionListener{
 	// 현재 영화관 데이터가 존재하는지 여부 확인
 	boolean exist=false;
 	
+	// 현재 DB에 존재하는 영화관 개수
+	int count;
+	
 	// DB연동에 필요
 	DBManager manager;
 	Connection con;
@@ -79,7 +83,7 @@ public class TheaterMain extends JPanel implements ActionListener{
 		p_warning=new JPanel();
 		
 		lb_title=new JLabel("영화관 목록");
-		lb_warning=new JLabel("현재 등록된 영화관이 없습니다. 영화관을 등록해주세요.");
+		lb_warning=new JLabel("현재 등록된 영화관이 없습니다.\n 영화관을 등록해주세요.");
 		
 		bt_add=new JButton("영화관 추가");
 		
@@ -133,16 +137,21 @@ public class TheaterMain extends JPanel implements ActionListener{
 				dto.setTheater_id(rs.getInt("theater_id"));
 				dto.setBranch_id(rs.getInt("branch_id"));
 				dto.setName(rs.getString("name"));
-				dto.setRow_line(rs.getInt("row_line"));
-				dto.setColumn_line(rs.getInt("column_line"));
+				dto.setCount(rs.getInt("count"));
 				
 				theaterList.add(dto);
 			}
 			
+			// 현재 존재하는 영화 개수 구하기
+			sql="select count(*) from theater";
+			pstmt=con.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			rs.next();
+			count=rs.getInt("count(*)");
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	// 영화관 패널 설정
@@ -153,10 +162,11 @@ public class TheaterMain extends JPanel implements ActionListener{
 		// 현재 존재하는 영화관만큼 생성하고 설정 및 출력
 		for(int i=0; i<theaterList.size(); i++){
 			String name=theaterList.get(i).getName()+" 관";
-			int row=theaterList.get(i).getRow_line();
-			int col=theaterList.get(i).getColumn_line();
-			
-			theaterItem=new TheaterItem(name, row, col);
+			int count=theaterList.get(i).getCount();
+
+			theaterItem=new TheaterItem(name, count);
+			theaterItem.theater_id=theaterList.get(i).getTheater_id();
+					
 			p_list.add(theaterItem);
 			
 			theaters.add(theaterItem);
@@ -170,8 +180,9 @@ public class TheaterMain extends JPanel implements ActionListener{
 					for(int k=0; k<theaters.size(); k++){
 						if(obj==theaters.get(k)){
 							System.out.println(theaters.get(k).theater_id+"관 선택");
-							id=theaters.get(k).theater_id;
-							editTheater=new EditTheater(TheaterMain.this);
+							//id=theaters.get(k).theater_id;
+							editTheater=new EditTheater(TheaterMain.this, k);
+							System.out.println(k);
 						}
 					}
 				}
@@ -194,19 +205,19 @@ public class TheaterMain extends JPanel implements ActionListener{
 			System.out.println("영화관 출력");
 		}
 	}
-	
-	// 영화관 수정 및 삭제 internalFrame 생성
-	public void editFrame(){
-		
-	}
 
 	// 영화관 추가 버튼
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
 	
 		if(obj==bt_add){
-			addTheater=new AddTheater(this);
-			System.out.println("영화관 추가");
+			if(count>=10){
+				JOptionPane.showMessageDialog(this, "영화관의 최대 개수는 10개입니다. 더 이상 추가할 수 없습니다.");
+			}
+			else{
+				addTheater=new AddTheater(this);
+				System.out.println("영화관 추가");
+			}
 		}
 	}
 }

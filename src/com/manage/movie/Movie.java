@@ -7,6 +7,8 @@ public class Movie {
 	private String director;
 	private String main_actor;
 	private String story;
+	private String start_date;
+	private String end_date;
 	private int run_time;
 	
 	public int getMovie_id() {
@@ -51,6 +53,17 @@ public class Movie {
 	public void setRun_time(int run_time) {
 		this.run_time = run_time;
 	}
-	
+	public String getStart_date() {
+		return start_date;
+	}
+	public void setStart_date(String start_date) {
+		this.start_date = start_date;
+	}
+	public String getEnd_date() {
+		return end_date;
+	}
+	public void setEnd_date(String end_date) {
+		this.end_date = end_date;
+	}
 	
 }

@@ -12,7 +12,7 @@ public class MonthlySales extends JPanel{
 
 	public MonthlySales() {
 		this.setVisible(true);
-		this.setBackground(Color.GREEN);
+		this.setBackground(Color.orange);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 	

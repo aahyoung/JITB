@@ -40,13 +40,13 @@ public class WeeklySales extends JPanel implements ActionListener {
 		bt_next = new JButton("▶");
 		la_title = new JLabel("");
 
-
 		yy = cal.get(Calendar.YEAR);
 		mm = cal.get(Calendar.MONTH);
+		
+		la_title.setText(yy + "-" + (mm+1));
+		System.out.println("label에 찍히는 달은?" +mm+1);
 
-		la_title.setText(yy + "-" + (mm + 1));
-
-		p_north.setBackground(Color.yellow);
+		p_north.setBackground(Color.ORANGE);
 		p_north.add(bt_prev);
 		p_north.add(la_title);
 		p_north.add(bt_next);
@@ -59,9 +59,7 @@ public class WeeklySales extends JPanel implements ActionListener {
 		p_center.setLayout(new BorderLayout());
 		//p_center.add();
 
-		// datepicker 패널
 		//p_date.setLayout(new BorderLayout());
-		//p_north.add(p_date);
 
 		// 패널들 붙이기
 		add(p_north, BorderLayout.NORTH);
@@ -71,12 +69,11 @@ public class WeeklySales extends JPanel implements ActionListener {
 		bt_next.addActionListener(this);
 
 		connect();
+		printDate();
+		graph();
 		
-		setVisible(true);
-		setPreferredSize(new Dimension(1000, 650));
-
 		this.setVisible(true);
-		this.setBackground(Color.magenta);
+		this.setBackground(Color.ORANGE);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 
@@ -87,26 +84,36 @@ public class WeeklySales extends JPanel implements ActionListener {
 
 	public void printDate() {
 		
+		
 		weeklyChart = new WeeklySalesPanel(con);
+		//위클리차트의 ArrayList는 월을 바꿀때마다 초기화 되거나, 모두 삭제되어야 한다.
+		//왜?? for문 돌릴때마다 5개씩 누적되니깐...
+		weeklyChart.list.removeAll(weeklyChart.list);
 
-		//p_center.add(weeklyChart);
 		p_center.updateUI();
 		
-		// 현재 날짜를 라벨에 출력
-		la_title.setText(yy + "-" + mm);
-		cal.set(yy, mm + 1, 0);
+		//현재 날짜를 라벨에 출력
+		la_title.setText(yy + "-" + (cal.get(Calendar.MONTH)+1));
+		cal.set(yy, (mm+1), 0);
+		System.out.println("여기서 mm은"+cal.get(Calendar.MONTH));
 
-		// 현재 선택한 달의 마지막 날짜를 구하기
 		int lastDay = cal.get(Calendar.DATE);
-		int lastWeek = cal.get(Calendar.DAY_OF_WEEK);
+		System.out.println("마지막 날은=" + lastDay);
+		
+		// 현재 선택한 달의 마지막 날짜를 구하기
 		int month = cal.get(Calendar.MONTH);
+		System.out.println("현재 월은" + (month+1));
 
-		System.out.println(DateUtil.getDateStr(Integer.toString(month)));
+		int lastWeek = cal.get(Calendar.WEEK_OF_MONTH);
+		System.out.println("마지막 주는" + lastWeek);
 
-		for (int i = 1; i <= lastWeek; i++) {
+		System.out.println(DateUtil.getDateStr(Integer.toString(month+1)));
+
+		//for (int i = 1; i <= lastWeek; i++) {
+			//System.out.println("주가 찍힌다" + i);
 			//월이 한자리수로 찍히는 문제점을 해결하기 위해 getDateStr 이용해 04로 출력!
-			weeklyChart.getData(DateUtil.getDateStr(Integer.toString(month)), Integer.toString(i));
-		}
+			weeklyChart.getData(DateUtil.getDateStr(Integer.toString(month+1)), lastWeek);
+		//}
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -120,20 +127,23 @@ public class WeeklySales extends JPanel implements ActionListener {
 				yy--;
 			}
 			printDate();
+			
 		} else if (obj == bt_next) {
 			mm++;
 			if (mm > 11) {
 				mm = 0;
 				yy++;
 			}
+			printDate();
 		}
-		printDate();
+		
 	}
 
 	// 그래프 부르기!
 	public void graph() {
-		p_center.updateUI(); // 업데이트 해줘야함 ★
-		// p_center.add(pie.showChart());
+		p_center.add(weeklyChart.createChart());
+		p_center.updateUI();
+		
 	}
 
 }

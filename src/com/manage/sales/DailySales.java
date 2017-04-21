@@ -62,7 +62,7 @@ public class DailySales extends JPanel implements ActionListener {
 		
 		sales = new JLabel("√— ¥Á¿œ ∏≈√‚ : "+"\n");
 
-		p_north.setBackground(Color.yellow);
+		p_north.setBackground(Color.orange);
 		p_south.setBackground(Color.orange);
 		p_south.add(sales);
 

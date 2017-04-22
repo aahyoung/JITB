@@ -312,26 +312,23 @@ public class BirthPhonePanel extends JPanel{
 		
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append("select m.name as 영화이름, b.name as 지점, t.name as 관,");
-		sql.append(" sd.screening_date as 날짜, time.start_time as 시작시간,");
-		sql.append(" mp.type as 타입, m.poster as 포스터,count(*) as 인원");
+		sql.append("select b.name as 지점, t.name as 관, m.name as 영화이름, mp.type as 타입, ");
+		sql.append(" p.screening_date as 날짜, p.start_time as 시작시간, m.poster as 포스터, count(*) as 인원");
 		sql.append(" from birth_phone bp");
-		sql.append(" inner join order_movie o on bp.order_id = o.order_id");
-		sql.append(" inner join buy_movie buy on o.order_id = buy.order_id");
-		sql.append(" inner join movie_price mp on buy.type_id = mp.type_id");
-		sql.append(" inner join seat s on buy.seat_id = s.seat_id");
-		sql.append(" inner join theater_operate toper on toper.theater_operate_id = s.theater_operate_id");
-		sql.append(" inner join theater t on t.theater_id = toper.theater_id");
+		sql.append(" inner join order_movie o on o.order_id = bp.order_id");
+		sql.append(" inner join buy_seat bs on bs.order_id = o.order_id");
+		sql.append(" inner join movie_price mp on mp.type_id = bs.type_id");
+		sql.append(" inner join product p on p.product_id = bs.product_id");
+		sql.append(" inner join movie m on m.movie_id = p.movie_id");
+		sql.append(" inner join theater t on t.theater_id = p.theater_id");
 		sql.append(" inner join branch b on b.branch_id = t.branch_id");
-		sql.append(" inner join start_time time on toper.start_time_id = time.start_time_id");
-		sql.append(" inner join screening_date sd on time.screening_date_id = sd.screening_date_id");
-		sql.append(" inner join movie m on sd.movie_id = m.movie_id");
-		sql.append(" where bp.birth = "+birth.toString());
-		sql.append(" and bp.phone = "+phone.toString());
-		sql.append(" group by m.name, b.name, t.name, sd.screening_date, time.start_time, mp.type, m.poster");
+		sql.append(" where birth = ? and phone = ?");
+		sql.append(" group by b.name, t.name, m.name, mp.type, p.screening_date, p.start_time, m.poster");
 		
 		try {
 			pstmt = main.con.prepareStatement(sql.toString());
+			pstmt.setString(1, birth.toString());
+			pstmt.setString(2, phone.toString());
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){

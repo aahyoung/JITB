@@ -1,59 +1,51 @@
 package com.user.main.purchase.ticket;
 
-public class MovieTime {
-	String movie_name;
-	String screening_date;
+import java.awt.Rectangle;
+
+public class MovieTime extends Rectangle{
+	int product_id;
+	int theater_id;
 	String start_time;
-	String poster;
-	String remaining_seat;
-	String total_seat;
+	String theater_name;
+	int remaining_seat;
+	int total_seat;
 	
-	public String getMovie_name() {
-		return movie_name;
+	public int getProduct_id() {
+		return product_id;
 	}
-	
-	public void setMovie_name(String movie_name) {
-		this.movie_name = movie_name;
+	public void setProduct_id(int product_id) {
+		this.product_id = product_id;
 	}
-	
-	public String getScreening_date() {
-		return screening_date;
+	public int getTheater_id() {
+		return theater_id;
 	}
-	
-	public void setScreening_date(String screening_date) {
-		this.screening_date = screening_date;
+	public void setTheater_id(int theater_id) {
+		this.theater_id = theater_id;
 	}
-	
 	public String getStart_time() {
 		return start_time;
 	}
-	
 	public void setStart_time(String start_time) {
 		this.start_time = start_time;
 	}
-	
-	public String getPoster() {
-		return poster;
+	public String getTheater_name() {
+		return theater_name;
 	}
-	
-	public void setPoster(String poster) {
-		this.poster = poster;
+	public void setTheater_name(String theater_name) {
+		this.theater_name = theater_name;
 	}
-	
-	public String getRemaining_seat() {
+	public int getRemaining_seat() {
 		return remaining_seat;
 	}
-	
-	public void setRemaining_seat(String remaining_seat) {
+	public void setRemaining_seat(int remaining_seat) {
 		this.remaining_seat = remaining_seat;
 	}
-	
-	public String getTotal_seat() {
+	public int getTotal_seat() {
 		return total_seat;
 	}
-	
-	public void setTotal_seat(String total_seat) {
+	public void setTotal_seat(int total_seat) {
 		this.total_seat = total_seat;
 	}
-
+	
+	
 }

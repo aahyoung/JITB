@@ -206,26 +206,10 @@ public class PersonsChoiceScreen extends ScreenFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(enable == true){
-					HashMap<Integer, Integer> type = new HashMap<Integer, Integer>();
-					HashMap<Integer, Integer> price = new HashMap<Integer, Integer>();
-					
-					int nomalTypeId = moviePrice.get(0).getType_id();
-					int studentTypeId = moviePrice.get(1).getType_id();
-					
-					type.put(nomalTypeId, nomalIndex);
-					type.put(studentTypeId, studentIndex);
-					price.put(nomalTypeId, moviePrice.get(0).getPrice());
-					price.put(studentTypeId, moviePrice.get(1).getPrice());
-					
-					main.selectList.setType(type);
-					main.selectList.setPrice(price);
-					
-					SeatsChoiceScreen seatScreen = (SeatsChoiceScreen)main.screen.get(6); 
-					seatScreen.selectTheaterId();
-					seatScreen.theaterRowColumn();
-					seatScreen.selectSeat();
-					seatScreen.createSeatBtn();
-					seatScreen.totalPersons = nomalIndex + studentIndex;
+					//타입아이디, 인원수
+					HashMap<Integer, Integer> type_price = new HashMap<Integer, Integer>();
+					type_price.put(moviePrice.get(0).getType_id(), nomalIndex);
+					type_price.put(moviePrice.get(1).getType_id(), studentIndex);
 					
 					main.setPage(6);
 				}
@@ -267,7 +251,7 @@ public class PersonsChoiceScreen extends ScreenFrame{
 				MoviePrice dto = new MoviePrice();
 				dto.setType_id(rs.getInt("type_id"));
 				dto.setType(rs.getString("type"));
-				dto.setPrice(rs.getInt("price"));
+				dto.setPrice(rs.getInt("ticket_price"));
 				
 				moviePrice.add(dto);
 			}

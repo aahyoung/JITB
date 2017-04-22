@@ -44,6 +44,7 @@ public class ClientMain extends JFrame implements Runnable{
 	Thread thread;
 	
 	public SelectList selectList = new SelectList();
+	public SelectCombo selectCombo = new SelectCombo();
 	
 	/*
 	 * »ý¼ºÀÚ

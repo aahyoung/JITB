@@ -43,8 +43,8 @@ public class WeeklySales extends JPanel implements ActionListener {
 		yy = cal.get(Calendar.YEAR);
 		mm = cal.get(Calendar.MONTH);
 		
-		la_title.setText(yy + "-" + (mm+1));
-		System.out.println("label에 찍히는 달은?" +mm+1);
+		//la_title.setText(yy + "-" + (mm+1));
+		//System.out.println("label에 찍히는 달은?" +mm+1);
 
 		p_north.setBackground(Color.ORANGE);
 		p_north.add(bt_prev);

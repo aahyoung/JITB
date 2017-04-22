@@ -51,23 +51,24 @@ public class WeeklySalesPanel extends JPanel {
 				// 실행될때마다 삭제해주기
 				sql.delete(0, sql.length());
 
-				sql.append("select 'movie' as type, sum(g.PRICE) as price, TO_CHAR(h.ORDER_TIME,'W') as week");
-				sql.append(" from BUY_MOVIE f, movie_price g, ORDER_MOVIE h");
-				sql.append(" where f.TYPE_ID = g.TYPE_ID");
-				sql.append(" and f.ORDER_ID = h.ORDER_ID");
-				sql.append(" and TO_CHAR(h.ORDER_TIME,'mm') = '" + month + "'");
-				sql.append(" and to_char(h.ORDER_TIME, 'W') = '" + i + "'");
-				sql.append(" group by TO_CHAR(h.ORDER_TIME,'W'), 'movie'");
-				sql.append(" union all select 'snack' as type, sum(i.PRICE) as price,");
-				sql.append(" TO_CHAR(k.ORDER_TIME,'W') as week");
-				sql.append(" from SUB_OPT i, BUY_SNACK j, ORDER_SNACK k");
-				sql.append(" where k.ORDER_ID= j.ORDER_ID");
-				sql.append(" and j.SUB_OPT_ID=i.SUB_OPT_ID");
-				sql.append(" and TO_CHAR(k.ORDER_TIME,'mm') = '" + month + "'");
-				sql.append(" and to_char(k.ORDER_TIME, 'W') = '" + i + "'");
-				sql.append(" group by TO_CHAR(k.ORDER_TIME,'W'), 'snack'");
+				sql.append("select 'movie' as type, d.TOTAL_PRICE as price,  TO_CHAR(d.ORDER_TIME,'w') as week");
+				sql.append(" FROM movie a, product b, buy_seat c, order_movie d");
+				sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
+				sql.append(" and b.PRODUCT_ID=c.PRODUCT_ID");
+				sql.append(" and d.ORDER_ID = c.ORDER_ID");
+				sql.append(" and TO_CHAR(d.ORDER_TIME,'mm') = '" + month + "'");
+				sql.append(" and TO_CHAR(d.ORDER_TIME,'W') = '" + i + "'");
+				sql.append(" group by 'movie', d.TOTAL_PRICE, TO_CHAR(d.ORDER_TIME,'w')");
+				sql.append(" union all select 'snack' as type, f.TOTAL_PRICE as total, TO_CHAR(f.ORDER_TIME,'W') as week");
+				sql.append(" from SUB_OPT d, BUY_SNACK e, ORDER_SNACK f ");
+				sql.append(" where e.ORDER_SNACK_ID = f.ORDER_SNACK_ID");
+				sql.append(" and e.SUB_OPT_ID=d.SUB_OPT_ID ");
+				sql.append(" and TO_CHAR(f.ORDER_TIME,'mm') = '" + month + "'");
+				sql.append(" and TO_CHAR(f.ORDER_TIME,'W') = '" + i + "'");
+				sql.append(" group by 'snack', f.TOTAL_PRICE, TO_CHAR(f.ORDER_TIME,'W')");
 				sql.append(" order by week asc");
 				System.out.println(sql);
+				
 
 				pstmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, 
 						ResultSet.CONCUR_READ_ONLY);
@@ -106,7 +107,6 @@ public class WeeklySalesPanel extends JPanel {
 					String[] str = list.get(a);
 					System.out.println(str[b]+",");
 				}
-				
 			}
 
 			/*

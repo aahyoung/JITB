@@ -47,32 +47,31 @@ public class DailySalesTable extends AbstractTableModel {
 		//System.out.println(con);
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("select a.name as 상품명, g.PRICE as total, h.ORDER_TIME");
-		sql.append(" from movie a, SCREENING_DATE b, START_TIME c, THEATER_OPERATE d");
-		sql.append(" ,SEAT e, BUY_MOVIE f, movie_price g, ORDER_MOVIE h");
-		sql.append(" where a.MOVIE_ID=b.MOVIE_ID");
-		sql.append(" and b.SCREENING_DATE_ID=c.SCREENING_DATE_ID");
-		sql.append(" and c.START_TIME_ID=d.START_TIME_ID");
-		sql.append(" and d.THEATER_OPERATE_ID=e.THEATER_OPERATE_ID");
-		sql.append(" and e.SEAT_ID=f.SEAT_ID");
-		sql.append(" and f.TYPE_ID=g.TYPE_ID");
-		sql.append(" and f.ORDER_ID = h.ORDER_ID");
-		sql.append(" and to_char(h.order_time, 'yyyy-mm-dd')= ?");
-		sql.append(" union all select i.NAME as 상품명, i.PRICE as price, k.ORDER_TIME");
-		sql.append(" from SUB_OPT i, BUY_SNACK j, ORDER_SNACK k");
-		sql.append(" where k.ORDER_ID= j.ORDER_ID");
-		sql.append(" and j.SUB_OPT_ID=i.SUB_OPT_ID");
-		sql.append(" and to_char(k.order_time, 'yyyy-mm-dd')= ?");
-		sql.append(" order by order_time");
-		
+		sql.append("SELECT a.name as 상품명, e.TOTAL_PRICE as total, e.ORDER_TIME as time");
+		sql.append(" FROM movie a, product b, buy_seat c, movie_price d, order_movie e");
+		sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
+		sql.append(" and b.PRODUCT_ID=c.PRODUCT_ID");
+		sql.append(" and d.TYPE_ID = c.TYPE_ID");
+		sql.append(" and e.ORDER_ID = c.ORDER_ID");
+		sql.append(" and to_char(e.order_time, 'yyyy-mm-dd')= ?");
+		sql.append(" union all select d.name as 상품명, f.TOTAL_PRICE as total, f.ORDER_TIME as time");
+		sql.append(" from SUB_OPT d, BUY_SNACK e, ORDER_SNACK f ");
+		sql.append(" where e.ORDER_SNACK_ID = f.ORDER_SNACK_ID");
+		sql.append(" and e.SUB_OPT_ID=d.SUB_OPT_ID ");
+		sql.append(" and TO_CHAR(f.ORDER_TIME,'yyyy-mm-dd')= ?");
+		sql.append(" order by time asc");
+		System.out.println(sql);
+	
 
+		
 		//System.out.println(today.getValue().toString());
 		//System.out.println(sql.toString());
 		String day = today.getValue().toString();
-		//System.out.println("출력"+day);
+		System.out.println("출력"+day);
 
 		try {
 			pstmt=con.prepareStatement(sql.toString());
+			
 			pstmt.setString(1, day);
 			pstmt.setString(2, day);
 			
@@ -90,11 +89,10 @@ public class DailySalesTable extends AbstractTableModel {
 			int total=0;
 
 			while(rs.next()) {
-				//System.out.println(rs.next());
 				Vector<String> vec = new Vector<String>();
 				vec.add(rs.getString("상품명"));
 				vec.add(rs.getString("total"));
-				vec.add(rs.getString("ORDER_TIME"));
+				vec.add(rs.getString("time"));
 				
 				total+= rs.getInt("total");
 				salesTotal=total;

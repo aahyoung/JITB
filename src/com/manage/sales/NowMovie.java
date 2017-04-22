@@ -42,17 +42,14 @@ public class NowMovie extends JPanel{
 
 	public void loadData() {
 		
-		String sql = "select a.name as 상품명, a.poster as poster, sum(g.price) as total, "
-				+ " MAX(b.SCREENING_DATE) as 종영일, MIN(b.SCREENING_DATE) as 상영시작일"
-				+ ", count(f.buy_movie_id) as 구매건수"
-				+ " from movie a full outer join SCREENING_DATE b on a.MOVIE_ID=b.MOVIE_ID"
-				+ " full outer join start_time c on b.SCREENING_DATE_ID=c.SCREENING_DATE_ID"
-				+ " full outer join theater_operate d on d.START_TIME_ID=c.START_TIME_ID"
-				+ " full outer join seat e on e.THEATER_OPERATE_ID=d.THEATER_OPERATE_ID"
-				+ " full outer join buy_movie f on f.seat_id = e.SEAT_ID"
-				+ " full outer join movie_price g on g.TYPE_ID=f.TYPE_ID"
-				+ " group by a. name, a.poster"
-				+ " having max(screening_date) >= TO_CHAR(SYSDATE, 'YYYY-MM-DD')";
+		String sql = "SELECT a.name as 상품명, a.poster, a.END_DATE as 종영일, a.START_DATE 상영시작일,"
+				+ " sum(e.TOTAL_PRICE) as total, count(e.order_id) as 구매건수"
+				+ " FROM movie a FULL OUTER JOIN product b ON a.MOVIE_ID = b.MOVIE_ID"
+				+ " FULL OUTER JOIN buy_seat c ON b.PRODUCT_ID=c.PRODUCT_ID"
+				+ " FULL OUTER JOIN movie_price d ON d.TYPE_ID = c.TYPE_ID"
+				+ " FULL OUTER JOIN order_movie e on e.ORDER_ID = c.ORDER_ID"
+				+ " GROUP BY a.name, a.poster, a.END_DATE, a.START_DATE"
+				+ " HAVING a.END_DATE >= TO_CHAR (SYSDATE, 'YYYY-MM-DD')";
 		
 		System.out.println(sql);
 
@@ -69,8 +66,8 @@ public class NowMovie extends JPanel{
 				dto.setName(rs.getString("상품명"));
 				dto.setPoster(rs.getString("poster"));
 				dto.setPrice(rs.getInt("total"));
-				dto.setEnd_date(rs.getString("종영일"));
 				dto.setStart_date(rs.getString("상영시작일"));
+				dto.setEnd_date(rs.getString("종영일"));
 				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);

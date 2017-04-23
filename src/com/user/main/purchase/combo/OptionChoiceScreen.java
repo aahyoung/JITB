@@ -147,15 +147,15 @@ public class OptionChoiceScreen extends ScreenFrame{
 				for(int j=0; j<topOpts.size(); j++){
 					TopOption topOpt = topOpts.get(j);
 					if(subOpt.getOpt_size_id() == topOpt.comboList.getSize_id()){
-						for(int k=0; k<topOpt.selectedId.length; k++){
-							if(topOpt.selectedId[k] == 0){
-								topOpt.selectedId[k] = subOpt.getSub_opt_id();
-								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
-								return;
-							}
-						}
-						
-						//전부 선택한 경우 변경을 하기 위해 버퍼를 둔다.
+//						for(int k=0; k<topOpt.selectedId.length; k++){
+//							if(topOpt.selectedId[k] == 0){
+//								topOpt.selectedId[k] = subOpt.getSub_opt_id();
+//								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+//								return;
+//							}
+//						}
+//						
+//						//전부 선택한 경우 변경을 하기 위해 버퍼를 둔다.
 						for(int k=0; k<topOpt.isSelectBuffr.length; k++){
 							if(topOpt.isSelectBuffr[k] == false){
 								topOpt.isSelectBuffr[k] = true;

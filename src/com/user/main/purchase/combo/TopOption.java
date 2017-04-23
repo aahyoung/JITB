@@ -31,13 +31,13 @@ public class TopOption extends JPanel{
 				URL url = getClass().getResource("/"+comboList.getTop_opt_img());
 				try {
 					Image img = ImageIO.read(url);
-					g.drawImage(img, 0, 0, 150, 200, this);
+					g.drawImage(img, 0, 0, 150, 180, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		};
-		opt_img.setPreferredSize(new Dimension(150, 200));
+		opt_img.setPreferredSize(new Dimension(150, 180));
 		add(opt_img);
 		
 		for(int j=0; j<comboList.getAmount(); j++){

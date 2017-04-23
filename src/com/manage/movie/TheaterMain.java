@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,11 +16,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.jitb.db.DBManager;
 
@@ -33,9 +41,9 @@ import com.jitb.db.DBManager;
  * */
 
 public class TheaterMain extends JPanel implements ActionListener{
-	JPanel p_north, p_content;
+	JPanel p_north, p_load, p_content;
 	JPanel p_list, p_warning;
-	JButton bt_add;
+	JButton bt_add, bt_form, bt_seat;
 	
 	JLabel lb_title, lb_warning;
 	
@@ -77,6 +85,7 @@ public class TheaterMain extends JPanel implements ActionListener{
 		getTheaterList();
 		
 		p_north=new JPanel();
+		p_load=new JPanel();
 		p_content=new JPanel();
 		
 		p_list=new JPanel();
@@ -86,16 +95,24 @@ public class TheaterMain extends JPanel implements ActionListener{
 		lb_warning=new JLabel("현재 등록된 영화관이 없습니다.\n 영화관을 등록해주세요.");
 		
 		bt_add=new JButton("영화관 추가");
+		bt_form=new JButton("좌석표 양식 다운");
+		bt_seat=new JButton("좌석표 일괄 등록");
 		
 		// 영화관 목록 패널에 scroll 붙이기
 		//scroll=new JScrollPane(p_list);
 		showTheaterList();
 		
+		p_load.add(bt_form);
+		p_load.add(bt_seat);
+		
 		p_north.setLayout(new BorderLayout());
 		p_north.add(lb_title, BorderLayout.WEST);
+		p_north.add(p_load);
 		p_north.add(bt_add, BorderLayout.EAST);
 		
 		bt_add.addActionListener(this);
+		bt_form.addActionListener(this);
+		bt_seat.addActionListener(this);
 		
 		//p_warning.add(lb_warning);
 		//p_warning.setBackground(Color.red);
@@ -205,11 +222,72 @@ public class TheaterMain extends JPanel implements ActionListener{
 			System.out.println("영화관 출력");
 		}
 	}
+	
+	// 영화관 좌석표 양식 저장 및 다운(일단은 저장만 가능한 상태, 서버 구축되면 서버에 올릴 예정)
+	public void saveExcelForm(){
+		System.out.println("좌석표 양식");
+		if(theaterList.size()==0){
+			JOptionPane.showMessageDialog(this, "아직 영화관이 추가되지 않았습니다.");
+			return;
+		}
+		HSSFRow row;
+		HSSFCell cell = null;
+		
+		HSSFWorkbook workbook=new HSSFWorkbook();
+		
+		// sheet명 설정
+		// 영화관마다 새로운 sheet 생성
+		HSSFSheet[] sheet=new HSSFSheet[theaterList.size()];
+		for(int i=0; i<sheet.length; i++){
+			sheet[i]=workbook.createSheet(theaterList.get(i).getName()+"관");		
+			
+			// 10*10, 마지막 줄은 총 좌석수 표시
+			for(int j=0; j<10; j++){
+				// 출력 row 생성
+				row=sheet[i].createRow(j);
+				for(int k=0; k<10; k++){
+					row.createCell(k).setCellValue("O");
+				}
+			}
+			row=sheet[i].createRow(10);
+			row.createCell(0).setCellValue("총 좌석수");
+			row.createCell(1).setCellValue(theaterList.get(i).getCount());
+			
+			// cell 가운데 정렬
+			/*
+			CellStyle center=workbook.createCellStyle();
+			center.setAlignment(CellStyle.ALIGN_CENTER);
+			cell.setCellStyle(center);
+			*/
+			
+			FileOutputStream fos;
+			try {
+				fos=new FileOutputStream("res_manager/영화관 좌석표.xls");
+				workbook.write(fos);
+				fos.close();
+				
+				JOptionPane.showMessageDialog(this, "좌석표 양식 다운 완료");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
+	// 서버 구축하면 올릴 예정
+	// 영화관 좌석표 등록
+	public void loadSeatExcel(){
+		
+	}
 
-	// 영화관 추가 버튼
+	// 영화관 추가, 영화관 좌석표 등록 버튼
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
-	
+		
+		// 영화관 추가
 		if(obj==bt_add){
 			if(count>=10){
 				JOptionPane.showMessageDialog(this, "영화관의 최대 개수는 10개입니다. 더 이상 추가할 수 없습니다.");
@@ -218,6 +296,15 @@ public class TheaterMain extends JPanel implements ActionListener{
 				addTheater=new AddTheater(this);
 				System.out.println("영화관 추가");
 			}
+		}
+		
+		// 영화관 좌석표 양식 다운
+		else if(obj==bt_form){
+			saveExcelForm();
+		}
+		// 영화관 좌석표 등록
+		else if(obj==bt_seat){
+			loadSeatExcel();
 		}
 	}
 }

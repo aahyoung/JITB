@@ -6,6 +6,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,9 +24,15 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.jitb.db.DBManager;
 
@@ -42,9 +51,9 @@ import oracle.sql.DATE;
 
 public class MovieMain extends JPanel implements ActionListener{
 	JPanel p_north, p_content;
-	JPanel p_load, p_list;
+	JPanel p_form, p_list;
 	JPanel p_upcoming, p_present, p_past;
-	JButton bt_back, bt_load, bt_add;
+	JButton bt_back, bt_form, bt_load, bt_add;
 	
 	JComboBox<String> list;
 	
@@ -96,7 +105,19 @@ public class MovieMain extends JPanel implements ActionListener{
 	// default 이미지 파일 경로
 	String path="res_manager/";
 	
-	public MovieMain() {
+	//TheaterMain theaterMain;
+	// 최상위 main
+	MovieTheaterTab movieTheaterTab;
+	
+	// 지점 이름
+	String branch_name;
+	
+	// 각 Excel 상영날짜에 대한 상영중인 영화를 담을 collection framework
+	ArrayList<Movie> excelMovie=new ArrayList<Movie>();
+	
+	public MovieMain(MovieTheaterTab movieTheaterTab) {
+		this.movieTheaterTab=movieTheaterTab;
+		
 		// DB 연동
 		connect();
 		
@@ -109,7 +130,7 @@ public class MovieMain extends JPanel implements ActionListener{
 		//present=new PresentMovie();
 		//past=new PastMovie();
 		
-		p_load=new JPanel();
+		p_form=new JPanel();
 		p_list=new JPanel();
 		
 		list=new JComboBox<String>();
@@ -119,6 +140,7 @@ public class MovieMain extends JPanel implements ActionListener{
 		
 		lb_title=new JLabel("영화 목록");
 		
+		bt_form=new JButton("상영시간표 양식");
 		bt_load=new JButton("상영시간표 등록");
 		bt_add=new JButton("새로운 영화 추가");
 		
@@ -127,13 +149,15 @@ public class MovieMain extends JPanel implements ActionListener{
 		// 영화 목록 패널에 scroll 붙이기
 		//scroll=new JScrollPane(p_list);
 		
-		p_load.add(bt_load);
+		p_form.add(bt_form);
+		p_form.add(bt_load);
+		p_form.add(bt_add);
 		p_list.add(list);
 		
 		p_north.setLayout(new BorderLayout());
 		p_north.add(lb_title, BorderLayout.WEST);
 		p_north.add(p_list);
-		p_north.add(bt_add, BorderLayout.EAST);
+		p_north.add(p_form, BorderLayout.EAST);
 		
 		//p_present.setBackground(Color.green);
 		//p_past.setBackground(Color.cyan);
@@ -141,10 +165,12 @@ public class MovieMain extends JPanel implements ActionListener{
 		p_content.setLayout(new BorderLayout());
 		//p_content.add(present);
 		//p_content.add(past);
-		p_content.add(p_load, BorderLayout.EAST);
+		//p_content.add(bt_add, BorderLayout.EAST);
 		p_content.add(p_present);
 		//p_content.add(p_past);
 		
+		bt_form.addActionListener(this);
+		bt_load.addActionListener(this);
 		bt_add.addActionListener(this);
 		list.addActionListener(this);
 		
@@ -163,6 +189,68 @@ public class MovieMain extends JPanel implements ActionListener{
 	public void connect(){
 		manager=DBManager.getInstance();
 		con=manager.getConnect();
+	}
+	
+	// 현재 정보를(지점, 영화관, 등등) DB에서 가져오기
+	public void getInfo(String date){
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		
+		excelMovie.removeAll(excelMovie);
+		
+		StringBuffer sql=new StringBuffer();
+		// 현재 지점 정보 얻기
+		sql.append("select b.name from theater t, branch b where t.branch_id=b.branch_id group by b.name");
+		try {
+			pstmt=con.prepareStatement(sql.toString());
+			rs=pstmt.executeQuery();
+			rs.next();
+			branch_name=rs.getString("name");
+			
+			// 상영 날짜와 비교하여 현재 상영중인 영화 목록 얻기
+			sql.delete(0, sql.length());
+			sql.append("select * from movie where start_date<=? and end_date>=?");
+			pstmt=con.prepareStatement(sql.toString());
+			pstmt.setString(1, date);
+			pstmt.setString(2, date);
+			rs=pstmt.executeQuery();
+			
+			while(rs.next()){
+				Movie dto=new Movie();
+
+				dto.setMovie_id(rs.getInt("movie_id"));
+				dto.setPoster(rs.getString("poster"));
+				dto.setName(rs.getString("name"));
+				dto.setDirector(rs.getString("director"));
+				dto.setMain_actor(rs.getString("main_actor"));
+				dto.setStory(rs.getString("story"));
+				dto.setStart_date(rs.getString("start_date"));
+				dto.setEnd_date(rs.getString("end_date"));
+				dto.setRun_time(rs.getInt("run_time"));
+				
+				excelMovie.add(dto);
+				System.out.println(excelMovie.size());
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(rs!=null){
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(pstmt!=null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 		
 	// 현재 존재하는 영화를 DB에서 가져오기
@@ -406,10 +494,127 @@ public class MovieMain extends JPanel implements ActionListener{
 			}
 		}
 	}
+	
+	// 상영시간표 양식 저장 및 다운(일단은 저장만 가능한 상태, 서버 구축되면 서버에 올릴 예정)
+	public void saveExcelForm(){
+		System.out.println("상영시간표 양식");
+		
+		if(present_movies.size()==0){
+			JOptionPane.showMessageDialog(this, "현재 상영중인 영화가 없습니다.");
+			return;
+		}
+		HSSFRow row;
+		HSSFCell cell = null;
+		
+		HSSFWorkbook workbook=new HSSFWorkbook();
+		
+		// sheet명 설정
+		// 상영 날짜마다 새로운 sheet 생성(현재 날짜로부터 7일 후까지 설정 가능)
+		HSSFSheet[] sheet=new HSSFSheet[7];
+		
+		Calendar cal=Calendar.getInstance();
+		String date;
+		//cal.add(cal.DATE, 7);
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		
+		for(int i=0; i<sheet.length; i++){
+			
+			date=format.format(cal.getTime());
+			sheet[i]=workbook.createSheet(date);
+			cal.add(cal.DATE, 1);
+			getInfo(date);
+			
+			// 테이블 형태를 모르는 관리자에게 간단한 정보 알려주기 위한 양식 추가
+			// 기본 row는 100줄로 설정(CGV 신촌아트레온 보면 70줄 넘어감ㅜㅜ)
+			for(int j=0; j<100; j++){
+				// 출력 row 생성
+				row=sheet[i].createRow(j);
+				for(int k=0; k<14; k++){
+					if(j==0){
+						row.createCell(0).setCellValue("CGV "+branch_name);
+					}
+					else if(j==1){
+						row.createCell(0).setCellValue("현재 상영 날짜");
+						row.createCell(1).setCellValue(date);
+					}
+					else if(j==2){
+						row.createCell(0).setCellValue("상영중인 영화 목록");
+						row.createCell(6).setCellValue("상영관 목록");
+						row.createCell(10).setCellValue("상영 시간표");
+					}
+					else if(j==3){
+						row.createCell(0).setCellValue("번호");
+						row.createCell(1).setCellValue("제목");
+						row.createCell(2).setCellValue("개봉 일자");
+						row.createCell(3).setCellValue("종료 일자");
+						row.createCell(4).setCellValue("상영 시간");
+						
+						row.createCell(6).setCellValue("번호");
+						row.createCell(7).setCellValue("이름");
+						row.createCell(8).setCellValue("좌석수");
+						
+						row.createCell(10).setCellValue("관");
+						row.createCell(11).setCellValue("날짜");
+						row.createCell(12).setCellValue("시간");
+						row.createCell(13).setCellValue("영화");
+					}
+					
+					// 상영중인 영화 목록
+					for(int movie_cnt=0; movie_cnt<excelMovie.size(); movie_cnt++){
+						if(j==4+movie_cnt){
+							row.createCell(0).setCellValue(excelMovie.get(movie_cnt).getMovie_id());
+							row.createCell(1).setCellValue(excelMovie.get(movie_cnt).getName());
+							row.createCell(2).setCellValue(excelMovie.get(movie_cnt).getStart_date());
+							row.createCell(3).setCellValue(excelMovie.get(movie_cnt).getEnd_date());
+							row.createCell(4).setCellValue(excelMovie.get(movie_cnt).getRun_time());
+						}
+					}
+					
+					// 상영관 목록
+					for(int theater_cnt=0; theater_cnt<movieTheaterTab.theaterMain.theaterList.size(); theater_cnt++){
+						if(j==4+theater_cnt){
+							row.createCell(6).setCellValue(movieTheaterTab.theaterMain.theaterList.get(theater_cnt).getTheater_id());
+							row.createCell(7).setCellValue(movieTheaterTab.theaterMain.theaterList.get(theater_cnt).getName()+"관");
+							row.createCell(8).setCellValue(movieTheaterTab.theaterMain.theaterList.get(theater_cnt).getCount());
+						}
+					}
+				}
+			}
+			
+			// cell 가운데 정렬
+			/*
+			CellStyle center=workbook.createCellStyle();
+			center.setAlignment(CellStyle.ALIGN_CENTER);
+			cell.setCellStyle(center);
+			*/
+			
+			FileOutputStream fos;
+			try {
+				fos=new FileOutputStream("res_manager/상영시간표.xls");
+				workbook.write(fos);
+				fos.close();
+				
+				//JOptionPane.showMessageDialog(this, "상영시간표 양식 다운 완료");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally{
+				
+			}
+		}
+
+	}
 
 	// Excel파일로부터 상영시간표 등록
 	public void setSchedule(){
-		
+		FileInputStream fis;
+		try {
+			fis=new FileInputStream("res_manager/상영시간표.xls");
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// 영화 패널 설정
@@ -446,6 +651,7 @@ public class MovieMain extends JPanel implements ActionListener{
 					System.out.println("과거");
 					movieItem.type="과거";
 					// 선택한 각 영화의 index를 넘겨줘야하는데ㅜㅜ
+					//movieItem.index=
 				}
 				// 현재 상영작(시작 일자가 오늘보다 작거나 같고 종료 일자가 오늘보다 큰 경우)
 				else if(start<=0 && end>0){
@@ -475,11 +681,16 @@ public class MovieMain extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
 		
-		if(obj==bt_load){
+		if(obj==bt_form){
+			saveExcelForm();
+			JOptionPane.showMessageDialog(this, "상영시간표 양식 다운 완료");
+		}
+		
+		else if(obj==bt_load){
 			setSchedule();
 		}
 		
-		if(obj==bt_add){
+		else if(obj==bt_add){
 			addMovie=new AddMovie(this);
 			System.out.println("영화 추가");
 		}

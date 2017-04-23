@@ -23,7 +23,7 @@ public class MovieTheaterTab extends JPanel{
 		tabbedPane = new JTabbedPane();
 		
 		theaterMain=new TheaterMain();
-		movieMain=new MovieMain();
+		movieMain=new MovieMain(this);
 		
 		// tab제목 : 영화관, 내용 : theater
 		theater=makeInnerPanel(theaterMain);

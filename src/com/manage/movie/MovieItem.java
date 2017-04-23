@@ -31,7 +31,7 @@ public class MovieItem extends JPanel implements ActionListener{
 	MovieMain movieMain;
 	
 	// 영화 정보 수정/삭제 가능
-	EditMovie editMovie;
+	//EditMovie editMovie;
 	
 	// 현재 선택한 영화 index
 	int index;
@@ -86,14 +86,14 @@ public class MovieItem extends JPanel implements ActionListener{
 			for(int i=0; i<movieMain.past_movies.size(); i++){
 				
 				// 선택한 영화의 상세 정보만 띄우기
-				if(i==)
+				// 각 상영작 리스트에서 선택한 index를 받아와야하는데ㅜㅜ movie_id자체를 넘길까?
 				System.out.println(movieMain.past_movies.get(i).name+" 선택");
 				
 				// 상세 보기를 선택한 영화의 id 구하기
 				int movie_id=movieMain.pastList.get(i).getMovie_id();
 				
-				
-				editMovie=new EditMovie(movieMain, this, movie_id);
+				// 영화 정보 수정(EditMovie 파일 어디감ㅠㅠ)
+				//editMovie=new EditMovie(movieMain, this, movie_id);
 			}
 		}
 
@@ -104,7 +104,7 @@ public class MovieItem extends JPanel implements ActionListener{
 				// 상세 보기를 선택한 영화의 id 구하기
 				int movie_id=movieMain.presentList.get(i).getMovie_id();
 				
-				editMovie=new EditMovie(movieMain, this, movie_id);
+				//editMovie=new EditMovie(movieMain, this, movie_id);
 			}
 		}
 		else if(type.equals("예정")){
@@ -114,7 +114,7 @@ public class MovieItem extends JPanel implements ActionListener{
 				// 상세 보기를 선택한 영화의 id 구하기
 				int movie_id=movieMain.upcomingList.get(i).getMovie_id();
 				
-				editMovie=new EditMovie(movieMain, this, movie_id);
+				//editMovie=new EditMovie(movieMain, this, movie_id);
 			}
 		}
 		

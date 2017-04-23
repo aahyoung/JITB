@@ -59,8 +59,6 @@ public class WeeklySales extends JPanel implements ActionListener {
 		p_center.setLayout(new BorderLayout());
 		//p_center.add();
 
-		//p_date.setLayout(new BorderLayout());
-
 		// 패널들 붙이기
 		add(p_north, BorderLayout.NORTH);
 		add(p_center);
@@ -84,16 +82,16 @@ public class WeeklySales extends JPanel implements ActionListener {
 
 	public void printDate() {
 		
-		
 		weeklyChart = new WeeklySalesPanel(con);
 		//위클리차트의 ArrayList는 월을 바꿀때마다 초기화 되거나, 모두 삭제되어야 한다.
 		//왜?? for문 돌릴때마다 5개씩 누적되니깐...
-		weeklyChart.list.removeAll(weeklyChart.list);
-
 		p_center.updateUI();
+		weeklyChart.list.removeAll(weeklyChart.list);
+		
 		
 		//현재 날짜를 라벨에 출력
-		la_title.setText(yy + "-" + (cal.get(Calendar.MONTH)+1));
+		la_title.setText(yy+"-"+(mm+1));
+		//la_title.setText(yy + "-" + (cal.get(Calendar.MONTH)+1));
 		cal.set(yy, (mm+1), 0);
 		System.out.println("여기서 mm은"+cal.get(Calendar.MONTH));
 
@@ -112,7 +110,7 @@ public class WeeklySales extends JPanel implements ActionListener {
 		//for (int i = 1; i <= lastWeek; i++) {
 			//System.out.println("주가 찍힌다" + i);
 			//월이 한자리수로 찍히는 문제점을 해결하기 위해 getDateStr 이용해 04로 출력!
-			weeklyChart.getData(DateUtil.getDateStr(Integer.toString(month+1)), lastWeek);
+		weeklyChart.getData(DateUtil.getDateStr(Integer.toString(month+1)), lastWeek);
 		//}
 	}
 
@@ -127,23 +125,29 @@ public class WeeklySales extends JPanel implements ActionListener {
 				yy--;
 			}
 			printDate();
+			graph();
 			
-		} else if (obj == bt_next) {
+		} 
+		if (obj == bt_next) {
 			mm++;
 			if (mm > 11) {
 				mm = 0;
 				yy++;
 			}
 			printDate();
+			graph();
 		}
-		
 	}
 
 	// 그래프 부르기!
 	public void graph() {
+		weeklyChart.createChart().repaint();
+		weeklyChart.createChart().updateUI();
+		p_center.removeAll();
 		p_center.add(weeklyChart.createChart());
-		p_center.updateUI();
+		p_center.revalidate();
+		//p_center.updateUI();
+		
 		
 	}
-
 }

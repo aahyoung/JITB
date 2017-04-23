@@ -1,5 +1,5 @@
 /*
-영화관 총 매출을 보여주는 main 패널
+ 영화관 총 매출을 보여주는 main 패널
  */
 package com.manage.sales;
 
@@ -91,7 +91,7 @@ public class SalesTheater extends JPanel implements ItemListener{
 		con = manager.getConnect();
 		//((DailySales)p_daily).setConnection(con);
 		//((WeeklySales)p_weekly).setConnection(con);
-		((MonthlySales)p_monthly).setConnection(con);
+		//((MonthlySales)p_monthly).setConnection(con);
 	}
 	
 	public static void main(String[] args) {

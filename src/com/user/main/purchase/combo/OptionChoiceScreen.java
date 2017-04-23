@@ -7,6 +7,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -31,7 +34,7 @@ public class OptionChoiceScreen extends ScreenFrame{
 	Canvas can_subOpt;
 	Canvas bt_confirm;
 	
-	ArrayList<TopOption> topOpt = new ArrayList<TopOption>();
+	ArrayList<TopOption> topOpts = new ArrayList<TopOption>();
 	ArrayList<SubOption> subOpts = new ArrayList<SubOption>();
 	
 	boolean isFirst = true;
@@ -112,6 +115,21 @@ public class OptionChoiceScreen extends ScreenFrame{
 		can_subOpt.setPreferredSize(new Dimension(800, 250));
 		bt_confirm.setPreferredSize(new Dimension(200, 50));
 		
+		can_subOpt.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Point point = e.getPoint();
+				clickSubOpt(point);
+			}
+		});
+		
+		bt_confirm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				clickConfirm();
+			}
+		});
+		
 		p_price.add(la_priceInfo);
 		p_price.add(la_price);
 		add(la_comboName);
@@ -120,6 +138,61 @@ public class OptionChoiceScreen extends ScreenFrame{
 		add(p_topOpt);
 		add(can_subOpt);
 		add(bt_confirm);
+	}
+	
+	public void clickSubOpt(Point point){
+		for(int i=0; i<subOpts.size(); i++){
+			SubOption subOpt = subOpts.get(i);
+			if(subOpts.get(i).contains(point)){
+				for(int j=0; j<topOpts.size(); j++){
+					TopOption topOpt = topOpts.get(j);
+					if(subOpt.getOpt_size_id() == topOpt.comboList.getSize_id()){
+						for(int k=0; k<topOpt.selectedId.length; k++){
+							if(topOpt.selectedId[k] == 0){
+								topOpt.selectedId[k] = subOpt.getSub_opt_id();
+								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+								return;
+							}
+						}
+						
+						//전부 선택한 경우 변경을 하기 위해 버퍼를 둔다.
+						for(int k=0; k<topOpt.isSelectBuffr.length; k++){
+							if(topOpt.isSelectBuffr[k] == false){
+								topOpt.isSelectBuffr[k] = true;
+								topOpt.selectedId[k] = subOpt.getSub_opt_id();
+								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+								return;
+							}
+						}
+						
+						//만약 버퍼조차 전부 찬다면 다시 false로 되돌려놓고 방금 선택한 값을 등록한다.
+						for(int k=0; k<topOpt.isSelectBuffr.length; k++){
+							topOpt.isSelectBuffr[k] = false;
+						}
+						topOpt.isSelectBuffr[0] = true;
+						topOpt.selectedId[0] = subOpt.getSub_opt_id();
+						topOpt.la_tags.get(0).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+					}
+				}
+			}
+		}
+	}
+	
+	public void clickConfirm(){
+		ArrayList<Integer> sub_opt_id = new ArrayList<Integer>();
+		for(int i=0; i<topOpts.size(); i++){
+			for(int j=0; j<topOpts.get(i).selectedId.length; j++){
+				if(topOpts.get(i).selectedId[j] == 0){
+					isFirst = true;
+					can_subOpt.repaint();
+					return;
+				}else{
+					sub_opt_id.add(topOpts.get(i).selectedId[j]);
+				}
+			}
+		}
+		main.selectCombo.setSub_opt_id(sub_opt_id);
+		main.setPage(11);
 	}
 	
 	public void selectSubOpt(int size_id){
@@ -144,11 +217,23 @@ public class OptionChoiceScreen extends ScreenFrame{
 				subOpt.setSub_opt_img(rs.getString("옵션이미지"));
 				subOpt.setPlus_price(rs.getInt("옵션가격"));
 				subOpt.setSub_opt_size(rs.getString("옵션크기"));
+				subOpt.setOpt_size_id(size_id);
 				
 				subOpts.add(subOpt);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally{
+			try {
+				if(rs != null){
+					rs.close();
+				}
+				if(pstmt != null){
+					pstmt.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

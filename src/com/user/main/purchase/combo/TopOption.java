@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -17,6 +18,10 @@ public class TopOption extends JPanel{
 	ComboList comboList;
 	
 	Canvas opt_img;
+	ArrayList<JLabel> la_tags = new ArrayList<JLabel>();
+	int[] selectedId;
+	boolean[] isSelectBuffr;
+	
 	public TopOption(ComboList comboList) {
 		this.comboList = comboList;
 		
@@ -40,8 +45,12 @@ public class TopOption extends JPanel{
 			opt.setFont(new Font("Malgun Gothic", Font.PLAIN, 17));
 			opt.setForeground(Color.WHITE);
 			opt.setPreferredSize(new Dimension(150, 17));
+			la_tags.add(opt);
 			add(opt);
 		}
+		selectedId = new int[la_tags.size()];
+		isSelectBuffr = new boolean[la_tags.size()];
+		
 		setPreferredSize(new Dimension(150, 250));
 		setBackground(new Color(33,33,33));
 	}

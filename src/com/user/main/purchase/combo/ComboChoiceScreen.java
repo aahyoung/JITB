@@ -112,7 +112,7 @@ public class ComboChoiceScreen extends ScreenFrame{
 							});
 							
 							nextScreen.p_topOpt.add(topOpt);
-							nextScreen.topOpt.add(topOpt);
+							nextScreen.topOpts.add(topOpt);
 							if(i < combo.comboLists.size()-1){
 								JLabel label = new JLabel("+");
 								label.setFont(new Font("Malgun Gothic", Font.PLAIN, 30));

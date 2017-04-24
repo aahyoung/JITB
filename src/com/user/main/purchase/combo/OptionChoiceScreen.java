@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -23,6 +24,7 @@ import javax.swing.JPanel;
 
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
+import com.user.main.purchase.ChoiceConfirmScreen;
 
 public class OptionChoiceScreen extends ScreenFrame{
 	JLabel la_comboName;
@@ -38,6 +40,11 @@ public class OptionChoiceScreen extends ScreenFrame{
 	ArrayList<SubOption> subOpts = new ArrayList<SubOption>();
 	
 	boolean isFirst = true;
+	boolean isDragged;
+	int[] offX;
+	
+	Image buffrImg;
+	Graphics2D buffr;
 	
 	public OptionChoiceScreen(ClientMain main) {
 		super(main);
@@ -45,38 +52,49 @@ public class OptionChoiceScreen extends ScreenFrame{
 		la_comboName = new JLabel("콤보이름");
 		la_priceInfo = new JLabel("총 결제금액");
 		p_price = new JPanel();
-		la_price = new JLabel("0원");
+		la_price = new JLabel("0");
 		la_optInfo = new JLabel("콤보 옵션을 선택해주세요", JLabel.CENTER);
 		p_topOpt = new JPanel();
+		
+		setSuboptBounds();
 		can_subOpt = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
 				Graphics2D g2 = (Graphics2D) g;
+				
+				buffrImg = createImage(800, 250);
+				buffr = (Graphics2D)buffrImg.getGraphics();
+				
 				if(!isFirst){
 					can_subOpt.setBackground(new Color(25,25,25));
 					for(int i=0; i<subOpts.size(); i++){
 						SubOption subOpt = subOpts.get(i);
-						subOpt.setBounds(25+(i*150), 25, 150, 200);
 						
 						URL url = getClass().getResource("/"+subOpt.getSub_opt_img());
 						try {
 							Image img = ImageIO.read(url);
-							g2.drawImage(img, subOpt.x+25, subOpt.y, subOpt.width-50, subOpt.height-50, this);
+							buffr.drawImage(img, subOpt.x+25, subOpt.y, subOpt.width-50, subOpt.height-50, this);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						g2.setColor(Color.WHITE);
-						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
-						g2.drawString(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")", subOpt.x+10, subOpt.y+180);
-						g2.drawString("(+"+subOpt.getPlus_price()+"원)", subOpt.x+30, subOpt.y+205);
-						//g2.draw(subOpt);
+						buffr.setColor(Color.WHITE);
+						buffr.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+						buffr.drawString(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")", subOpt.x+10, subOpt.y+180);
+						buffr.drawString("(+"+subOpt.getPlus_price()+"원)", subOpt.x+30, subOpt.y+205);
+						//buffr.draw(subOpt);
 					}
 				}else{
 					isFirst = false;
-					g2.setColor(new Color(66, 106, 126));
-					g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 25));
-					g2.drawString("선택하고자 하는 옵션 이미지를 눌러주세요.", 140, 80);
+					buffr.setColor(new Color(66, 106, 126));
+					buffr.setFont(new Font("Malgun Gothic", Font.PLAIN, 25));
+					buffr.drawString("선택하고자 하는 옵션 이미지를 눌러주세요.", 140, 80);
 				}
+				g2.drawImage(buffrImg, 0, 0, 800, 250, this);
+			}
+			
+			@Override
+			public void update(Graphics g) {
+				paint(g);
 			}
 		};
 		bt_confirm = new Canvas(){
@@ -85,7 +103,7 @@ public class OptionChoiceScreen extends ScreenFrame{
 				URL url = getClass().getResource("/bt_select_end.png");
 				try {
 					Image img = ImageIO.read(url);
-					g.drawImage(img, 0, 0, 200, 50, this);
+					g.drawImage(img, 0, 50, 200, 50, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -113,13 +131,43 @@ public class OptionChoiceScreen extends ScreenFrame{
 		la_optInfo.setPreferredSize(new Dimension(700, 150));
 		p_topOpt.setPreferredSize(new Dimension(700, 300));
 		can_subOpt.setPreferredSize(new Dimension(800, 250));
-		bt_confirm.setPreferredSize(new Dimension(200, 50));
+		bt_confirm.setPreferredSize(new Dimension(200, 100));
 		
 		can_subOpt.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Point point = e.getPoint();
 				clickSubOpt(point);
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				isDragged = true;
+				for(int i=0; i<subOpts.size(); i++){
+					offX[i] = e.getX() - subOpts.get(i).x;
+				}
+			}
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				isDragged = false;
+			}
+		});
+		
+		can_subOpt.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				if(isDragged){
+					for(int i=0; i<subOpts.size(); i++){
+						subOpts.get(i).x = e.getX()-offX[i];
+						subOpts.get(i).translate(10, 0);
+					}
+				}
+				can_subOpt.repaint();
 			}
 		});
 		
@@ -140,6 +188,12 @@ public class OptionChoiceScreen extends ScreenFrame{
 		add(bt_confirm);
 	}
 	
+	public void setSuboptBounds(){
+		for(int i=0; i<subOpts.size(); i++){
+			subOpts.get(i).setBounds(25+(i*150), 25, 150, 200);
+		}
+	}
+	
 	public void clickSubOpt(Point point){
 		for(int i=0; i<subOpts.size(); i++){
 			SubOption subOpt = subOpts.get(i);
@@ -147,31 +201,33 @@ public class OptionChoiceScreen extends ScreenFrame{
 				for(int j=0; j<topOpts.size(); j++){
 					TopOption topOpt = topOpts.get(j);
 					if(subOpt.getOpt_size_id() == topOpt.comboList.getSize_id()){
-//						for(int k=0; k<topOpt.selectedId.length; k++){
-//							if(topOpt.selectedId[k] == 0){
-//								topOpt.selectedId[k] = subOpt.getSub_opt_id();
-//								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
-//								return;
-//							}
-//						}
-//						
-//						//전부 선택한 경우 변경을 하기 위해 버퍼를 둔다.
 						for(int k=0; k<topOpt.isSelectBuffr.length; k++){
 							if(topOpt.isSelectBuffr[k] == false){
 								topOpt.isSelectBuffr[k] = true;
 								topOpt.selectedId[k] = subOpt.getSub_opt_id();
 								topOpt.la_tags.get(k).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+								
+								int price = Integer.parseInt(la_price.getText());
+								price -= topOpt.plus_price;
+								topOpt.plus_price = subOpt.getPlus_price();
+								la_price.setText(Integer.toString(price+topOpt.plus_price));
+								
 								return;
 							}
 						}
 						
-						//만약 버퍼조차 전부 찬다면 다시 false로 되돌려놓고 방금 선택한 값을 등록한다.
+						//만약 버퍼가 전부 찬다면 다시 false로 되돌려놓고 방금 선택한 값을 등록한다.
 						for(int k=0; k<topOpt.isSelectBuffr.length; k++){
 							topOpt.isSelectBuffr[k] = false;
 						}
 						topOpt.isSelectBuffr[0] = true;
 						topOpt.selectedId[0] = subOpt.getSub_opt_id();
 						topOpt.la_tags.get(0).setText(subOpt.getSub_opt_name()+"("+subOpt.getSub_opt_size()+")");
+						
+						int price = Integer.parseInt(la_price.getText());
+						price -= topOpt.plus_price;
+						topOpt.plus_price = subOpt.getPlus_price();
+						la_price.setText(Integer.toString(price+topOpt.plus_price));
 					}
 				}
 			}
@@ -192,6 +248,18 @@ public class OptionChoiceScreen extends ScreenFrame{
 			}
 		}
 		main.selectCombo.setSub_opt_id(sub_opt_id);
+		main.selectCombo.setPrice(Integer.parseInt(la_price.getText()));
+		
+		ChoiceConfirmScreen nextScreen = ((ChoiceConfirmScreen)main.screen.get(11));
+		if(main.movie == true){
+			nextScreen.la_movie_price.setText(Integer.toString(main.selectList.getPrice()));
+			nextScreen.selectChoiceProduct(main.selectList.getProduct_id());
+		}
+		nextScreen.la_combo_price.setText(Integer.toString(main.selectCombo.getPrice()));
+		nextScreen.setTotalPrice();
+		nextScreen.extractCombo(main.selectCombo.getSub_opt_id());
+		nextScreen.createInfo();
+		main.combo = true;
 		main.setPage(11);
 	}
 	

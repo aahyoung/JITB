@@ -336,7 +336,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 					//buffr.draw(movie);
 					y_point += height;
 				}
-				g.drawImage(buffrImg, 0, 0, 750, 1000, this);
+				g2.drawImage(buffrImg, 0, 0, 750, 1000, this);
 			}
 			
 			@Override

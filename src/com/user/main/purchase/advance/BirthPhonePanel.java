@@ -412,7 +412,7 @@ public class BirthPhonePanel extends JPanel{
 		System.out.println(dateTime.toString());
 		
 		at.setBranch(ticket.get(0).getBranch());
-		at.setTheater(ticket.get(0).getTheater()+"°ü");
+		at.setTheater(ticket.get(0).getTheater());
 		at.setMovie_name(ticket.get(0).getMovie_name());
 		at.setPersons(persons.toString());
 		at.setMovie_time(dateTime.toString());

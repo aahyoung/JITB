@@ -22,6 +22,8 @@ public class TopOption extends JPanel{
 	int[] selectedId;
 	boolean[] isSelectBuffr;
 	
+	int plus_price;
+	
 	public TopOption(ComboList comboList) {
 		this.comboList = comboList;
 		

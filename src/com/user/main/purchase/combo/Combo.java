@@ -60,7 +60,7 @@ public class Combo extends JPanel {
 
 		combo_name.setPreferredSize(new Dimension(240, 35));
 		combo_price.setPreferredSize(new Dimension(240, 35));
-		combo_img.setPreferredSize(new Dimension(240, 250));
+		combo_img.setPreferredSize(new Dimension(200, 250));
 		combo_list.setPreferredSize(new Dimension(240, 25));
 		
 		combo_name.setText(name);

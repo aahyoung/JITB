@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import com.jitb.db.MoviePrice;
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
+import com.user.main.OrderInfo;
 
 public class PersonsChoiceScreen extends ScreenFrame{
 	JPanel p_default;
@@ -207,9 +208,22 @@ public class PersonsChoiceScreen extends ScreenFrame{
 			public void mouseClicked(MouseEvent e) {
 				if(enable == true){
 					//타입아이디, 인원수
-					HashMap<Integer, Integer> type_price = new HashMap<Integer, Integer>();
-					type_price.put(moviePrice.get(0).getType_id(), nomalIndex);
-					type_price.put(moviePrice.get(1).getType_id(), studentIndex);
+					
+					SeatsChoiceScreen nextScreen = ((SeatsChoiceScreen)main.screen.get(6));
+					
+					for(int i=0; i<moviePrice.size(); i++){
+						OrderInfo orderInfo = new OrderInfo();
+						orderInfo.setType_id(moviePrice.get(i).getType_id());
+						orderInfo.setType(moviePrice.get(i).getType());
+						orderInfo.setType_price(moviePrice.get(i).getPrice());
+						nextScreen.orderInfos[i] = orderInfo;
+					}
+					
+					nextScreen.nomal = new String[nomalIndex];
+					nextScreen.student = new String[studentIndex];
+					
+					nextScreen.selectSeatOccupation(main.selectList.getProduct_id());
+					nextScreen.createSeatBtn();
 					
 					main.setPage(6);
 				}

@@ -13,10 +13,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.jitb.db.DBManager;
-import com.user.main.purchase.ConfirmScreen;
-import com.user.main.purchase.DiscountChoiceScreen;
+import com.user.main.purchase.ChoiceConfirmScreen;
 import com.user.main.purchase.MenuChoiceScreen;
-import com.user.main.purchase.PaymentChoiceScreen;
+import com.user.main.purchase.PaymentScreen;
 import com.user.main.purchase.advance.NoTicketScreen;
 import com.user.main.purchase.advance.NumberCheckScreen;
 import com.user.main.purchase.advance.TicketConfirmScreen;
@@ -45,6 +44,8 @@ public class ClientMain extends JFrame implements Runnable{
 	
 	public SelectList selectList = new SelectList();
 	public SelectCombo selectCombo = new SelectCombo();
+	public boolean movie = false;
+	public boolean combo = false;
 	
 	/*
 	 * »ý¼ºÀÚ
@@ -77,9 +78,10 @@ public class ClientMain extends JFrame implements Runnable{
 		screen.add(new OptionChoiceScreen(this));
 		//index=10
 		screen.add(new TicketConfirmScreen(this));
-		screen.add(new ConfirmScreen(this));
-		screen.add(new DiscountChoiceScreen(this));
-		screen.add(new PaymentChoiceScreen(this));
+		//index=11
+		screen.add(new ChoiceConfirmScreen(this));
+		//index=12
+		screen.add(new PaymentScreen(this));
 		
 		for(int i=0; i<screen.size(); i++){
 			add(screen.get(i));

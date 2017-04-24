@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -22,6 +21,7 @@ import javax.swing.JPanel;
 
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
+import com.user.main.purchase.ChoiceConfirmScreen;
 
 public class ComboChoiceScreen extends ScreenFrame{
 	JLabel la_comboInfo;
@@ -67,6 +67,21 @@ public class ComboChoiceScreen extends ScreenFrame{
 		
 		selectCombo();
 		
+		bt_cancle.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(main.movie == true){
+					ChoiceConfirmScreen nextScreen = ((ChoiceConfirmScreen)main.screen.get(11));
+					nextScreen.la_movie_price.setText(Integer.toString(main.selectList.getPrice()));
+					nextScreen.setTotalPrice();
+					nextScreen.selectChoiceProduct(main.selectList.getProduct_id());
+					nextScreen.createInfo();
+					main.setPage(11);
+				}else{
+					main.setPage(0);
+				}
+			}
+		});
 		
 		add(la_comboInfo);
 		add(p_default);
@@ -106,8 +121,10 @@ public class ComboChoiceScreen extends ScreenFrame{
 								public void mouseClicked(MouseEvent e) {
 									nextScreen.subOpts.removeAll(nextScreen.subOpts);
 									nextScreen.selectSubOpt(topOpt.comboList.getSize_id());
+									nextScreen.offX = new int[nextScreen.subOpts.size()];
+									
+									nextScreen.setSuboptBounds();
 									nextScreen.can_subOpt.repaint();
-									System.out.println("³ª´­·È¾î??");
 								}
 							});
 							
@@ -121,7 +138,7 @@ public class ComboChoiceScreen extends ScreenFrame{
 							}
 						}
 						nextScreen.la_comboName.setText(combo.name);
-						nextScreen.la_price.setText(Integer.toString(combo.price)+"¿ø");
+						nextScreen.la_price.setText(Integer.toString(combo.price));
 						
 						main.setPage(9);
 					}

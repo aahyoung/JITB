@@ -1,7 +1,6 @@
 package com.manage.movie;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,15 +13,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,10 +37,14 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.jitb.db.DBManager;
-
-import oracle.sql.DATE;
+import com.jitb.file.FileUtil;
 
 /*
  * 1. 레이아웃 구성
@@ -114,6 +122,16 @@ public class MovieMain extends JPanel implements ActionListener{
 	
 	// 각 Excel 상영날짜에 대한 상영중인 영화를 담을 collection framework
 	ArrayList<Movie> excelMovie=new ArrayList<Movie>();
+	
+	// 하나의 sheet내 한 row에 대한 상영시간표 데이터(관 or 날짜  or 시간 or 영화)
+	// theater_name : value or screening_date : value or start_time : value or movie_name : value
+	HashMap<String, String> excelRow=new HashMap<String, String>();
+	
+	// 하나의 sheet내 상영시간표 데이터(관/날짜/시간/영화)를 담아놓을 collection framework
+	ArrayList<HashMap> excelSheet=new ArrayList<HashMap>();
+	
+	// 하나의 Excel파일 상영시간표를 담아놓을 collection framework
+	ArrayList<ArrayList> excelData=new ArrayList<ArrayList>();
 	
 	public MovieMain(MovieTheaterTab movieTheaterTab) {
 		this.movieTheaterTab=movieTheaterTab;
@@ -607,16 +625,272 @@ public class MovieMain extends JPanel implements ActionListener{
 	}
 
 	// Excel파일로부터 상영시간표 등록
-	public void setSchedule(){
-		FileInputStream fis;
-		try {
-			fis=new FileInputStream("res_manager/상영시간표.xls");
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	public void setSchedule() throws ParseException{
+		File excel;
+		FileInputStream fis=null;
+		JFileChooser chooser=new JFileChooser("res_manager/");
+		//String[] columnName=new String[4];
+		
+		// cell 데이터의 형식을 변경할 수 있음
+		DataFormatter df=new DataFormatter();
+		
+		// 새로운 파일을 읽을 때 마다 포맷
+		excelRow.clear();
+		excelSheet.removeAll(excelSheet);
+		excelData.removeAll(excelData);
+		
+		int result=chooser.showOpenDialog(this);
+		if(result==JFileChooser.APPROVE_OPTION){
+			try {
+				excel=chooser.getSelectedFile();
+				fis=new FileInputStream(excel);
+				System.out.println(FileUtil.getOnlyFileName(excel.toString()));
+				boolean xls=FileUtil.getOnlyFileName(excel.toString()).equalsIgnoreCase(".xls");
+				boolean xlsx=FileUtil.getOnlyFileName(excel.toString()).equalsIgnoreCase(".xlsx");
+				
+				// 파일의 확장자가 xls인 경우
+				if(xls){
+					System.out.println("xls 확장자");
+					HSSFWorkbook workbook=new HSSFWorkbook(fis);
+					
+					for(int i=0; i<workbook.getNumberOfSheets(); i++){
+						// 각 시트 구하기
+						HSSFSheet sheet=workbook.getSheetAt(i);
+						
+						// 행 수 구하기
+						int rows=sheet.getLastRowNum();
+						
+						if(rows>0){
+							// 상영시간표 값은 4행부터 시작
+							for(int j=4; j<15; j++){
+								HSSFRow row=sheet.getRow(j);
+								// 각 행에 값이 있는 경우에만
+								if(row!=null){
+									// cell 수 구하기
+									int cells=row.getPhysicalNumberOfCells();
+									//System.out.println(cells);
+									// 상영시간표 값은 11열부터 시작
+									for(int k=10; k<14; k++){
+										/*
+										// 10행은 column : 관/날짜/시간/영화
+										if(j==10){
+											HSSFCell cell=row.getCell(j);
+											cell.getStringCellValue();
+										}
+										*/
+										HSSFCell cell=row.getCell(k);
+										if(cell!=null){
+											if(k==10){
+												//System.out.println(cell.getStringCellValue());
+												excelRow.put("theater_name", cell.getStringCellValue());
+											}
+											else if(k==11){
+												//System.out.println(cell.getStringCellValue());
+												excelRow.put("screening_date", cell.getStringCellValue());
+											}
+											else if(k==12){
+												DateFormat date=new SimpleDateFormat("HH:mm");
+												Date time=cell.getDateCellValue();
+												String st=date.format(time);
+												//System.out.println(st);
+												excelRow.put("start_time", st);
+											}
+											else if(k==13){
+												//System.out.println(cell.getStringCellValue());
+												excelRow.put("movie_name", cell.getStringCellValue());
+											}
+										}
+										System.out.println("각 행 : "+excelRow.size());
+									}//행(10-14열)
+									excelSheet.add(excelRow);
+									System.out.println(excelSheet.get(0).values());
+									System.out.println("각 sheet : "+excelSheet.size());
+								}
+							}//sheet(4행-끝까지)
+						}
+						excelData.add(excelSheet);
+						//excelData.add(excelSheet);
+						System.out.println("하나의 excel : "+excelData.size());
+						
+					}//sheet 개수
+					
+					
+				}
+				// 파일의 확장자가 xlsx인 경우
+				else if(xlsx){
+					System.out.println("xlsx 확장자");
+					XSSFWorkbook workbook=new XSSFWorkbook(fis);
+					
+					for(int i=0; i<workbook.getNumberOfSheets(); i++){
+						// 각 시트 구하기
+						XSSFSheet sheet=workbook.getSheetAt(i);
+						
+						// 행 수 구하기
+						int rows=sheet.getPhysicalNumberOfRows();
+						if(rows>0){
+							// 상영시간표 값은 4행부터 시작
+							for(int j=3; j<rows; j++){
+								XSSFRow row=sheet.getRow(j);
+								// 각 행에 값이 있는 경우에만
+								if(row!=null){
+									// cell 수 구하기
+									int cells=row.getPhysicalNumberOfCells();
+									// 상영시간표 값은 11열부터 시작
+									for(int k=10; k<cells; k++){
+										/*
+										// 10행은 column : 관/날짜/시간/영화
+										if(j==10){
+											HSSFCell cell=row.getCell(j);
+											cell.getStringCellValue();
+										}
+										*/
+										//XSSFCell cell=row.getCell(j);
+										//excelCell.add(cell.getStringCellValue());
+										//System.out.println(cell.getStringCellValue());
+									}
+								}
+							}
+						}
+						//excelData.add(excelCell);
+					}
+				}
+				JOptionPane.showMessageDialog(this, "상영시간표 등록 완료");
+				setProduct();
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}  
+			finally{
+				if(fis!=null){
+					try {
+						fis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
+
+	// 상영시간표 Excel 파일로부터 얻은 데이터를 DB에 저장
+	public void setProduct(){
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		StringBuffer sql=new StringBuffer();
+		
+		int theater_id = 0, movie_id =0;
+		String screening_date=null, start_time=null;
 	
+		// sheet 수만큼 insert
+		for(int i=0; i<excelData.size(); i++){
+			// 각 sheet의 row 수만큼 insert
+			for(int j=0; j<12; j++){
+				Set<String> set=excelSheet.get(j).keySet();
+				Iterator<String> it=set.iterator();
+				
+				// excelData의 i번째 keySet
+				while(it.hasNext()){
+					
+					// key 추출
+					String key=it.next();
+					String value=(String)excelSheet.get(i).get(key);
+					System.out.print(key+":"+value+" ");
+
+					if(key.equals("theater_name")){
+						sql.append("select theater_id from theater where name=?");
+						try {
+							pstmt=con.prepareStatement(sql.toString());
+							pstmt.setString(1, value.substring(0,value.length()-1));
+							//System.out.println(value.substring(0,value.length()-1));
+							rs=pstmt.executeQuery();
+							rs.next();
+							theater_id=rs.getInt("theater_id");		// 관 이름에 따른 id 구하기
+							
+						} catch (SQLException e) {
+							e.printStackTrace();
+						} finally{
+							if(rs!=null){
+								try {
+									rs.close();
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
+							if(pstmt!=null){
+								try {
+									pstmt.close();
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+					else if(key.equals("screening_date")){
+						screening_date=value;
+					}
+					else if(key.equals("start_time")){
+						start_time=value;
+					}
+					else if(key.equals("movie_name")){
+						sql.delete(0, sql.length());
+						sql.append("select movie_id from movie where name=?");
+						try {
+							pstmt=con.prepareStatement(sql.toString());
+							pstmt.setString(1, value);
+							rs=pstmt.executeQuery();
+							rs.next();
+							movie_id=rs.getInt("movie_id");		// 영화 이름에 따른 id 구하기
+						} catch (SQLException e) {
+							e.printStackTrace();
+						} finally{
+							if(rs!=null){
+								try {
+									rs.close();
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
+							if(pstmt!=null){
+								try {
+									pstmt.close();
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+					//System.out.println(theater_id+","+movie_id);
+					
+					sql.delete(0, sql.length());
+					sql.append("insert into product(product_id, movie_id, theater_id, screening_date, start_time)");
+					sql.append(" values(seq_product.nextval, ?, ?, ?, ?)");
+					try {
+						pstmt=con.prepareStatement(sql.toString());
+						pstmt.setString(1, Integer.toString(movie_id));
+						pstmt.setString(2, Integer.toString(theater_id));
+						pstmt.setString(3, screening_date);
+						pstmt.setString(4, start_time);
+						int result=pstmt.executeUpdate();
+						
+					} catch (SQLException e) {
+						e.printStackTrace();
+					} finally{
+						if(pstmt!=null){
+							try {
+								pstmt.close();
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+	}
 	// 영화 패널 설정
 	public void setMovieList(ArrayList<Movie> movieList, ArrayList<MovieItem> movies, JPanel panel){
 		movies.removeAll(movies);
@@ -687,7 +961,13 @@ public class MovieMain extends JPanel implements ActionListener{
 		}
 		
 		else if(obj==bt_load){
-			setSchedule();
+			try {
+				setSchedule();
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("상영시간표 등록");
 		}
 		
 		else if(obj==bt_add){

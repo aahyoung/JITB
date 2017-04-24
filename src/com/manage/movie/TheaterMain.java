@@ -25,7 +25,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
 
 import com.jitb.db.DBManager;
 
@@ -260,21 +259,26 @@ public class TheaterMain extends JPanel implements ActionListener{
 			cell.setCellStyle(center);
 			*/
 			
-			FileOutputStream fos;
-			try {
-				fos=new FileOutputStream("res_manager/영화관 좌석표.xls");
-				workbook.write(fos);
-				fos.close();
-				
-				JOptionPane.showMessageDialog(this, "좌석표 양식 다운 완료");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+		}
+		FileOutputStream fos=null;
+		try {
+			fos=new FileOutputStream("res_manager/영화관 좌석표.xls");
+			workbook.write(fos);
+			JOptionPane.showMessageDialog(this, "좌석표 양식 다운 완료");
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally{
+			if(fos!=null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		
 	}
 	
 	// 서버 구축하면 올릴 예정

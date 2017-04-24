@@ -89,7 +89,7 @@ public class Main extends JFrame implements ActionListener{
 		add(p_north,BorderLayout.NORTH);
 		add(p_content);
 		
-		setSize(1200,800);
+		setSize(1200,1000);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	

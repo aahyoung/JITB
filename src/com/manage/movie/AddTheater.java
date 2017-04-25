@@ -134,6 +134,22 @@ public class AddTheater extends JDialog implements ActionListener{
 		}
 	}
 	
+	// 입력값이 유효한지 검사
+	public void checkDataFormat(){
+		// 좌석수가 숫자가 아닌 경우
+		if(!DataValidTest.isNumber(t_count.getText())){
+			JOptionPane.showMessageDialog(this, "좌석수는 숫자로 입력해주세요.");
+			return;
+		}
+		// 좌석수에 음수 값을 넣은 경우
+		if(Integer.parseInt(t_count.getText())<0){
+			JOptionPane.showMessageDialog(this, "좌석수는 양수로 입력해주세요.");
+			return;
+		}
+		insertTheater();		// 영화관 등록
+	}
+
+	
 	// 하나의 internalFrame을 사용하기 때문에 기존 값으로 항상 초기화
 	public void setDefault(){
 		t_name.setText("");
@@ -145,7 +161,7 @@ public class AddTheater extends JDialog implements ActionListener{
 		
 		// 영화관 추가 확인
 		if(obj==bt_confirm){
-			insertTheater();
+			checkDataFormat();
 			setVisible(false);
 			theaterMain.getTheaterList();
 			theaterMain.setTheaterList();

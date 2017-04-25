@@ -323,6 +323,38 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 	*/
 	}
 	
+	// 입력값이 유효한지 검사
+		public void checkDataFormat(){
+			// 입력값을 변수에 저장
+			//String poster=file.getName();
+			String title=t_title.getText();
+			String director=t_director.getText();
+			String actor=t_actor.getText();
+			String story=ta_story.getText();
+			String run_time=t_run_time.getText();
+			
+			start_date=startDatePicker.getValue();
+			end_date=endDatePicker.getValue();
+			
+			// 입력값 제약조건 함수 호출
+			if(file==null){
+				JOptionPane.showMessageDialog(this, "영화 포스터가 선택되지 않았습니다.");
+				return;
+			}
+			if(!DataValidTest.isNumber(run_time)){
+				JOptionPane.showMessageDialog(this, "상영 시간이 숫자로 입력되지 않았습니다.");
+				return;
+			}
+			if(Integer.parseInt(run_time)<0){
+				JOptionPane.showMessageDialog(this, "상영 시간은 양수로 입력해주세요.");
+				return;
+			}
+
+			// 유효성 검사가 끝나면 삽입 쿼리 실행
+			insertMovie();
+		}
+	
+	
 	// 포스터 등록
 	public void getPoster(){
 		int result=chooser.showOpenDialog(this);
@@ -417,7 +449,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		JButton bt=(JButton)e.getSource();
 		
 		if(bt==bt_confirm){
-			insertMovie();
+			checkDataFormat();
 			setVisible(false);
 			movieMain.getMovieList();
 			movieMain.p_present.updateUI();

@@ -420,6 +420,10 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 			JOptionPane.showMessageDialog(this, "상영 시간이 숫자로 입력되지 않았습니다.");
 			return;
 		}
+		if(Integer.parseInt(run_time)<0){
+			JOptionPane.showMessageDialog(this, "상영 시간은 양수로 입력해주세요.");
+			return;
+		}
 		// 원래 상영 일자와 입력값이 다르면(변경)
 		if(!ori_start_date.equals(start_date)){
 			System.out.println(ori_start_date+"->"+start_date);

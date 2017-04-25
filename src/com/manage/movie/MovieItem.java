@@ -40,7 +40,7 @@ public class MovieItem extends JPanel implements ActionListener{
 	
 	public MovieItem(MovieMain movieMain, Image img, String name, String start_date, String end_date) {
 		this.movieMain=movieMain;
-		// 영화 포스터와 이름은 DB로부터 가져오기
+		// 영화 포스터, 이름, 개봉/종료 일자는 생성 시 받아오기
 		this.img=img;
 		this.name=name;
 		this.start_date=start_date;

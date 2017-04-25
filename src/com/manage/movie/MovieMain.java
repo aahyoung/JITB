@@ -538,11 +538,12 @@ public class MovieMain extends JPanel implements ActionListener{
 		cal.add(cal.DATE, 1);
 		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 		
-		for(int i=0; i<=sheet.length; i++){
+		for(int i=0; i<sheet.length; i++){
 			
 			date=format.format(cal.getTime());
 			sheet[i]=workbook.createSheet(date);
 			cal.add(cal.DATE, 1);
+			System.out.println(cal.getTime());
 			getInfo(date);
 			
 			// 테이블 형태를 모르는 관리자에게 간단한 정보 알려주기 위한 양식 추가
@@ -667,7 +668,7 @@ public class MovieMain extends JPanel implements ActionListener{
 						
 						if(rows>0){
 							// 상영시간표 값은 4행부터 시작
-							for(int j=4; j<16; j++){
+							for(int j=4; j<=rows; j++){
 								excelRow=new ArrayList<String>();
 								HSSFRow row=sheet.getRow(j);
 								// 각 행에 값이 있는 경우에만
@@ -853,36 +854,54 @@ public class MovieMain extends JPanel implements ActionListener{
 					}
 				}
 				
-				System.out.println("각 행 theater_id : "+theater_id+", movie_id : "+movie_id);
-				
-				// insert
+				//System.out.println("각 행 theater_id : "+theater_id+", movie_id : "+movie_id);
+				System.out.println(value[1]+","+value[2]);
+				// 중복 체크
 				sql.delete(0, sql.length());
-				sql.append("insert into product(product_id, movie_id, theater_id, screening_date, start_time)");
-				sql.append(" values(seq_product.nextval, ?, ?, ?, ?)");
-				
+				sql.append("select * from product where movie_id=? and theater_id=? and screening_date=? and start_time=?");
 				try {
 					pstmt=con.prepareStatement(sql.toString());
 					pstmt.setString(1, Integer.toString(movie_id));
 					pstmt.setString(2, Integer.toString(theater_id));
 					pstmt.setString(3, value[1]);
 					pstmt.setString(4, value[2]);
-					int result=pstmt.executeUpdate();
-					
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} finally{
-					if(pstmt!=null){
+					rs=pstmt.executeQuery();
+					if(!rs.next()){
+						System.out.println("해당 레코드가 없습니다.");
+						// insert
+						sql.delete(0, sql.length());
+						sql.append("insert into product(product_id, movie_id, theater_id, screening_date, start_time)");
+						sql.append(" values(seq_product.nextval, ?, ?, ?, ?)");
+						
 						try {
-							pstmt.close();
+							pstmt=con.prepareStatement(sql.toString());
+							pstmt.setString(1, Integer.toString(movie_id));
+							pstmt.setString(2, Integer.toString(theater_id));
+							pstmt.setString(3, value[1]);
+							pstmt.setString(4, value[2]);
+							int result=pstmt.executeUpdate();
+							
 						} catch (SQLException e) {
 							e.printStackTrace();
+						} finally{
+							if(pstmt!=null){
+								try {
+									pstmt.close();
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+							}
 						}
 					}
+					
+				} catch (SQLException e1) {
+					e1.printStackTrace();
 				}
+				
 			}
 		}
 	}
-	// 영화 패널 설정
+	// 영화 패널 설정(movieItem)
 	public void setMovieList(ArrayList<Movie> movieList, ArrayList<MovieItem> movies, JPanel panel){
 		movies.removeAll(movies);
 		panel.removeAll();

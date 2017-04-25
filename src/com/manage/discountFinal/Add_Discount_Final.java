@@ -1,4 +1,4 @@
-package com.manage.discount;
+package com.manage.discountFinal;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -30,26 +30,23 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.discount.table_model;
+import com.manage.inventory.TablePanel;
 
 import javafx.scene.layout.Border;
 
-public class Add_gift_type extends JFrame implements ActionListener{
+public class Add_Discount_Final extends JFrame implements ActionListener{
 	JPanel p_west,p_center; //기본 창
 	JPanel p_center_top,p_center_center,p_center_south;//센터에 상세 분류
-	JLabel la_gift;
+	JLabel la_combo,la_info;
 	JLabel la_name;
 	JTextField t_name;
 	JButton bt_add;
-	Canvas can;
-	JFileChooser chooser;
-	BufferedImage image = null;
-	File file;
 	table_model tablemodel;
 	DBManager manager;
 	Connection con;
-	gift_infoCategory gift_info;
 	JTable table_up;
-	public Add_gift_type(JTable table_up) {
+	public Add_Discount_Final(JTable table_up) {
 		init(); //connect 받기
 		this.table_up=table_up;
 		p_west=new JPanel();//이미지 넣어둘 패널
@@ -59,34 +56,13 @@ public class Add_gift_type extends JFrame implements ActionListener{
 		p_center_center=new JPanel();
 		p_center_south=new JPanel();
 
-		la_gift=new JLabel("상품권 회사 추가");
-		la_name=new JLabel("회 사 명 :");
-		
+		la_combo=new JLabel("할인정보 추가");
+		la_name=new JLabel("할인 명 :");
+		la_info=new JLabel("추가 하실 내용은 '포인트','상품권','카드사',가 있으며 추가시에는 테이블을 추가한후 해주세요");
 		t_name=new JTextField(15);
 		bt_add=new JButton("추가");
 		
-		chooser=new JFileChooser("/JITB/res_manager");
-		
-		try {
-			URL url = this.getClass().getResource("/default.png");
-			image = ImageIO.read(url);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		can = new Canvas(){
-			@Override
-			public void paint(Graphics g) {
-				g.drawImage(image, 0, 0, 135,135,this);
-			}
-		};
-		can.setPreferredSize(new Dimension(135, 135));
-		
-		p_west.add(can);
-		
-		p_center_top.add(la_gift);
+		p_center_top.add(la_name);
 		p_center_center.add(la_name);
 		p_center_center.add(t_name);
 		p_center_south.add(bt_add);
@@ -103,21 +79,14 @@ public class Add_gift_type extends JFrame implements ActionListener{
 		
 		bt_add.addActionListener(this);
 		
-		can.addMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				select();
-			}
-		});
 		
 		setSize(400,200);
 		setVisible(true);
 	}
 	public void regist() {
 		PreparedStatement pstmt = null;
-		String sql = "insert into gift_type(gift_type_id,name)";
-		sql += "values(seq_gift_type.nextval,?)";
+		String sql = "insert into discount_type(discount_type_id,name)";
+		sql += "values(seq_discount_type.nextval,?)";
 		try {
 			pstmt = con.prepareStatement(sql);
 
@@ -143,22 +112,6 @@ public class Add_gift_type extends JFrame implements ActionListener{
 			}
 		}
 		table_up.setModel(tablemodel=new table_model(con,"discount_type"));
-	}
-	
-	public void select(){
-		int result=chooser.showOpenDialog(this);
-		if(result==JFileChooser.APPROVE_OPTION){
-			//캔버스에 이미지 그리자!
-			file=chooser.getSelectedFile();
-			
-			//얻어진 파일을 기존의 이미지로 대체하기
-			try {
-				image=ImageIO.read(file);
-				can.repaint();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	//추가 버튼

@@ -53,6 +53,7 @@ public class Add_sub extends JFrame implements ActionListener {
 	DBManager manager;
 	Connection con;
 	ArrayList<TopSizeCategory> topList = new ArrayList<TopSizeCategory>();
+	ArrayList<TopCategory> sub = new ArrayList<TopCategory>();
 	ComboCategory combocategory;
 	JTable table_up;
 	TablePanel tablepanel;
@@ -131,7 +132,7 @@ public class Add_sub extends JFrame implements ActionListener {
 
 		setSize(400, 200);
 		setVisible(true);
-		choice.add("종류를 선택하세요");
+		choice.add("종류를 선택하세요1");
 		setChoice();
 	}
 	
@@ -142,12 +143,17 @@ public class Add_sub extends JFrame implements ActionListener {
 		try {
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
+			int count=0;
 			while (rs.next()) {
 				TopSizeCategory dto = new TopSizeCategory();
 				dto.setTop_opt_size_id(rs.getInt("top_opt_size_id"));
+				dto.setTop_opt_id(rs.getInt("top_opt_id"));
 				dto.setOpt_size(rs.getString("opt_size"));
 				topList.add(dto);// 리스트에 탑재
-				choice.add(dto.getOpt_size());
+				selectChoice(dto.getTop_opt_id());
+				String list=dto.getOpt_size()+"  "+sub.get(count).getName();
+				choice.add(list);
+				count++;
 			}
 
 		} catch (SQLException e) {
@@ -163,7 +169,34 @@ public class Add_sub extends JFrame implements ActionListener {
 		}
 
 	}
+	public void selectChoice(int top_opt) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "select * from top_opt where top_opt_id="+top_opt;
+		try {
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				TopCategory dto = new TopCategory();
+				dto.setTop_opt_id(rs.getInt("top_opt_id"));
+				dto.setName((rs.getString("name")));
+				dto.setImg((rs.getString("img")));
+				sub.add(dto);// 리스트에 탑재
+			}
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 	public void regist() {
 		PreparedStatement pstmt = null;
 		String sql = "insert into sub_opt(sub_opt_id,top_opt_size_id,name,price,img,stock)";

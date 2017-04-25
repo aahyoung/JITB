@@ -1,6 +1,6 @@
-package com.manage.discount;
+package com.manage.discountFinal;
 
-public class Discount_typeCategory {
+public class DiscountFCategory {
 	private int discount_id;
 	private String name;
 

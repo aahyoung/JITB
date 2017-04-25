@@ -1,6 +1,7 @@
 package com.manage.movie;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 
@@ -37,6 +38,8 @@ public class MovieTheaterTab extends JPanel{
 		add(tabbedPane);
 		
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		
+		setBackground(Color.white);
 		
 		// 메인Frame의 버튼을 클릭했을 때만 보여져야 하므로 지금은 false
 		setVisible(false);

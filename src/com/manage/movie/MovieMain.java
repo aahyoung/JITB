@@ -282,9 +282,10 @@ public class MovieMain extends JPanel implements ActionListener{
 		
 		int count=0;
 		
-		// 현재, 과거 상영작 정보 모두 지우기
+		// 현재, 과거, 예정 상영작 정보 모두 지우기
 		presentList.removeAll(presentList);
 		pastList.removeAll(pastList);
+		upcomingList.removeAll(upcomingList);
 		
 		String count_sql="select count(movie_id) from movie";
 		
@@ -445,7 +446,7 @@ public class MovieMain extends JPanel implements ActionListener{
 		
 		StringBuffer present_sql=new StringBuffer();
 		present_sql.append("select movie_id from movie");
-		present_sql.append(" where end_date>to_char(sysdate, 'YYYY-MM-DD')");
+		present_sql.append(" where start_date<=to_char(sysdate, 'YYYY-MM-DD') and end_date>to_char(sysdate, 'YYYY-MM-DD')");
 		
 		try {
 			// 현재 상영작 id 저장
@@ -534,10 +535,10 @@ public class MovieMain extends JPanel implements ActionListener{
 		
 		Calendar cal=Calendar.getInstance();
 		String date;
-		//cal.add(cal.DATE, 7);
+		cal.add(cal.DATE, 1);
 		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 		
-		for(int i=0; i<sheet.length; i++){
+		for(int i=0; i<=sheet.length; i++){
 			
 			date=format.format(cal.getTime());
 			sheet[i]=workbook.createSheet(date);
@@ -887,6 +888,7 @@ public class MovieMain extends JPanel implements ActionListener{
 		panel.removeAll();
 		
 		System.out.println("movieList 크기 : "+movieList.size());
+		
 		// 현재 존재하는 영화만큼 생성하고 설정 및 출력
 		for(int i=0; i<movieList.size(); i++){				
 			Image img;
@@ -914,6 +916,7 @@ public class MovieMain extends JPanel implements ActionListener{
 				if(start<0 && end<0){
 					System.out.println("과거");
 					movieItem.type="과거";
+					movieItem.index=i;
 					// 선택한 각 영화의 index를 넘겨줘야하는데ㅜㅜ
 					//movieItem.index=
 				}
@@ -921,11 +924,13 @@ public class MovieMain extends JPanel implements ActionListener{
 				else if(start<=0 && end>0){
 					System.out.println("현재");
 					movieItem.type="현재";
+					movieItem.index=i;
 				}
 				// 상영 예정작(시작 일자가 오늘보다 큰 경우)
 				else if(start>0 && end>0){
 					System.out.println("예정");
 					movieItem.type="예정";
+					movieItem.index=i;
 				}
 				
 				panel.add(movieItem);
@@ -954,7 +959,6 @@ public class MovieMain extends JPanel implements ActionListener{
 			try {
 				setSchedule();
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			System.out.println("상영시간표 등록");

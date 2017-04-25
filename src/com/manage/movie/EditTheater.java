@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
 
@@ -27,6 +28,8 @@ public class EditTheater extends JDialog implements ActionListener{
 	JPanel p_button;
 	
 	JLabel lb_name, lb_count;
+	
+	JTextField t_name, t_count;
 
 	JButton bt_cancel, bt_confirm, bt_delete;
 
@@ -34,7 +37,7 @@ public class EditTheater extends JDialog implements ActionListener{
 	DBManager manager;
 	Connection con;
 	
-	// 현재 선택된 panel의 index
+	// 현재 선택된 panel의 theater_id
 	int index;	
 	
 	// 부모 패널
@@ -52,9 +55,13 @@ public class EditTheater extends JDialog implements ActionListener{
 		//p_seat=new JPanel();
 		p_button=new JPanel();
 		
-		lb_name=new JLabel(theaterMain.theaters.get(index).name);
-		lb_count=new JLabel("총 좌석수 : "+theaterMain.theaters.get(index).count);
+		//lb_name=new JLabel(theaterMain.theaters.get(index).name);
+		//lb_count=new JLabel("총 좌석수 : "+theaterMain.theaters.get(index).count);
+		lb_name=new JLabel("영화관 이름 : ");
+		lb_count=new JLabel("총 좌석수 : ");
 		
+		t_name=new JTextField(5);
+		t_count=new JTextField(5);
 		//p_seat.setSize(new Dimension(120, 120));
 		
 		// 좌석 출력
@@ -64,12 +71,17 @@ public class EditTheater extends JDialog implements ActionListener{
 		bt_cancel=new JButton("취소");
 		bt_delete=new JButton("삭제");
 		
+		t_name.setText(theaterMain.theaters.get(index).name);
+		t_count.setText(Integer.toString(theaterMain.theaters.get(index).count));
+		
 		p_info.add(lb_name);
+		p_info.add(t_name);
 		p_info.add(lb_count);
+		p_info.add(t_count);
 		
 		p_button.add(bt_confirm);
 		p_button.add(bt_cancel);
-		p_button.add(bt_delete);
+		//p_button.add(bt_delete);
 		
 		p_outer.add(p_info);
 		//p_outer.add(p_seat);
@@ -114,6 +126,53 @@ public class EditTheater extends JDialog implements ActionListener{
 	public void setDefault(){
 		
 	}
+	
+	// 영화관 정보 수정
+	public void updateTheater(){
+		PreparedStatement pstmt=null;
+		String sql="update theater set name=?, count=? where theater_id=?";
+		try {
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, t_name.getText());
+			pstmt.setString(2, t_count.getText());
+			pstmt.setString(3, Integer.toString(theaterMain.theaters.get(index).theater_id));
+			int result=pstmt.executeUpdate();
+			
+			if(result!=0){
+				JOptionPane.showMessageDialog(this, theaterMain.theaters.get(index).name+"관 수정 완료");
+			}
+			else{
+				JOptionPane.showMessageDialog(this, theaterMain.theaters.get(index).name+"관 수정 실패");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(pstmt!=null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+	
+	// 입력값이 유효한지 검사
+	public void checkDataFormat(){
+		// 좌석수가 숫자가 아닌 경우
+		if(!DataValidTest.isNumber(t_count.getText())){
+			JOptionPane.showMessageDialog(this, "좌석수는 숫자로 입력해주세요.");
+			return;
+		}
+		// 좌석수에 음수 값을 넣은 경우
+		if(Integer.parseInt(t_count.getText())<0){
+			JOptionPane.showMessageDialog(this, "좌석수는 양수로 입력해주세요.");
+			return;
+		}
+		updateTheater();		// 영화관 정보 수정
+	}
 
 	// 확인 버튼을 누르면
 	public void actionPerformed(ActionEvent e) {
@@ -123,16 +182,19 @@ public class EditTheater extends JDialog implements ActionListener{
 		// 확인 버튼을 누르면 
 		if(bt==bt_confirm){
 			System.out.println("확인 누름");
+			checkDataFormat();
 			this.setVisible(false);
-			theaterMain.p_list.setVisible(true);
-			
+			theaterMain.getTheaterList();
+			theaterMain.setTheaterList();
+			theaterMain.p_list.updateUI();
+			//theaterMain.p_list.setVisible(true);
 		}
 		
 		// 취소 버튼을 누르면
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
-			theaterMain.p_list.setVisible(true);
+			//theaterMain.p_list.setVisible(true);
 		}
 		
 		// 삭제 버튼을 누르면

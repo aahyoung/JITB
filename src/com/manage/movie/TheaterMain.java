@@ -177,7 +177,7 @@ public class TheaterMain extends JPanel implements ActionListener{
 		
 		// 현재 존재하는 영화관만큼 생성하고 설정 및 출력
 		for(int i=0; i<theaterList.size(); i++){
-			String name=theaterList.get(i).getName()+" 관";
+			String name=theaterList.get(i).getName();
 			int count=theaterList.get(i).getCount();
 
 			theaterItem=new TheaterItem(name, count);
@@ -199,6 +199,7 @@ public class TheaterMain extends JPanel implements ActionListener{
 							//id=theaters.get(k).theater_id;
 							editTheater=new EditTheater(TheaterMain.this, k);
 							System.out.println(k);
+							return;
 						}
 					}
 				}

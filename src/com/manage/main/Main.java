@@ -84,12 +84,14 @@ public class Main extends JFrame implements ActionListener{
 		//p_content.setLayout(new GridLayout(1,1));
 		
 		// 그냥 패널 붙이는 실험할 때 편하시라고 배경색 올려놨어용
-		p_content.setBackground(Color.pink);
+		p_content.setBackground(Color.white);
+		
+		p_north.setBackground(Color.white);
 		
 		add(p_north,BorderLayout.NORTH);
 		add(p_content);
 		
-		setSize(1200,1000);
+		setSize(1200,900);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	

@@ -24,7 +24,7 @@ public class TheaterItem extends JPanel{
 		lb_name=new JLabel();
 		lb_count=new JLabel();
 		
-		lb_name.setText(name);
+		lb_name.setText(name+"관");
 		lb_count.setText("총 좌석수 : "+count);
 		//lb_count.setText("현재 영화관의 총 좌석수는 "+count+" 좌석 입니다.");	
 		

@@ -79,9 +79,9 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 	JFileChooser chooser;
 	
 	// Date Picker
-	private Stage stage;
-    private DatePicker startDatePicker;
-    private DatePicker endDatePicker;
+	Stage stage;
+    DatePicker startDatePicker;
+    DatePicker endDatePicker;
     
     // DB 연동
     DBManager manager;
@@ -109,6 +109,9 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
     // 영화 id
     int movie_id;
     
+    // 영화 poster
+    String poster;
+    
     // 총 상영일수
     int run_date;
     
@@ -123,7 +126,11 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
  	
  	LocalDate start_date;
  	LocalDate end_date;
- 
+ 	
+ 	LocalDate ori_start_date;
+ 	LocalDate ori_end_date;
+
+ 	URL url;
  	/*
  	 * 1. 수정
  	 * 과거 상영작 : 영화 상세 정보
@@ -137,15 +144,16 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		this.movieMain=movieMain;
 		this.movieItem=movieItem;
 		this.movie_id=movie_id;
-				
-		URL url=this.getClass().getResource("/shrek.jpg");
+		
+		/*
+		url=this.getClass().getResource("/shrek.jpg");
 		
 		try {
 			img=ImageIO.read(url);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+		*/
 		// 포스터 등록
 		can=new Canvas(){
 			
@@ -212,7 +220,12 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		
 		// 선택한 영화 정보 가져오기
 		getMovieData();
-
+		
+		// 값이 변경되기 전 개봉 일자와 종료 일자 저장
+		ori_start_date=startDatePicker.getValue();
+		ori_end_date=endDatePicker.getValue();
+		
+		System.out.println("현재 선택한 영화 id : "+movie_id);
 	}
 	
 	// DB 연결
@@ -233,7 +246,6 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 			rs=pstmt.executeQuery();
 			
 			while(rs.next()){
-				// 포스터 출력
 				t_title.setText(rs.getString("name"));
 				t_director.setText(rs.getString("director"));
 				t_actor.setText(rs.getString("main_actor"));
@@ -248,87 +260,53 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		}
 	}
 	
-	// 설정한 영화 정보 저장
-	// -> movie 테이블에 데이터 저장
-	public void insertMovie(){
+	// 영화 정보 수정
+	// -> movie 테이블에 데이터 수정
+	public void updateMovie(){
 		PreparedStatement pstmt=null;
-		/*
-		// 입력값을 변수에 저장
-		String poster=file.getName();
-		String title=t_title.getText();
-		String director=t_director.getText();
-		String actor=t_actor.getText();
-		String story=ta_story.getText();
-		int run_time=Integer.parseInt(t_run_time.getText());
-		*/
-		//LocalDate start_date=startDatePicker.getValue();
-		//LocalDate end_date=endDatePicker.getValue();
-		start_date=startDatePicker.getValue();
-		end_date=endDatePicker.getValue();
 		
-		System.out.println(start_date.toString()+","+end_date.toString());
+		//System.out.println(start_date.toString()+","+end_date.toString());
 		
 		// movie_id, poster, name, director, main_actor, story, start_date, end_date, run_time
-		StringBuffer sql_insert=new StringBuffer();
-		sql_insert.append("insert into movie(movie_id, poster, name, director, main_actor, story, start_date, end_date, run_time)");
-		sql_insert.append(" values(seq_movie.nextval, ?, ?, ?, ?, ?, ?, ?, ?)");
-		//sql.append("to_date(?,'YYYY-MM-DD'), ");
-		//sql.append("to_date(?,'YYYY-MM-DD'), ?)");
-		
-		// 제약조건(제약조건이 좀 많아유ㅠㅠ)
-		/* 1. 이미지명이 제대로 들어오고
-		 * 2. 영화 이름이 null이 아니고
-		 * 3. 영화 감독이 null이 아니고
-		 * 4. 주연 배우가 null이 아니고
-		 * 5. 스토리가 null이 아니고
-		 * 6. 상영시간이 0보다 커야하고
-		 * 7. 개봉일자가 종료일자보다 크면 안되고
-		 * */
-		//if(file.getName()!=null&&!t_title.getText().equals("")&&!t_director.getText().equals("")&&!t_actor.getText().equals("")&&!ta_story.getText().equals("")&&Integer.parseInt(t_run_time.getText())>0&&start_date.isAfter(end_date)){
-			try {
-				//pstmt=con.prepareStatement(sql.toString());
-				pstmt=con.prepareStatement(sql_insert.toString());
-				pstmt.setString(1, file.getName());
-				pstmt.setString(2, t_title.getText());
-				pstmt.setString(3, t_director.getText());
-				pstmt.setString(4, t_actor.getText());
-				pstmt.setString(5, ta_story.getText());
-				pstmt.setString(6, startDatePicker.getValue().toString());
-				pstmt.setString(7, endDatePicker.getValue().toString());
-				pstmt.setInt(8, Integer.parseInt(t_run_time.getText()));
+		StringBuffer sql_update=new StringBuffer();
+		sql_update.append("update movie set poster=?, name=?, director=?, main_actor=?, story=?, start_date=?, end_date=?, run_time=?");
+		sql_update.append(" where movie_id=?");
+
+		try {
+			pstmt=con.prepareStatement(sql_update.toString());
+			pstmt.setString(1, file.getName());
+			pstmt.setString(2, t_title.getText());
+			pstmt.setString(3, t_director.getText());
+			pstmt.setString(4, t_actor.getText());
+			pstmt.setString(5, ta_story.getText());
+			pstmt.setString(6, startDatePicker.getValue().toString());
+			pstmt.setString(7, endDatePicker.getValue().toString());
+			pstmt.setInt(8, Integer.parseInt(t_run_time.getText()));
+			pstmt.setInt(9, movie_id);
+			
+			// 성공적으로 insert했다면 반환값은 1
+			int result=pstmt.executeUpdate();
+			if(result!=0){
+				JOptionPane.showMessageDialog(this, "영화 수정 완료");
 				
-				// 성공적으로 insert했다면 반환값은 1
-				int result=pstmt.executeUpdate();
-				if(result!=0){
-					JOptionPane.showMessageDialog(this, "영화 수정 완료");
-					
-					// 등록과 동시에 movie_id값 얻기
-					//getMovieId();
-					
-					// 등록 완료했으면 포스터 파일 저장
-					copyPoster();
-				}
-				else{
-					JOptionPane.showMessageDialog(this, "영화 수정 실패");
-				}
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally{
-				if(pstmt!=null){
-					try {
-						pstmt.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+				// 등록 완료했으면 포스터 파일 저장
+				copyPoster();
+			}
+			else{
+				JOptionPane.showMessageDialog(this, "영화 수정 실패");
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(pstmt!=null){
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
-		//}
-	/*
-		else{
-			JOptionPane.showMessageDialog(this, "입력값을 제대로 입력해주세요.");
 		}
-	*/
 	}
 	
 	// 포스터 등록
@@ -420,36 +398,71 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
         
 	}
 	
+	// 입력값이 유효한지 검사
+	public void checkDataFormat(){
+		// 입력값을 변수에 저장
+		//String poster=file.getName();
+		String title=t_title.getText();
+		String director=t_director.getText();
+		String actor=t_actor.getText();
+		String story=ta_story.getText();
+		String run_time=t_run_time.getText();
+		
+		start_date=startDatePicker.getValue();
+		end_date=endDatePicker.getValue();
+		
+		// 입력값 제약조건 함수 호출
+		if(file==null){
+			JOptionPane.showMessageDialog(this, "영화 포스터가 선택되지 않았습니다.");
+			return;
+		}
+		if(!DataValidTest.isNumber(run_time)){
+			JOptionPane.showMessageDialog(this, "상영 시간이 숫자로 입력되지 않았습니다.");
+			return;
+		}
+		// 원래 상영 일자와 입력값이 다르면(변경)
+		if(!ori_start_date.equals(start_date)){
+			System.out.println(ori_start_date+"->"+start_date);
+			// 현재 날짜에서 8일 이후의 날짜와 현재 선택된 날짜 비교해서 
+			if(!DataValidTest.inDateRange(start_date)){
+				JOptionPane.showMessageDialog(this, "개봉 일자는 "+DataValidTest.yymmdd+" 부터 선택 가능합니다.");
+				return;
+			}
+		}
+		// 원래 종료 일자와 입력값이 다르면(변경)
+		if(!ori_end_date.equals(end_date)){
+			System.out.println(ori_end_date+"->"+end_date);
+			// 현재 날짜에서 8일 이후의 날짜와 현재 선택된 날짜 비교해서 
+			if(!DataValidTest.inDateRange(end_date)){
+				JOptionPane.showMessageDialog(this, "종료 일자는 "+DataValidTest.yymmdd+" 부터 선택 가능합니다.");
+				return;
+			}
+		}
+		// 유효성 검사가 끝나면 수정 쿼리 실행
+		updateMovie();
+	}
+	
 	// 확인 버튼을 누르면
 	public void actionPerformed(ActionEvent e) {
 		JButton bt=(JButton)e.getSource();
 		
 		if(bt==bt_confirm){
-			insertMovie();
+			checkDataFormat();
 			setVisible(false);
 			movieMain.getMovieList();
+			movieMain.p_past.updateUI();
 			movieMain.p_present.updateUI();
-			movieMain.p_present.setVisible(true);
-			System.out.println("영화 추가 확인");
+			movieMain.p_upcoming.updateUI();
+			//movieMain.p_present.setVisible(true);
+			System.out.println("영화 수정 확인");
 		}
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
-			movieMain.p_present.setVisible(true);
-			System.out.println("영화 추가 취소");
+			//movieMain.p_present.setVisible(true);
+			System.out.println("영화 수정 취소");
 		}
 	}
-	
-	/*
-	// 영화관 선택
-	public void itemStateChanged(ItemEvent e) {
-		Object obj=e.getSource();
-		if(obj==ch_theater.getSelectedItem()){
-			
-		}
-		
-	}
-	*/
 	
 	// textfield default값 구하기
 	public String getTextField(int index){

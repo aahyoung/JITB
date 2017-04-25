@@ -19,7 +19,7 @@ import com.jitb.db.DBManager;
 
 import javafx.scene.control.DatePicker;
 
-public class SalesTheater extends JPanel implements ItemListener{
+public class SalesTheater extends JPanel implements ItemListener {
 
 	DBManager manager = DBManager.getInstance();
 	Connection con;
@@ -44,11 +44,11 @@ public class SalesTheater extends JPanel implements ItemListener{
 		choice.add("Monthly, 월 별");
 		choice.setPreferredSize(new Dimension(130, 30));
 
-		p_north.setBackground(Color.ORANGE);
+		//p_north.setBackground(Color.ORANGE);
 		p_north.add(choice);
 		p_north.setPreferredSize(new Dimension(1000, 50));
 
-		p_center.setBackground(Color.ORANGE);
+		//p_center.setBackground(Color.ORANGE);
 		p_center.setPreferredSize(new Dimension(1000, 650));
 
 		p_center.add(p_daily);
@@ -61,13 +61,15 @@ public class SalesTheater extends JPanel implements ItemListener{
 		add(p_content);
 
 		choice.addItemListener(this);
+		
+		setLayout(new BorderLayout());
 
 		setLayout(new FlowLayout());
 		setVisible(true);
 		setSize(1000, 650);
 	}
 
-	// 일별, 주별, 월별 선택 choice
+	//일별, 주별, 월별 선택 choice
 	public void itemStateChanged(ItemEvent e) {
 		int index = choice.getSelectedIndex();
 		System.out.println(index);
@@ -89,9 +91,6 @@ public class SalesTheater extends JPanel implements ItemListener{
 
 	public void init() {
 		con = manager.getConnect();
-		//((DailySales)p_daily).setConnection(con);
-		//((WeeklySales)p_weekly).setConnection(con);
-		//((MonthlySales)p_monthly).setConnection(con);
 	}
 	
 	public static void main(String[] args) {

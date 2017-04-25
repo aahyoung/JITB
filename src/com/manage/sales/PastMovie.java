@@ -36,7 +36,7 @@ public class PastMovie extends JPanel {
 
 	public PastMovie() {
 		this.setVisible(true);
-		this.setBackground(Color.yellow);
+		//this.setBackground(Color.pink);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 
@@ -151,7 +151,7 @@ public class PastMovie extends JPanel {
 				String booking = String.format("%.1f", (double)count/period);
 				System.out.println(booking);
 				
-				MovieItem item = new MovieItem(poster, sales, booking);
+				MovieItem item = new MovieItem(poster, name, sales, booking);
 				add(item);
 				
 			} catch (IOException e) {

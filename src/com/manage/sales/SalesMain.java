@@ -49,14 +49,14 @@ public class SalesMain extends JPanel implements ItemListener{
 		tab.addTab("영화별", panel1);		
 		tab.addTab("영화관별", salesTheater);
 		
-		choice.add("선택 ▼");
 		choice.add("상영 중");
 		choice.add("과거 상영");
 		choice.setPreferredSize(new Dimension(130, 30));
 
-		p_north.setBackground(Color.pink);
+		//p_north.setBackground(Color.pink);
 		p_north.add(choice);
 		p_north.setPreferredSize(new Dimension(1000, 50));
+		//p_north.setLayout(new BorderLayout());
 
 		p_center.add(p_default);
 		p_center.add(p_nowMovie);
@@ -89,18 +89,14 @@ public class SalesMain extends JPanel implements ItemListener{
 		int index = choice.getSelectedIndex();
 		System.out.println(index);
 		
-		if(index==1) {
+		if(index==0) {
 			p_nowMovie.setVisible(true);
 			p_pastMovie.setVisible(false);
 			p_default.setVisible(false);
-		} else if(index==2) {
+		} else if(index==1) {
 			p_pastMovie.setVisible(true);
 			p_nowMovie.setVisible(false);
 			p_default.setVisible(false);
-		} else {
-			p_default.setVisible(true);
-			p_nowMovie.setVisible(false);	
-			p_pastMovie.setVisible(false);
 		}
 	}
 

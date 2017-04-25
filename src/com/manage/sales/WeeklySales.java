@@ -42,9 +42,6 @@ public class WeeklySales extends JPanel implements ActionListener {
 
 		yy = cal.get(Calendar.YEAR);
 		mm = cal.get(Calendar.MONTH);
-		
-		//la_title.setText(yy + "-" + (mm+1));
-		//System.out.println("label에 찍히는 달은?" +mm+1);
 
 		p_north.setBackground(Color.ORANGE);
 		p_north.add(bt_prev);
@@ -75,16 +72,18 @@ public class WeeklySales extends JPanel implements ActionListener {
 		setPreferredSize(new Dimension(1000, 650));
 	}
 
+	//DB연결
 	public void connect() {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
 	}
 
+	//날짜 출력 후, 데이터는 WeeklySalesPanel로 보내기
 	public void printDate() {
 		
 		weeklyChart = new WeeklySalesPanel(con);
 		//위클리차트의 ArrayList는 월을 바꿀때마다 초기화 되거나, 모두 삭제되어야 한다.
-		//왜?? for문 돌릴때마다 5개씩 누적되니깐...
+		//왜?? for문 돌릴때마다 주차 수 만큼 누적되니깐...
 		p_center.updateUI();
 		weeklyChart.list.removeAll(weeklyChart.list);
 		
@@ -146,8 +145,6 @@ public class WeeklySales extends JPanel implements ActionListener {
 		p_center.removeAll();
 		p_center.add(weeklyChart.createChart());
 		p_center.revalidate();
-		//p_center.updateUI();
-		
 		
 	}
 }

@@ -5,11 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-
-import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -21,53 +19,59 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class WeeklySalesPanel extends JPanel {
+import com.jitb.date.DateUtil;
 
+public class MonthlySalesPanel {
+	
 	Connection con;
 	JFreeChart barChart;
 	DefaultCategoryDataset dataSet;
-	String month;
+	String getMonth;
 	int week;
 
 	ArrayList<String[]> list = new ArrayList<String[]>();
 
-	public WeeklySalesPanel(Connection con) {
+	public MonthlySalesPanel(Connection con) {
 		this.con = con;
 		createChart();
 	}
+	
 
-	public void getData(String month, int week) {
+	public void getData(String year) {
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		StringBuffer sql = new StringBuffer();
 
-		System.out.println(sql);
-
 		try {
 
-			for (int i = 1; i <= week; i++) {
+			for (int i = 1; i <= 12; i++) {
 				String[] table = new String[2];
 
 				// 실행될때마다 삭제해주기
 				sql.delete(0, sql.length());
+				
+				String getMonth = DateUtil.getDateStr(Integer.toString(i));
 
-				sql.append("select 'movie' as type, sum(d.TOTAL_PRICE) as price, TO_CHAR(d.ORDER_TIME,'w') as week");
+				sql.append("select 'movie' as type, sum(d.TOTAL_PRICE) as price, TO_CHAR(d.ORDER_TIME,'mm') as month");
 				sql.append(" FROM movie a, product b, buy_seat c, order_movie d");
-				sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
-				sql.append(" and b.PRODUCT_ID=c.PRODUCT_ID");
+				sql.append(" where a.MOVIE_ID = b.MOVIE_ID and b.PRODUCT_ID=c.PRODUCT_ID");
 				sql.append(" and d.ORDER_ID = c.ORDER_ID");
-				sql.append(" and TO_CHAR(d.ORDER_TIME,'mm') = '" + month + "'");
-				sql.append(" and TO_CHAR(d.ORDER_TIME,'W') = '" + i + "'");
-				sql.append(" group by 'type', TO_CHAR(d.ORDER_TIME,'W')");
-				sql.append(" union all select 'snack' as type, sum(f.TOTAL_PRICE) as total, TO_CHAR(f.ORDER_TIME,'W') as week");
-				sql.append(" from SUB_OPT d, BUY_SNACK e, ORDER_SNACK f ");
+				sql.append(" and c.PRODUCT_ID=b.PRODUCT_ID");
+				sql.append(" and b.MOVIE_ID=a.MOVIE_ID");
+				sql.append(" and TO_CHAR(d.ORDER_TIME,'yyyy') = '" + year + "'");
+				sql.append(" and TO_CHAR(d.ORDER_TIME,'mm') = '" + getMonth + "'");
+				sql.append(" group by 'type', TO_CHAR(d.ORDER_TIME,'mm')");
+				sql.append(" union all select 'snack' as type, sum(f.TOTAL_PRICE) as total, TO_CHAR(f.ORDER_TIME,'mm') as month");
+				sql.append(" from SUB_OPT d, BUY_SNACK e, ORDER_SNACK f");
 				sql.append(" where e.ORDER_SNACK_ID = f.ORDER_SNACK_ID");
-				sql.append(" and e.SUB_OPT_ID=d.SUB_OPT_ID ");
-				sql.append(" and TO_CHAR(f.ORDER_TIME,'mm') = '" + month + "'");
-				sql.append(" and TO_CHAR(f.ORDER_TIME,'W') = '" + i + "'");
-				sql.append(" group by 'type', TO_CHAR(f.ORDER_TIME,'W')");
-				sql.append(" order by week asc");
+				sql.append(" and e.SUB_OPT_ID=d.SUB_OPT_ID");
+				sql.append(" and TO_CHAR(f.ORDER_TIME,'yyyy') = '" + year + "'");
+				sql.append(" and TO_CHAR(f.ORDER_TIME,'mm') = '" + getMonth + "'");
+				sql.append(" group by 'type', TO_CHAR(f.ORDER_TIME,'mm')");
+				sql.append(" order by month asc");
+				
+
 				System.out.println(sql);
 
 				pstmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -77,14 +81,17 @@ public class WeeklySalesPanel extends JPanel {
 
 				while (rs.next()) {
 
-					//DB레코드 중에서 주가 같은 데이터들 비교
-					if (rs.getString("week").equals(Integer.toString(i))) {
-						System.out.println("week가 같고 같은 week는" + i);
+					//DB레코드 중에서 주가 같은 데이터들 비교, 하지만 월은 04로 찍히기 때문에 DateUtil사용!
+					if (rs.getString("month").equals(getMonth)) {
+						System.out.println("month가 같고 같은 month는" + i);
+						
 						//type에 따라 데이터 구분해서 담기
 						if (rs.getString("type").equals("movie")) {
 							table[0] = rs.getString("price");
+							System.out.println("price 담았다"+rs.getString("price"));
 						} else if (rs.getString("type").equals("snack")) {
 							table[1] = rs.getString("price");
+							System.out.println("price 담았다"+rs.getString("price"));
 						}
 					} else {
 						//DB레코드 중에서 같은 주가 없으면 (=매출액이0이면) 0으로 담기
@@ -100,7 +107,6 @@ public class WeeklySalesPanel extends JPanel {
 			for (int a = 0; a < list.size(); a++) {
 				System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 			}
-			
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -123,29 +129,28 @@ public class WeeklySalesPanel extends JPanel {
 		}
 	}
 
-	/*
-	
-	 */
+
 	private CategoryDataset createDataset() {
 		
 		String movie = "MOVIE";
 		String snack = "SNACK";
 
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		String[] shortMonths = new DateFormatSymbols().getShortMonths();
 
 		for (int a = 0; a < list.size(); a++) {
 			System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 
 			if (list.get(a)[0] != null) {
-				dataset.addValue(Integer.parseInt(list.get(a)[0]), movie, Integer.toString(a+1)+" week");
+				dataset.addValue(Integer.parseInt(list.get(a)[0]), movie, shortMonths[a]);
 			} else {
-				dataset.addValue(0, "MOVIE", Integer.toString(a+1)+" week");
+				dataset.addValue(0, movie, shortMonths[a]);
 			}
 			
 			if (list.get(a)[1] != null) {
-				dataset.addValue(Integer.parseInt(list.get(a)[1]), snack, Integer.toString(a+1)+" week");
+				dataset.addValue(Integer.parseInt(list.get(a)[1]), snack, shortMonths[a]);
 			} else {
-				dataset.addValue(0, "SNACK", Integer.toString(a+1)+" week");
+				dataset.addValue(0, snack, shortMonths[a]);
 			}
 		}
 		return dataset;
@@ -153,7 +158,7 @@ public class WeeklySalesPanel extends JPanel {
 
 	public ChartPanel createChart() {
 
-		JFreeChart barChart = ChartFactory.createBarChart("", "Weekly revenue", "Sales revenue", createDataset());
+		JFreeChart barChart = ChartFactory.createBarChart("", "Monthly revenue", "Sales revenue", createDataset());
 
 		Font font = new Font("Dodum", Font.PLAIN, 15);
 		Font font_legend = new Font("Dodum", Font.BOLD, 15);
@@ -181,5 +186,6 @@ public class WeeklySalesPanel extends JPanel {
 		
 		return chartPanel;
 	}
+
 
 }

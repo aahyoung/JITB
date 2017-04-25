@@ -21,6 +21,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class NowMovie extends JPanel{
+	
 	private Connection con;
 	String path = "C:/project/JITB/res_manager/";
 	ArrayList <BuyMovie> list = new ArrayList<BuyMovie>();
@@ -31,7 +32,7 @@ public class NowMovie extends JPanel{
 
 	public NowMovie() {
 		this.setVisible(true);
-		this.setBackground(Color.orange);
+		//this.setBackground(Color.pink);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 
@@ -61,6 +62,7 @@ public class NowMovie extends JPanel{
 			rs = pstmt.executeQuery(); //쿼리 실행!!
 
 			while(rs.next()){
+				
 				BuyMovie dto = new BuyMovie();
 
 				dto.setName(rs.getString("상품명"));
@@ -99,14 +101,14 @@ public class NowMovie extends JPanel{
 	/*---------------------------------------
 	 list에 들어있는 movie 객체만큼 MovieItem을 생성해서 화면에 보여준다.
 	 보여줄 때 조건으로 START_DATE, 현재 날짜(TODAY)를 불러옴
-	 상영 중인 영화의 경우 (START_DATE - TODAY)를 기간으로 설정
+	 상영 중인 영화의 경우 (TODAY - START_DATE)를 기간으로 설정
 	---------------------------------------*/
 	public void init() {
 		for(int i=0; i<list.size(); i++) {
 			BuyMovie buyMovie = list.get(i);
 			try {
 				Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
-				//String name = buyMovie.getName();
+				String name = buyMovie.getName();
 				int price = buyMovie.getPrice();
 				
 				String str = buyMovie.getStart_date();
@@ -123,27 +125,26 @@ public class NowMovie extends JPanel{
 				//영화 여러번 돌리기 때문에 startDate가 달라 초기화 시키기
 				int period = 0; 
 
-				
 				//현재 날짜 구하기
 				int year = date.get ( date.YEAR );
 				int month = date.get ( date.MONTH ) + 1;
-				int yoil = date.get ( date.DAY_OF_MONTH ); 
+				int day = date.get ( date.DAY_OF_MONTH ); 
 				
 				//today.setTime(new Date());
 				//today에 현재 날짜 넣기
-				today.set(year, month, yoil);
+				today.set(year, month, day);
 				
 				//strDate 영화 개봉일 넣기
 				strDate.set(str_year, str_month, str_date);
 
 				period = (int)((today.getTimeInMillis()-strDate.getTimeInMillis())/(60*60*24*1000))+1;
 				
-				System.out.println(period);
+				System.out.println("상영기간은" + period);
 
 				String sales = String.format("%.1f", (double)price/period);
 				String booking = String.format("%.1f", (double)count/period);
 				
-				MovieItem item = new MovieItem(poster, sales, booking);
+				MovieItem item = new MovieItem(poster, name, sales, booking);
 				add(item);
 				
 			} catch (IOException e) {

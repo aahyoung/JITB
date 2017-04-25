@@ -5,27 +5,24 @@ buy_movie 데이터 베이스의 레코드 1건을 담기위한 객체 : DTO 설계
 package com.manage.sales;
 
 public class BuyMovie {
-	
+
 	private int buy_movie_id;
 	private int price;
 	private int type_id;
 	private String type;
-	
+
 	private int movie_id;
 	private String name;
 	private String poster;
 
 	private String screening_date;
-	
+
 	private String order_time;
-	
 
 	private String start_date;
 	private String end_date;
 
-
 	private int countBuy;
-
 
 	public int getBuy_movie_id() {
 		return buy_movie_id;
@@ -99,7 +96,6 @@ public class BuyMovie {
 		this.order_time = order_time;
 	}
 
-	
 	public String getStart_date() {
 		return start_date;
 	}
@@ -115,7 +111,7 @@ public class BuyMovie {
 	public void setEnd_date(String end_date) {
 		this.end_date = end_date;
 	}
-	
+
 	public int getCountBuy() {
 		return countBuy;
 	}
@@ -123,6 +119,5 @@ public class BuyMovie {
 	public void setCountBuy(int countBuy) {
 		this.countBuy = countBuy;
 	}
-
 
 }

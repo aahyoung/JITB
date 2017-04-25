@@ -28,8 +28,10 @@ public class DailySalesTable extends AbstractTableModel {
 	Vector<String> columName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
 	
-	//total을 DailySales에 보내기위한 변수 선언
+	//총매출, 영화매출, 스낵매출을 DailySales에 보내기위한 변수 선언
 	int salesTotal;
+	int movieTotal;
+	int snackTotal;
 	
 
 	public DailySalesTable(Connection con, DatePicker today) {
@@ -47,14 +49,14 @@ public class DailySalesTable extends AbstractTableModel {
 		//System.out.println(con);
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("SELECT a.name as 상품명, e.TOTAL_PRICE as total, e.ORDER_TIME as time");
+		sql.append("select 'movie' as type, a.name as 상품명, e.TOTAL_PRICE as total, e.ORDER_TIME as time");
 		sql.append(" FROM movie a, product b, buy_seat c, movie_price d, order_movie e");
 		sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
 		sql.append(" and b.PRODUCT_ID=c.PRODUCT_ID");
 		sql.append(" and d.TYPE_ID = c.TYPE_ID");
 		sql.append(" and e.ORDER_ID = c.ORDER_ID");
 		sql.append(" and to_char(e.order_time, 'yyyy-mm-dd')= ?");
-		sql.append(" union all select d.name as 상품명, f.TOTAL_PRICE as total, f.ORDER_TIME as time");
+		sql.append(" union all select 'snack' as type, d.name as 상품명, f.TOTAL_PRICE as total, f.ORDER_TIME as time");
 		sql.append(" from SUB_OPT d, BUY_SNACK e, ORDER_SNACK f ");
 		sql.append(" where e.ORDER_SNACK_ID = f.ORDER_SNACK_ID");
 		sql.append(" and e.SUB_OPT_ID=d.SUB_OPT_ID ");
@@ -63,9 +65,6 @@ public class DailySalesTable extends AbstractTableModel {
 		System.out.println(sql);
 	
 
-		
-		//System.out.println(today.getValue().toString());
-		//System.out.println(sql.toString());
 		String day = today.getValue().toString();
 		System.out.println("출력"+day);
 
@@ -87,16 +86,29 @@ public class DailySalesTable extends AbstractTableModel {
 			}
 			
 			int total=0;
+			int movie =0;
+			int snack=0;
 
 			while(rs.next()) {
 				Vector<String> vec = new Vector<String>();
+				vec.add(rs.getString("type"));
 				vec.add(rs.getString("상품명"));
 				vec.add(rs.getString("total"));
 				vec.add(rs.getString("time"));
 				
+				if(rs.getString("type").equals("movie")){
+					movie+=rs.getInt("total");
+
+				} else if(rs.getString("type").equals("snack")) {
+					snack+=rs.getInt("total");
+				}
+				
 				total+= rs.getInt("total");
+				
+				movieTotal = movie;
+				snackTotal = snack;
 				salesTotal=total;
-				System.out.println(total);
+
 				data.add(vec);		
 			}
 		} catch (SQLException e) {

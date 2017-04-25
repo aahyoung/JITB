@@ -14,6 +14,6 @@ public class PurchasePanelFrame extends JPanel{
 		this.main = main;
 		
 		setBackground(new Color(33, 33, 33));
-		setPreferredSize(new Dimension(750, 750));
+		setPreferredSize(new Dimension(755, 750));
 	}
 }

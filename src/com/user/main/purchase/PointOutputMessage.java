@@ -14,18 +14,18 @@ import javax.swing.JPanel;
 import com.user.frame.PurchasePanelFrame;
 import com.user.main.ClientMain;
 
-public class PurchaseEndMessage extends PurchasePanelFrame{
+public class PointOutputMessage extends PurchasePanelFrame{
 	JPanel content;
 	JPanel can_default;
 	Canvas bt_cancle;
 	
-	public PurchaseEndMessage(ClientMain main) {
+	public PointOutputMessage(ClientMain main) {
 		super(main);
 		
 		content = new JPanel(){
 			@Override
 			public void paint(Graphics g) {
-				URL url = getClass().getResource("/payment_message.png");
+				URL url = getClass().getResource("/point_output_message.png");
 				try {
 					Image img = ImageIO.read(url);
 					g.drawImage(img, 0, 50, 527, 402, this);
@@ -38,7 +38,7 @@ public class PurchaseEndMessage extends PurchasePanelFrame{
 		bt_cancle = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
-				URL url = getClass().getResource("/bt_go_main.png");
+				URL url = getClass().getResource("/bt_cancle.png");
 				try {
 					Image img = ImageIO.read(url);
 					g.drawImage(img, -10, 0, 200, 50, this);

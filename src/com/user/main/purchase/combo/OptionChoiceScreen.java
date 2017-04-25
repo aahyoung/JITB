@@ -255,11 +255,11 @@ public class OptionChoiceScreen extends ScreenFrame{
 			nextScreen.la_movie_price.setText(Integer.toString(main.selectList.getPrice()));
 			nextScreen.selectChoiceProduct(main.selectList.getProduct_id());
 		}
+		main.combo = true;
 		nextScreen.la_combo_price.setText(Integer.toString(main.selectCombo.getPrice()));
 		nextScreen.setTotalPrice();
 		nextScreen.extractCombo(main.selectCombo.getSub_opt_id());
 		nextScreen.createInfo();
-		main.combo = true;
 		main.setPage(11);
 	}
 	

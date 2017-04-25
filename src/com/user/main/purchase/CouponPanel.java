@@ -7,6 +7,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -51,12 +54,14 @@ public class CouponPanel extends PurchasePanelFrame{
 				for(int i=0; i<gifts.size(); i++){
 					URL url = getClass().getResource("/"+gifts.get(i).getImg());
 					try {
+						g2.setColor(Color.WHITE);
 						Image img = ImageIO.read(url);
 						g2.drawImage(img, gifts.get(i).x+10, gifts.get(i).y+10, gifts.get(i).width-20, gifts.get(i).height-70, this);
 						g2.drawString(gifts.get(i).getName(), gifts.get(i).x+30, gifts.get(i).y+180);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+					g2.setColor(new Color(66,106,126));
 					g2.draw(gifts.get(i));
 				}
 			}
@@ -88,11 +93,60 @@ public class CouponPanel extends PurchasePanelFrame{
 			}
 		};
 		
-		content.setBackground(Color.PINK);
+		content.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Point point = e.getPoint();
+				
+				for(int i=0; i<gifts.size(); i++){
+					if(gifts.get(i).contains(point)){
+						PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+						int price = Integer.parseInt(screen.la_total_price.getText());
+						price = (int)(price * gifts.get(i).rate);
+						screen.la_disc_price.setText(Integer.toString(price));
+						
+						int total = Integer.parseInt(screen.la_total_price.getText())-Integer.parseInt(screen.la_disc_price.getText());
+						screen.la_remain_price.setText(Integer.toString(total));
+						
+						if(main.movie){
+							main.selectList.setDiscount_type_id(gifts.get(i).getDiscount_type_id());
+						}
+						if(main.combo){
+							main.selectCombo.setDiscount_type_id(gifts.get(i).getDiscount_type_id());
+						}
+						screen.setImg(2);
+						screen.stepInfo.repaint();
+						screen.setPanel(2);
+					}
+				}
+			}
+		});
 		
-		content.setPreferredSize(new Dimension(750, 550));
+		content.setPreferredSize(new Dimension(755, 550));
 		bt_go_purchase.setPreferredSize(new Dimension(200, 100));
 		bt_go_next.setPreferredSize(new Dimension(200, 100));
+		
+		bt_go_purchase.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+				PurchasePanel nextPanel = (PurchasePanel)screen.content.get(2);
+				screen.setImg(2);
+				screen.stepInfo.repaint();
+				nextPanel.isNoDiscount = true;
+				screen.setPanel(2);
+			}
+		});
+		
+		bt_go_next.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+				screen.setImg(1);
+				screen.stepInfo.repaint();
+				screen.setPanel(1);
+			}
+		});
 		
 		add(content);
 		add(bt_go_purchase);

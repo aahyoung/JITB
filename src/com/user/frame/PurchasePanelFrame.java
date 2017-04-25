@@ -5,10 +5,15 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
+import com.user.main.ClientMain;
+
 public class PurchasePanelFrame extends JPanel{
-	public PurchasePanelFrame() {
+	protected ClientMain main;
+	
+	public PurchasePanelFrame(ClientMain main) {
+		this.main = main;
 		
-		setBackground(Color.WHITE);
-		setPreferredSize(new Dimension(750, 700));
+		setBackground(new Color(33, 33, 33));
+		setPreferredSize(new Dimension(750, 750));
 	}
 }

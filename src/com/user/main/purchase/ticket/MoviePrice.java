@@ -1,4 +1,4 @@
-package com.jitb.db;
+package com.user.main.purchase.ticket;
 
 public class MoviePrice {
 	int type_id;

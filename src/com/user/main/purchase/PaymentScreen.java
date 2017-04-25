@@ -56,19 +56,27 @@ public class PaymentScreen extends ScreenFrame{
 		la_spar1 = new JLabel("-", JLabel.CENTER);
 		la_spar2 = new JLabel("=", JLabel.CENTER);
 		
-		//쿠폰 쓰기
-		content.add(new CouponPanel());
-		content.add(new CouponMessage());
+		//======================쿠폰 쓰기
+		//index=0
+		content.add(new CouponPanel(main));
+		//index=1
+		content.add(new CouponMessage(main));
 		
-		//포인트 쓰기
-		content.add(new PointPanel());
-		content.add(new PointUseMessage());
+		//======================포인트 쓰기
+		//index=2
+		content.add(new PointPanel(main));
+		//index=3
+		content.add(new PointUseMessage(main));
 		
-		//구매 + 포인트 적립
-		content.add(new PurchasePanel());
-		content.add(new CardInputMessage());
-		content.add(new PointSaveMessage());
-		content.add(new PurchaseEndMessage());
+		//======================구매 + 포인트 적립
+		//index=4
+		content.add(new PurchasePanel(main));
+		//index=5
+		content.add(new CardInputMessage(main));
+		//index=6
+		content.add(new PointSaveMessage(main));
+		//index=7
+		content.add(new PurchaseEndMessage(main));
 		
 		setURL();
 		setImg(0);

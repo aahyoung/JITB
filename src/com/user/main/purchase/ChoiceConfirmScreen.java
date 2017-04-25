@@ -238,7 +238,11 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 			}
 		};
 		
-		info.setPreferredSize(new Dimension(700, 650));
+		if(main.movie == false || main.combo == false){
+			info.setPreferredSize(new Dimension(700, 350));
+		}else{
+			info.setPreferredSize(new Dimension(700, 650));
+		}
 		add(info);
 		add(bt_purchase);
 	}

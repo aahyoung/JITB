@@ -3,9 +3,10 @@
  */
 package com.manage.sales;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,13 +15,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class NowMovie extends JPanel{
+public class NowMovie extends JPanel implements ActionListener{
 	
 	private Connection con;
 	String path = "C:/project/JITB/res_manager/";
@@ -32,7 +32,6 @@ public class NowMovie extends JPanel{
 
 	public NowMovie() {
 		this.setVisible(true);
-		//this.setBackground(Color.pink);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 
@@ -151,5 +150,10 @@ public class NowMovie extends JPanel{
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		Object ojb = e.getSource();
+
 	}
 }

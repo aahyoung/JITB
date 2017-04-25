@@ -7,14 +7,9 @@ package com.manage.sales;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Vector;
 
@@ -29,7 +24,6 @@ import com.jitb.db.DBManager;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.control.DatePicker;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -41,8 +35,6 @@ public class DailySales extends JPanel implements ActionListener {
 	Vector<String> columName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
 	
-	DailyChartPanel dailyChart;
-
 	private JPanel p_north, p_center, p_south, p_west, p_east;
 	private JTable table;
 	private JButton bt;
@@ -87,9 +79,11 @@ public class DailySales extends JPanel implements ActionListener {
 		p_center.add(p_west, BorderLayout.WEST);
 		
 		p_west.add(scroll);
-
+		
+		scroll.setPreferredSize(new Dimension(500, 500));
 		p_west.setPreferredSize(new Dimension(500, 500));
 		p_east.setPreferredSize(new Dimension(500, 500));
+		//p_east.setBackground(Color.pink);
 
 		// datepicker 패널
 		p_date.setLayout(new BorderLayout());
@@ -117,10 +111,10 @@ public class DailySales extends JPanel implements ActionListener {
 	
 	//버튼을 누르면 테이블 조회
 	public void actionPerformed(ActionEvent e) {
-		//graph();
 		p_north.repaint();
 		Object obj = e.getSource();
 		if(obj==bt){
+
 			table.setModel(salesTable = new DailySalesTable(con, today));
 			table.updateUI();
 			salesTable.getTable();
@@ -132,17 +126,17 @@ public class DailySales extends JPanel implements ActionListener {
 			tot_sal.setText("<html>영화 당일 매출: "+ movieTotal+" 원"
 					+"<br>식품 당일 매출: "+ snackTtoal+" 원"
 					+"<br>총 당일 매출: "+ salesTotal+" 원</html>");	
+			graph();
 		}
 	}
 	
 	// 그래프 부르기!
 	public void graph() {
-		//dailyChart.createChart().repaint();
-		//dailyChart.createChart().updateUI();
-		p_west.removeAll();
-		//p_center.add(dailyChart.createChart());
-		p_west.revalidate();	
-		
+		salesTable.createChart().repaint();
+		salesTable.createChart().updateUI();
+		p_east.removeAll();
+		p_east.add(salesTable.createChart());
+		p_east.revalidate();
 	}
 
 	public void createCalendar() {
@@ -155,7 +149,6 @@ public class DailySales extends JPanel implements ActionListener {
 		gridPane.setVgap(10);
 		gridPane.add(today, 1, 0);
 		vbox.getChildren().add(gridPane);
-
 		p_date.setScene(scene);
 	}
 }

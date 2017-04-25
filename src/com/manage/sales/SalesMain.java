@@ -19,7 +19,7 @@ import javax.swing.JTabbedPane;
 
 import com.jitb.db.DBManager;
 
-public class SalesMain extends JPanel implements ItemListener{
+public class SalesMain extends JPanel implements ItemListener {
 	 
 	DBManager manager = DBManager.getInstance();
 	Connection con;
@@ -77,6 +77,7 @@ public class SalesMain extends JPanel implements ItemListener{
 		setLayout(new FlowLayout());
 		setSize(1000, 650);
 		setVisible(true);
+		setBackground(Color.WHITE);
 	}
 	
 	public void init() {

@@ -1,6 +1,7 @@
 /*
  영화관 총 매출을 보여주는 main 패널
  */
+
 package com.manage.sales;
 
 import java.awt.BorderLayout;
@@ -67,6 +68,8 @@ public class SalesTheater extends JPanel implements ItemListener {
 		setLayout(new FlowLayout());
 		setVisible(true);
 		setSize(1000, 650);
+		setBackground(Color.WHITE);
+
 	}
 
 	//일별, 주별, 월별 선택 choice

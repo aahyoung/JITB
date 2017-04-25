@@ -42,7 +42,7 @@ public class WeeklySalesPanel extends JPanel {
 		ResultSet rs = null;
 		StringBuffer sql = new StringBuffer();
 
-		System.out.println(sql);
+		//System.out.println(sql);
 
 		try {
 
@@ -68,7 +68,7 @@ public class WeeklySalesPanel extends JPanel {
 				sql.append(" and TO_CHAR(f.ORDER_TIME,'W') = '" + i + "'");
 				sql.append(" group by 'type', TO_CHAR(f.ORDER_TIME,'W')");
 				sql.append(" order by week asc");
-				System.out.println(sql);
+				//System.out.println(sql);
 
 				pstmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
 						ResultSet.CONCUR_READ_ONLY);
@@ -79,7 +79,7 @@ public class WeeklySalesPanel extends JPanel {
 
 					//DB레코드 중에서 주가 같은 데이터들 비교
 					if (rs.getString("week").equals(Integer.toString(i))) {
-						System.out.println("week가 같고 같은 week는" + i);
+						//System.out.println("week가 같고 같은 week는" + i);
 						//type에 따라 데이터 구분해서 담기
 						if (rs.getString("type").equals("movie")) {
 							table[0] = rs.getString("price");
@@ -96,10 +96,11 @@ public class WeeklySalesPanel extends JPanel {
 			}
 			System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
 			
-			// LIST에 잘 담아져있는지 확인하기
+			/*// LIST에 잘 담아져있는지 확인하기
 			for (int a = 0; a < list.size(); a++) {
 				System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 			}
+			*/
 			
 
 		} catch (SQLException e) {
@@ -134,7 +135,7 @@ public class WeeklySalesPanel extends JPanel {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 		for (int a = 0; a < list.size(); a++) {
-			System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
+			//System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 
 			if (list.get(a)[0] != null) {
 				dataset.addValue(Integer.parseInt(list.get(a)[0]), movie, Integer.toString(a+1)+" week");
@@ -148,6 +149,7 @@ public class WeeklySalesPanel extends JPanel {
 				dataset.addValue(0, "SNACK", Integer.toString(a+1)+" week");
 			}
 		}
+		System.out.println("dataset :" + dataset);
 		return dataset;
 	}
 

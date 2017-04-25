@@ -72,7 +72,7 @@ public class MonthlySalesPanel {
 				sql.append(" order by month asc");
 				
 
-				System.out.println(sql);
+				//System.out.println(sql);
 
 				pstmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
 						ResultSet.CONCUR_READ_ONLY);
@@ -83,15 +83,15 @@ public class MonthlySalesPanel {
 
 					//DB레코드 중에서 주가 같은 데이터들 비교, 하지만 월은 04로 찍히기 때문에 DateUtil사용!
 					if (rs.getString("month").equals(getMonth)) {
-						System.out.println("month가 같고 같은 month는" + i);
+						//System.out.println("month가 같고 같은 month는" + i);
 						
 						//type에 따라 데이터 구분해서 담기
 						if (rs.getString("type").equals("movie")) {
 							table[0] = rs.getString("price");
-							System.out.println("price 담았다"+rs.getString("price"));
+							//System.out.println("price 담았다"+rs.getString("price"));
 						} else if (rs.getString("type").equals("snack")) {
 							table[1] = rs.getString("price");
-							System.out.println("price 담았다"+rs.getString("price"));
+							//System.out.println("price 담았다"+rs.getString("price"));
 						}
 					} else {
 						//DB레코드 중에서 같은 주가 없으면 (=매출액이0이면) 0으로 담기
@@ -103,10 +103,11 @@ public class MonthlySalesPanel {
 			}
 			System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
 			
-			// LIST에 잘 담아져있는지 확인하기
+			/* LIST에 잘 담아져있는지 확인하기
 			for (int a = 0; a < list.size(); a++) {
 				System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 			}
+			*/
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -139,7 +140,7 @@ public class MonthlySalesPanel {
 		String[] shortMonths = new DateFormatSymbols().getShortMonths();
 
 		for (int a = 0; a < list.size(); a++) {
-			System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
+			//System.out.println(list.get(a)[0] + "," + list.get(a)[1]);
 
 			if (list.get(a)[0] != null) {
 				dataset.addValue(Integer.parseInt(list.get(a)[0]), movie, shortMonths[a]);

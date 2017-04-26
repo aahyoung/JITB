@@ -27,7 +27,6 @@ import java.awt.BorderLayout;
 	import javax.swing.JTextField;
 
 	import com.jitb.db.DBManager;
-	import com.manage.discount.table_model;
 
 	public class Add_Gift_Final extends JFrame implements ActionListener{
 		Canvas can;

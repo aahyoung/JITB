@@ -9,7 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.manage.discount.DiscountMain;
+import com.manage.discountFinal.DiscountF;
+import com.manage.discountFinal.Discount_Final_Panel;
 import com.manage.inventory.InventoryMain;
 import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
@@ -70,7 +71,7 @@ public class Main extends JFrame implements ActionListener{
 		 * */
 		page[1]=new MovieTheaterTab();
 		page[2]=new InventoryMain();
-		page[3]=new DiscountMain();
+		page[3]=new DiscountF();
 		page[4]=new SalesMain();
 		
 		// Movie Panel ºÎÂø

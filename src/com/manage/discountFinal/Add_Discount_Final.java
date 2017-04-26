@@ -30,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
-import com.manage.discount.table_model;
 import com.manage.inventory.TablePanel;
 
 import javafx.scene.layout.Border;
@@ -42,7 +41,7 @@ public class Add_Discount_Final extends JFrame implements ActionListener{
 	JLabel la_name;
 	JTextField t_name;
 	JButton bt_add;
-	table_model tablemodel;
+	table_modelF tablemodel;
 	DBManager manager;
 	Connection con;
 	JTable table_up;
@@ -111,7 +110,7 @@ public class Add_Discount_Final extends JFrame implements ActionListener{
 				}
 			}
 		}
-		table_up.setModel(tablemodel=new table_model(con,"discount_type"));
+		table_up.setModel(tablemodel=new table_modelF(con,"discount_type"));
 	}
 	
 	//추가 버튼

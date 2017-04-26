@@ -1,12 +1,10 @@
 package com.manage.discountFinal;
 
 import java.awt.BorderLayout;
-import java.awt.Choice;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,15 +13,11 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.MouseInputListener;
-
 import com.jitb.db.DBManager;
-import com.manage.discount.table_model;
 
 public class Plus_PointF_DoNotStart extends JFrame implements ActionListener{
 	JTextField t_Point;

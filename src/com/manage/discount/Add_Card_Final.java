@@ -54,7 +54,6 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 	FileInputStream fis;
 	FileOutputStream fos;
 	BufferedInputStream bis;
-	ImageThread it;
 
 	public Add_Card_Final(int discount_type_id, JTable table) {
 		this.discount_type_id = discount_type_id;
@@ -133,8 +132,6 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		PreparedStatement pstmt = null;
 		String filePath =file.getAbsolutePath().toString();
 		System.out.println(filePath);
-		it=new ImageThread(socket,filePath);
-		it.start();
 		String sql = "insert into card(card_id,name,rate,img,discount_type_id)";
 		sql += "values(seq_card.nextval,?,?,?,?)";
 		try {

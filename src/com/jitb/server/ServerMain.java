@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class ServerMain extends JFrame implements ActionListener, Runnable{
+public class ServerMain implements Runnable{
 	JPanel p_north;
 	JLabel label;
 	JTextField t_port;
@@ -26,74 +26,42 @@ public class ServerMain extends JFrame implements ActionListener, Runnable{
 	JTextArea console;
 	JScrollPane scroll;
 	
-	int port = 7777;
 	ServerSocket server;
+	int port = 9090;
 	
-	Thread thread;
-	Vector<ServerThread> stArr = new Vector<ServerThread>();
+	// 다중 사용자 접속을 받는 용도
+	Thread connectThread;
+	Vector<ServerThread> threadList = new Vector<ServerThread>();	// 멀티쓰레드 담기
 	
 	public ServerMain() {
-		p_north = new JPanel();
-		label = new JLabel("포트번호");
-		t_port = new JTextField(5);
-		bt_start = new JButton("서버 가동");
-		
-		console = new JTextArea();
-		scroll = new JScrollPane(console);
-		
-		t_port.setText(Integer.toString(port));
-		
-		bt_start.setBackground(Color.YELLOW);
-		p_north.setBackground(Color.WHITE);
-		console.setFont(new Font("dotum", Font.PLAIN, 25));
-		console.setBackground(Color.BLACK);
-		console.setForeground(Color.WHITE);
-		
-		p_north.add(label);
-		p_north.add(t_port);
-		p_north.add(bt_start);
-		add(p_north, BorderLayout.NORTH);
-		add(scroll);
-		
-		console.setEditable(false);
-		bt_start.addActionListener(this);
-		
-		setTitle("server");
-		setSize(600, 800);
-		setLocationRelativeTo(null);
-		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	public void connect(){
-		port = Integer.parseInt(t_port.getText());
-		
+		// 서버 생성
 		try {
-			server = new ServerSocket(port);
-			console.setText("Operation port "+port+" ...\n");
+			server=new ServerSocket(port);
 			
-			while(true){
-				Socket socket = server.accept();
-				String ip = socket.getInetAddress().getHostAddress();
-				console.setText("Connect IP "+ip+" (total xx)");
-				ServerThread st = new ServerThread(socket, this);
-				st.start();
-				stArr.add(st);
-			}
+			connectThread=new Thread(this);
+			connectThread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		thread = new Thread(this);
-		thread.start();
-	}
-	
-	@Override
 	public void run() {
-		connect();
+		// 접속자 무한 감지
+		while(true){
+			try {
+				// 접속자 감지
+				Socket socket=server.accept();
+				ServerThread st=new ServerThread(this, socket);
+				st.start();
+				// 접속자 명단에 추가
+				threadList.addElement(st);
+				System.out.println(threadList.size()+" 명 접속");
+				
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public static void main(String[] args) {

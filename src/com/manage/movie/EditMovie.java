@@ -326,7 +326,7 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		
 		try {
 			fis=new FileInputStream(file);
-			fos=new FileOutputStream("res_manager/"+file.getName());
+			fos=new FileOutputStream("http://localhost:9090/data/"+file.getName());
 			
 			byte[] b=new byte[1024];
 			int flag;

@@ -252,6 +252,10 @@ public class MovieMain extends JPanel implements ActionListener{
 				System.out.println(excelMovie.size());
 			}
 			
+			// product 테이블 정보 알아오기
+			sql.delete(0, sql.length());
+			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{

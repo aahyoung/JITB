@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.jitb.client.ClientMain;
 import com.jitb.db.DBManager;
 
 import javafx.embed.swing.JFXPanel;
@@ -148,6 +149,9 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
     // 부모 패널
     MovieMain movieMain;
     
+    // ClientMain의 url
+    URL url;
+    
     // 각 날짜별(영화)시작 시간 계산
     String[] start_time=new String[7];
     
@@ -159,7 +163,6 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
  
 	public AddMovie(MovieMain movieMain) {
 		this.movieMain=movieMain;
-		
 		URL url=this.getClass().getResource("/shrek.jpg");
 		
 		try {
@@ -315,12 +318,6 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 					}
 				}
 			}
-		//}
-	/*
-		else{
-			JOptionPane.showMessageDialog(this, "입력값을 제대로 입력해주세요.");
-		}
-	*/
 	}
 	
 	// 입력값이 유효한지 검사
@@ -372,7 +369,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		
 		try {
 			fis=new FileInputStream(file);
-			fos=new FileOutputStream("res_manager/"+file.getName());
+			fos=new FileOutputStream("http://localhost:9090/data/"+file.getName());
 			
 			byte[] b=new byte[1024];
 			int flag;

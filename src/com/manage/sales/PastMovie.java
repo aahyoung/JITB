@@ -151,7 +151,7 @@ public class PastMovie extends JPanel {
 				String booking = String.format("%.1f", (double)count/period);
 				System.out.println(booking);
 				
-				MovieItem item = new MovieItem(poster, name, sales, booking);
+				MovieItem item = new MovieItem(poster, name, sales, booking, con);
 				add(item);
 				
 			} catch (IOException e) {

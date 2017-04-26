@@ -43,7 +43,7 @@ public class WeeklySales extends JPanel implements ActionListener {
 		yy = cal.get(Calendar.YEAR);
 		mm = cal.get(Calendar.MONTH);
 
-		p_north.setBackground(Color.ORANGE);
+		//p_north.setBackground(Color.white);
 		p_north.add(bt_prev);
 		p_north.add(la_title);
 		p_north.add(bt_next);
@@ -68,7 +68,7 @@ public class WeeklySales extends JPanel implements ActionListener {
 		graph();
 		
 		this.setVisible(true);
-		this.setBackground(Color.ORANGE);
+		this.setBackground(Color.white);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 

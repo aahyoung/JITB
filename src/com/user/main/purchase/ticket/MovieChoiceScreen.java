@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
+import com.user.main.InitScreen;
+import com.user.main.purchase.MenuChoiceScreen;
 
 public class MovieChoiceScreen extends ScreenFrame{
 	JPanel p_north;
@@ -242,6 +244,15 @@ public class MovieChoiceScreen extends ScreenFrame{
 				selectMovieTimeNotToday(movie_id);
 			}
 		}
+		
+		InitScreen initScreen = (InitScreen)main.screen.get(0);
+		MenuChoiceScreen menuScreen = (MenuChoiceScreen)main.screen.get(1);
+		
+		String poster = movies.get(0).getPoster();
+		initScreen.poster_url = getClass().getResource("/"+poster);
+		initScreen.touch.repaint();
+		menuScreen.poster_url = getClass().getResource("/"+poster);
+		menuScreen.poster.repaint();
 		
 		int height = 300;
 		int y_point = 0;

@@ -7,6 +7,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -17,6 +20,12 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
@@ -29,12 +38,14 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	JPanel p_screenInfo;
 	JPanel p_bt;
 	
-	OrderInfo[] orderInfos = new OrderInfo[2];
+	ArrayList<OrderInfo> orderInfos = new ArrayList<OrderInfo>();
 	String nomal[];
 	String student[];
 	
 	ArrayList<SeatButton> selectSeat = new ArrayList<SeatButton>();
 	ArrayList<String> occupiedSeat = new ArrayList<String>();
+	ArrayList<String> existSeat = new ArrayList<String>();
+	String theaterName;
 	
 	String[] locationImg = {
 			"A.png", "B.png", "C.png", "D.png", "E.png", "F.png", "G.png", "H.png", "I.png", "J.png"
@@ -102,6 +113,8 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	
 	public void createSeatBtn(){
 		char seatName = 'A';
+		exelSeatSetting();
+		
 		for(int i=0; i<10; i++){
 			JPanel col_panel = new JPanel();
 			col_panel.setBackground(new Color(33,33,33));
@@ -129,6 +142,10 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				}else{
 					String seatNaming = ""+seatName+(j);
 					int status = 1;
+					
+					if(existSeat.get(j).equalsIgnoreCase("X")){
+						status = -1;
+					}
 					
 					for(int k=0; k<occupiedSeat.size(); k++){
 						if(occupiedSeat.get(k).equals(seatNaming)){
@@ -177,7 +194,7 @@ public class SeatsChoiceScreen extends ScreenFrame{
 					selectSeat.remove(btn);
 					
 					int price = Integer.parseInt(la_price.getText());
-					la_price.setText(Integer.toString(price - orderInfos[0].getType_price()));
+					la_price.setText(Integer.toString(price - orderInfos.get(0).getType_price()));
 					
 					return;
 				}
@@ -191,7 +208,7 @@ public class SeatsChoiceScreen extends ScreenFrame{
 					selectSeat.remove(btn);
 					
 					int price = Integer.parseInt(la_price.getText());
-					la_price.setText(Integer.toString(price - orderInfos[1].getType_price()));
+					la_price.setText(Integer.toString(price - orderInfos.get(1).getType_price()));
 					
 					return;
 				}
@@ -207,7 +224,7 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				selectSeat.add(btn);
 				
 				int price = Integer.parseInt(la_price.getText());
-				la_price.setText(Integer.toString(price + orderInfos[0].getType_price()));
+				la_price.setText(Integer.toString(price + orderInfos.get(0).getType_price()));
 				
 				return;
 			}
@@ -217,9 +234,9 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				student[i] = btn.seat_name;
 				btn.index = 0;
 				selectSeat.add(btn);
-				System.out.println(orderInfos[1].getType_price());
+				System.out.println(orderInfos.get(1).getType_price());
 				int price = Integer.parseInt(la_price.getText());
-				la_price.setText(Integer.toString(price + orderInfos[1].getType_price()));
+				la_price.setText(Integer.toString(price + orderInfos.get(1).getType_price()));
 				
 				return;
 			}
@@ -239,12 +256,39 @@ public class SeatsChoiceScreen extends ScreenFrame{
 			}
 		}
 		
-		orderInfos[0].setSeatName(nomal);
-		orderInfos[1].setSeatName(student);
+		orderInfos.get(0).setSeatName(nomal);
+		orderInfos.get(1).setSeatName(student);
 		main.selectList.setOrderInfos(orderInfos);
 		main.selectList.setPrice(Integer.parseInt(la_price.getText()));
 		main.movie = true;
 		main.setPage(7);
+	}
+	
+	public void exelSeatSetting(){
+		File file = new File("C:/JITB Java Project/JITB/res_manager/영화관 좌석표.xls");
+		FileInputStream fis;
+		try {
+			DataFormatter df = new DataFormatter();
+			fis = new FileInputStream(file);
+			
+			HSSFWorkbook book = new HSSFWorkbook(fis);
+			selectTheaterName();
+			HSSFSheet sheet = book.getSheet(theaterName);
+			
+			for(int i=0; i<10; i++){
+				HSSFRow row = sheet.getRow(i);
+				for(int j=0; j<10; j++){
+					HSSFCell cell = row.getCell(j);
+					String value = df.formatCellValue(cell);
+					existSeat.add(value);
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void selectSeatOccupation(int product_id){
@@ -275,6 +319,27 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void selectTheaterName(){
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		
+		StringBuffer sql = new StringBuffer();
+		sql.append("select t.name as 관이름 from product p");
+		sql.append(" inner join theater t on p.theater_id = t.theater_id");
+		sql.append(" where product_id = ?");
+		
+		try {
+			pstmt = main.con.prepareStatement(sql.toString());
+			pstmt.setInt(1, main.selectList.getProduct_id());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()){
+				theaterName = rs.getString("관이름");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

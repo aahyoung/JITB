@@ -70,10 +70,10 @@ public class PaymentScreen extends ScreenFrame{
 		
 		//======================메시지들
 		//index=3
-		content.add(new PointInputMessage(main));
+		content.add(new PointOutputMessage(main));
 		
 		//index=4
-		content.add(new PointOutputMessage(main));
+		content.add(new PointInputMessage(main));
 		
 		//index=5
 		content.add(new PurchaseEndMessage(main));
@@ -84,6 +84,12 @@ public class PaymentScreen extends ScreenFrame{
 		//======================포인트 선택
 		//index=7
 		content.add(new ApplyPointPanel(main));
+		
+		//index=8
+		content.add(new NoSeatMessage(main));
+		
+		//index=9
+		content.add(new NoPointOnemoreMessage(main));
 		
 		setURL();
 		setImg(0);

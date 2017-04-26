@@ -215,7 +215,7 @@ public class PersonsChoiceScreen extends ScreenFrame{
 						orderInfo.setType_id(moviePrice.get(i).getType_id());
 						orderInfo.setType(moviePrice.get(i).getType());
 						orderInfo.setType_price(moviePrice.get(i).getPrice());
-						nextScreen.orderInfos[i] = orderInfo;
+						nextScreen.orderInfos.add(orderInfo);
 					}
 					
 					nextScreen.nomal = new String[nomalIndex];

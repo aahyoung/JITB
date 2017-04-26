@@ -4,6 +4,7 @@ public class UserPoint {
 	int point_serial_id;
 	long serial_number;
 	int point;
+	int use_point;
 	int discount_type_id;
 	
 	public int getPoint_serial_id() {
@@ -28,6 +29,14 @@ public class UserPoint {
 	
 	public void setPoint(int point) {
 		this.point = point;
+	}
+	
+	public int getUse_point() {
+		return use_point;
+	}
+
+	public void setUse_point(int use_point) {
+		this.use_point = use_point;
 	}
 
 	public int getDiscount_type_id() {

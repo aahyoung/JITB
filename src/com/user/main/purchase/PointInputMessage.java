@@ -25,12 +25,10 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 	JPanel can_default;
 	Canvas bt_cancle;
 	
-	int discount_type_id;
-	
 	Thread thread;
-	boolean flag = true;
 	
 	long serial;
+	boolean isSerial;
 	UserPoint point;
 	
 	public PointInputMessage(ClientMain main) {
@@ -89,16 +87,21 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 		
 		System.out.println(serial);
 		PaymentScreen screen = (PaymentScreen)main.screen.get(12);
-		ApplyPointPanel nextPanel = (ApplyPointPanel)screen.content.get(7);
 		
+		System.out.println("시리얼확인전");
 		selectSerialNum(serial);
+		System.out.println("시리얼확인후");
+		
 		//시리얼 넘버가 있는 경우
-		if(point != null){
-			nextPanel.point = point;
-			nextPanel.la_point.setText(Integer.toString(point.getPoint()));
-			screen.setPanel(7);
+		if(isSerial){
+			System.out.println("포인트적립전");
+			//포인트 적립 후 결제완료 메시지
+			pointInput();
+			System.out.println("포인트적립후");
+			screen.setPanel(5);
 		}else{
-			screen.setPanel(6);
+			System.out.println("카드잘못됨");
+			screen.setPanel(9);
 		}
 	}
 	
@@ -114,11 +117,11 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()){
+				isSerial = true;
 				point = new UserPoint();
 				point.setPoint_serial_id(rs.getInt("point_serial_id"));
-				point.setSerial_number(rs.getInt("serial_number"));
+				point.setSerial_number(rs.getLong("serial_number"));
 				point.setPoint(rs.getInt("point"));
-				point.setDiscount_type_id(discount_type_id);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,6 +137,40 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void pointInput(){
+		System.out.println("포인트인풋");
+		PreparedStatement pstmt = null;
+		
+		PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+		int plusPoint = (int)(Integer.parseInt(screen.la_total_price.getText()) * 0.1);
+		
+		String sql = "update point_serial set point = (point + ?) where point_serial_id = ?";
+		try {
+			pstmt = main.con.prepareStatement(sql);
+			pstmt.setInt(1, plusPoint);
+			pstmt.setInt(2, point.getPoint_serial_id());
+			
+			int result = pstmt.executeUpdate();
+			System.out.println(result);
+			if(result!=0){
+				System.out.println("포인트적립!!");
+			}else{
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(pstmt != null){
+					pstmt.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	@Override

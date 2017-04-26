@@ -31,8 +31,6 @@ public class ClientMain extends JFrame implements Runnable{
 	public Connection con;
 	public ArrayList<JPanel> screen;
 	
-	private int port = 7777; //사용자에게 노출되지 않고 바로 실행됨
-	private String ip = "localhost"; //추후 네트워크상 다른 계정과도 테스트 해볼 것
 	Socket socket;
 	
 	String[] days = {"일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"};
@@ -55,6 +53,26 @@ public class ClientMain extends JFrame implements Runnable{
 		setLayout(new FlowLayout());
 		
 		init();
+		createScreen();
+		
+		thread = new Thread(this);
+		thread.start();
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				manager.disConnect(con);
+				System.exit(0);
+			}
+		});
+		setSize(800, 1200);
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
+	
+	public void createScreen(){
+		
+		screen = new ArrayList<JPanel>();
 		
 		//index=0
 		screen.add(new InitScreen(this));
@@ -88,20 +106,12 @@ public class ClientMain extends JFrame implements Runnable{
 		}
 		
 		setPage(0);
-		
-		thread = new Thread(this);
-		thread.start();
-		
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				manager.disConnect(con);
-				System.exit(0);
-			}
-		});
-		setSize(800, 1200);
-		setLocationRelativeTo(null);
-		setVisible(true);
+	}
+	
+	public void removeScreen(){
+		for(int i=0; i<screen.size(); i++){
+			remove(screen.get(i));
+		}
 	}
 	
 	/*
@@ -112,8 +122,6 @@ public class ClientMain extends JFrame implements Runnable{
 	public void init(){
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
-		
-		screen = new ArrayList<JPanel>();
 	}
 	
 	/*
@@ -127,15 +135,6 @@ public class ClientMain extends JFrame implements Runnable{
 			}else{
 				screen.get(i).setVisible(false);
 			}
-		}
-	}
-	
-	public void connect(){
-		try {
-			socket = new Socket(ip, port);
-			ClientThread ct;
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	

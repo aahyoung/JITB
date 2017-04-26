@@ -227,11 +227,19 @@ public class ApplyPointPanel  extends PurchasePanelFrame{
 					int total = Integer.parseInt(screen.la_disc_price.getText())-Integer.parseInt(screen.la_disc_price.getText());
 					screen.la_remain_price.setText(Integer.toString(total));
 					
+					point.setUse_point(Integer.parseInt(t_apply.getText()));
+					
 					//결제 후 포인트 삭감을 위한 정보 넘기기
 					nextPanel.point = point;
+					nextPanel.isPoint = true;
 					
 					//discount_type_id 넣기
-					main.selectList.setDiscount_type_id(point.getDiscount_type_id());
+					if(main.movie){
+						main.selectList.setDiscount_type_id(point.getDiscount_type_id());
+					}
+					if(main.combo){
+						main.selectCombo.setDiscount_type_id(point.getDiscount_type_id());
+					}
 					
 					screen.setImg(2);
 					screen.stepInfo.repaint();

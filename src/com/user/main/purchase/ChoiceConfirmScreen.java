@@ -284,10 +284,10 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 			
 			StringBuffer persons = new StringBuffer();
 			
-			for(int i=0; i<main.selectList.getOrderInfos().length; i++){
-				if(main.selectList.getOrderInfos()[i].getSeatName().length != 0){
-					persons.append(main.selectList.getOrderInfos()[i].getType()+" ");
-					persons.append(main.selectList.getOrderInfos()[i].getSeatName().length+"¸Å ");
+			for(int i=0; i<main.selectList.getOrderInfos().size(); i++){
+				if(main.selectList.getOrderInfos().get(i).getSeatName().length != 0){
+					persons.append(main.selectList.getOrderInfos().get(i).getType()+" ");
+					persons.append(main.selectList.getOrderInfos().get(i).getSeatName().length+"¸Å ");
 				}
 			}
 			ticket.setPersons(persons.toString());

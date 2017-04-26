@@ -10,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -27,7 +26,9 @@ public class MenuChoiceScreen extends ScreenFrame {
 	JPanel ticket_print;
 	JPanel ticket_purchase;
 	JPanel combo_purchase;
-	Canvas poster;
+	public Canvas poster;
+	
+	public URL poster_url;
 	
 	public MenuChoiceScreen(ClientMain main) {
 		super(main);
@@ -76,13 +77,15 @@ public class MenuChoiceScreen extends ScreenFrame {
 				}
 			}
 		};
+		
+		poster_url = getClass().getResource("/kingsman.png");
+		
 		poster = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
-				URL url = getClass().getResource("/kingsman.png");
 				Image img;
 				try {
-					img = ImageIO.read(url);
+					img = ImageIO.read(poster_url);
 					g.drawImage(img, 0, 0, 800, 1200, this);
 				} catch (IOException e) {
 					e.printStackTrace();

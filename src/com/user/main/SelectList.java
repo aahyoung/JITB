@@ -1,8 +1,10 @@
 package com.user.main;
 
+import java.util.ArrayList;
+
 public class SelectList {
 	int product_id;
-	OrderInfo[] orderInfos;
+	ArrayList<OrderInfo> orderInfos;
 	int payment_way_id;
 	int discount_type_id;
 	int price;
@@ -15,11 +17,11 @@ public class SelectList {
 		this.product_id = product_id;
 	}
 	
-	public OrderInfo[] getOrderInfos() {
+	public ArrayList<OrderInfo> getOrderInfos() {
 		return orderInfos;
 	}
 
-	public void setOrderInfos(OrderInfo[] orderInfos) {
+	public void setOrderInfos(ArrayList<OrderInfo> orderInfos) {
 		this.orderInfos = orderInfos;
 	}
 

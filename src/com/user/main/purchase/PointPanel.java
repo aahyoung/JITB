@@ -90,7 +90,7 @@ public class PointPanel extends PurchasePanelFrame{
 				for(int i=0; i<points.size(); i++){
 					if(points.get(i).contains(point)){
 						PaymentScreen screen = (PaymentScreen)main.screen.get(12);
-						PointInputMessage nextPanel = (PointInputMessage)screen.content.get(3);
+						PointOutputMessage nextPanel = (PointOutputMessage)screen.content.get(3);
 						
 						nextPanel.discount_type_id = points.get(i).discount_type_id;
 						nextPanel.thread = new Thread(nextPanel);

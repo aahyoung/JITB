@@ -239,14 +239,14 @@ public class TheaterMain extends JPanel implements ActionListener{
 		// 영화관마다 새로운 sheet 생성
 		HSSFSheet[] sheet=new HSSFSheet[theaterList.size()];
 		for(int i=0; i<sheet.length; i++){
-			sheet[i]=workbook.createSheet(theaterList.get(i).getName()+"관");		
+			sheet[i]=workbook.createSheet(theaterList.get(i).getName());		
 			
 			// 10*10, 마지막 줄은 총 좌석수 표시
 			for(int j=0; j<10; j++){
 				// 출력 row 생성
 				row=sheet[i].createRow(j);
 				for(int k=0; k<10; k++){
-					row.createCell(k).setCellValue("O");
+					row.createCell(k).setCellValue("");
 				}
 			}
 			row=sheet[i].createRow(10);

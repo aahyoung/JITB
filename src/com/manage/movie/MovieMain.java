@@ -134,7 +134,7 @@ public class MovieMain extends JPanel implements ActionListener{
 	// 하나의 Excel파일 상영시간표를 담아놓을 collection framework
 	ArrayList<ArrayList> excelData=new ArrayList<ArrayList>();
 	
-	URL url_image;
+	//URL url_image;
 	
 	public MovieMain(MovieTheaterTab movieTheaterTab) {
 		this.movieTheaterTab=movieTheaterTab;
@@ -420,8 +420,8 @@ public class MovieMain extends JPanel implements ActionListener{
 			
 			while(rs_upcoming.next()){			
 				upcomingId.add(rs_upcoming.getInt("movie_id"));
-				System.out.println(upcomingId);
 			}
+			System.out.println("upcomingId : "+upcomingId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -460,8 +460,8 @@ public class MovieMain extends JPanel implements ActionListener{
 			
 			while(rs_present.next()){			
 				presentId.add(rs_present.getInt("movie_id"));
-				System.out.println(presentId);
 			}
+			System.out.println("presentId : "+presentId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -501,6 +501,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			while(rs_past.next()){
 				pastId.add(rs_past.getInt("movie_id"));
 			}
+			System.out.println("pastId : "+pastId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -618,6 +619,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			FileOutputStream fos;
 			try {
 				fos=new FileOutputStream("res_manager/상영시간표.xls");
+				//fos=new FileOutputStream("http://192.168.0.8:8989/상영시간표.xls");
 				workbook.write(fos);
 				fos.close();
 				
@@ -630,6 +632,8 @@ public class MovieMain extends JPanel implements ActionListener{
 				
 			}
 		}
+		Main main=Main.getMain();
+		main.upload("res_manager/상영시간표.xls", "excel");
 
 	}
 
@@ -918,11 +922,12 @@ public class MovieMain extends JPanel implements ActionListener{
 			Image img;
 			try {
 				//img = ImageIO.read(new File(path+movieList.get(i).getPoster()));
-				Main main=Main.getMain();
 				// Image 경로에서 받아오기
-				url_image = new URL("http://211.238.142.112:8989/data/"+movieList.get(i).getPoster());
-				System.out.println(movieList.get(i).getPoster());
-				img=ImageIO.read(url_image);
+				//url_image = new URL("http://211.238.142.112:8989/data/"+movieList.get(i).getPoster());
+				//url_image = new URL("http://192.168.0.8:8989/"+movieList.get(i).getPoster());
+				System.out.println("영화 패널 설정"+Calendar.getInstance().getTime());
+				URL url_image = new URL("http://192.168.0.8:8989/"+movieList.get(i).getPoster());
+				img=ImageIO.read(url_image.openStream());
 				String name=movieList.get(i).getName();
 				String start_date=movieList.get(i).getStart_date();
 				String end_date=movieList.get(i).getEnd_date();

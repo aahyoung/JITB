@@ -4,6 +4,8 @@
 package com.jitb.server;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 
@@ -33,14 +36,18 @@ public class ServerThread extends Thread{
 	
 	BufferedReader buffr;
 	InputStream img_is;
+	InputStream file_is;
 	OutputStream os;
+	BufferedInputStream buffis;
+	BufferedOutputStream buffos;
 	
 	boolean listenFlag=true;
 	
-	String path="C:/Hyeona/myServer/data/";
+	//String path="C:/Hyeona/myServer/data/";
+	String path="C:/JITB_server/";
 	
 	String fileName;
-	
+	int size;
 	boolean flag;
 	
 	public ServerThread(ServerMain serverMain, Socket socket) {
@@ -51,8 +58,9 @@ public class ServerThread extends Thread{
 		
 		try {
 			buffr=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			buffis=new BufferedInputStream(socket.getInputStream());
 			img_is=socket.getInputStream();
-			os=socket.getOutputStream();
+			//os=socket.getOutputStream();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -60,15 +68,17 @@ public class ServerThread extends Thread{
 	}
 	
 	// 클라이언트 측에서 보낸 이미지 파일 받기
-	public void listen(){
+	public void image_listen(){
 		byte[] b=new byte[1024];
 		
 		try {
 			fileName=buffr.readLine();
 			System.out.println("파일명 : "+fileName);
 			
-			BufferedImage img=ImageIO.read(img_is);
+			size=Integer.parseInt(buffr.readLine());
+			System.out.println("파일 크기 : "+size);
 
+			BufferedImage img=ImageIO.read(img_is);
 			fos=new FileOutputStream(path+fileName);
 			ImageIO.write(img, "jpg", fos);
 			
@@ -78,7 +88,8 @@ public class ServerThread extends Thread{
 			
 			if(fos!=null){
 				try {
-					System.out.println("파일 읽기 완료");
+					Calendar cal=Calendar.getInstance();
+					System.out.println("파일 읽기 완료"+cal.getTime());
 					fos.close();
 					listenFlag=false;
 				} catch (IOException e) {
@@ -92,13 +103,72 @@ public class ServerThread extends Thread{
 		}
 	}
 	
+	public void file_listen(){
+		byte[] b=new byte[1024];
+		
+		try {
+			fileName=buffr.readLine();
+			System.out.println("파일명 : "+fileName);
+			
+			size=Integer.parseInt(buffr.readLine());
+			System.out.println("파일 크기 : "+size);
+			
+			fos=new FileOutputStream(path+fileName);
+			file_is=socket.getInputStream();
+			//file_is=new BufferedInputStream(file_is);
+			
+			os=new BufferedOutputStream(fos);
+			
+			int readLength;
+			while(true){
+				readLength=file_is.read(b);
+				if(readLength==-1){
+					break;
+				}
+				os.write(b, 0, readLength);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally{
+			if(os!=null){
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(fos!=null){
+				try {
+					Calendar cal=Calendar.getInstance();
+					System.out.println("파일 읽기 완료"+cal.getTime());
+					fos.close();
+					listenFlag=false;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(file_is!=null){
+				try {
+					file_is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			else{
+				listenFlag=true;
+			}
+		}
+
+	}
+	
 	public void send(String msg){
 		
 	}
 	
 	public void run() {
 		while(listenFlag){
-			listen();
+			image_listen();
+			file_listen();
 		}
 	}
 }

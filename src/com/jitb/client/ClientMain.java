@@ -118,9 +118,16 @@ public class ClientMain{
 	}
 	
 	// 파일 업로드
-	public void uploadFile(String filePath){
-		file=new File(filePath);
+	public void uploadFile(String filePath, String type){
 		connect();
+		if(type.equals("img")){
+			ct.img_send=true;
+			file=new File(filePath);
+		}
+		else if(type.equals("excel")){
+			ct.file_send=true;
+			file=new File(filePath);
+		}
 	}
 /*	
 	public static void main(String[] args) {

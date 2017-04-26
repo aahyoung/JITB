@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -294,6 +295,12 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 				
 				// 등록 완료했으면 포스터 파일 저장
 				copyPoster();
+				
+				System.out.println("updateMovie()실행 완료");
+				movieMain.getMovieList();
+				movieMain.p_past.updateUI();
+				movieMain.p_present.updateUI();
+				movieMain.p_upcoming.updateUI();
 			}
 			else{
 				JOptionPane.showMessageDialog(this, "영화 수정 실패");
@@ -327,7 +334,8 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		filePath=file.getAbsolutePath();
 		System.out.println(filePath);
 		Main main=Main.getMain();
-		main.upload(filePath);
+		main.upload(filePath, "img");
+		System.out.println("영화 포스터 저장"+Calendar.getInstance().getTime());
 	}
 	
 	
@@ -422,10 +430,13 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		if(bt==bt_confirm){
 			checkDataFormat();
 			setVisible(false);
+			/*
+			System.out.println("updateMovie()실행 완료");
 			movieMain.getMovieList();
 			movieMain.p_past.updateUI();
 			movieMain.p_present.updateUI();
 			movieMain.p_upcoming.updateUI();
+			*/
 			//movieMain.p_present.setVisible(true);
 			System.out.println("영화 수정 확인");
 		}

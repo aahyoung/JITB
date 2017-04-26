@@ -27,7 +27,8 @@ public class MovieItem extends JPanel implements ActionListener {
 
 	SalesMoviePanel saelsMovie;
 
-	public MovieItem(Image poster, String name, String sales, String booking) {
+	public MovieItem(Image poster, String name, String sales, String booking, Connection con) {
+		this.con=con;
 
 		can = new Canvas() {
 			public void paint(Graphics g) {
@@ -40,7 +41,7 @@ public class MovieItem extends JPanel implements ActionListener {
 		la_movie = new JLabel(name);
 		la_sales = new JLabel("평균 매출 : " + sales + " 원 \n");
 		la_booking = new JLabel("평균 예매 : " + booking + " 건");
-		bt = new JButton("상세보기");
+		bt = new JButton("상세매출");
 
 		add(can);
 		add(la_movie);
@@ -64,7 +65,6 @@ public class MovieItem extends JPanel implements ActionListener {
 		Object obj = e.getSource();
 		if (obj == bt) {
 			String movieName = la_movie.getText();
-			System.out.println("눌렸어");
 			saelsMovie = new SalesMoviePanel(movieName, con);
 		}
 	}

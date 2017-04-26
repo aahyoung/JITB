@@ -41,7 +41,7 @@ public class MonthlySales extends JPanel implements ActionListener{
 
 		yy = cal.get(Calendar.YEAR);
 
-		p_north.setBackground(Color.yellow);
+		//p_north.setBackground(Color.white);
 		p_north.add(bt_prev);
 		p_north.add(la_title);
 		p_north.add(bt_next);
@@ -65,7 +65,7 @@ public class MonthlySales extends JPanel implements ActionListener{
 		graph();
 		
 		this.setVisible(true);
-		this.setBackground(Color.yellow);
+		this.setBackground(Color.white);
 		setPreferredSize(new Dimension(1000, 650));
 	}
 

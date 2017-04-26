@@ -62,23 +62,24 @@ public class DailySalesTable extends AbstractTableModel {
 		date = today.getValue();
 
 		StringBuffer sql = new StringBuffer();
-		sql.append("select 'movie' as type, a.name as 상품명, e.TOTAL_PRICE as total, ");
-		sql.append(" abs(e.TOTAL_PRICE-e.ORDER_PRICE) as 할인받은금액, e.ORDER_TIME as time ");
-		sql.append(" FROM movie a, product b, buy_seat c, movie_price d, order_movie e");
-		sql.append(" where a.MOVIE_ID = b.MOVIE_ID");
-		sql.append(" and b.PRODUCT_ID=c.PRODUCT_ID");
-		sql.append(" and d.TYPE_ID = c.TYPE_ID");
-		sql.append(" and e.ORDER_ID = c.ORDER_ID");
-		sql.append(" and to_char(e.order_time, 'yyyy-mm-dd')= ?");
-		sql.append(" union all select 'snack' as type, f.name as 상품명, h.TOTAL_PRICE as total, ");
-		sql.append(" abs(h.TOTAL_PRICE-h.ORDER_PRICE) as 할인받은금액, h.ORDER_TIME as time");
-		sql.append(" from SUB_OPT f, BUY_SNACK g, ORDER_SNACK h");
-		sql.append(" where g.ORDER_SNACK_ID = h.ORDER_SNACK_ID");
-		sql.append(" and f.SUB_OPT_ID = f.SUB_OPT_ID ");
-		sql.append(" and TO_CHAR(h.ORDER_TIME,'yyyy-mm-dd')= ?");
-		sql.append(" order by time asc");
+		sql.append("select 'movie' as 상품종류, a.name as 상품명, e.TOTAL_PRICE as 매출액,  ");
+		sql.append(" e.ORDER_TIME as 구매시간, g.NAME as 할인수단");
+		sql.append(" from movie a inner join product b on a.MOVIE_ID=b.MOVIE_ID");
+		sql.append(" inner join buy_seat c on b.PRODUCT_ID=c.PRODUCT_ID");
+		sql.append(" inner join order_movie e on c.ORDER_ID = e.ORDER_ID");
+		sql.append(" full outer join MOVIE_DISCOUNT_HISTORY f on e.ORDER_ID=f.ORDER_ID");
+		sql.append(" full outer join DISCOUNT_TYPE g on f.DISCOUNT_TYPE_ID= g.DISCOUNT_TYPE_ID");
+		sql.append(" where to_char(e.order_time, 'yyyy-mm-dd') = ?");
+		sql.append(" union all select 'snack' as 상품종류, h.name as 상품명,");
+		sql.append(" j.TOTAL_PRICE as 매출액, j.ORDER_TIME as 구매시간, l.name as 할인수단");
+		sql.append(" from SUB_OPT h inner join BUY_SNACK i on h.SUB_OPT_ID = i.SUB_OPT_ID ");
+		sql.append(" inner join  ORDER_SNACK j on i.ORDER_SNACK_ID = j.ORDER_SNACK_ID");
+		sql.append(" full outer join snack_discount_history k on j.ORDER_SNACK_ID = k.ORDER_SNACK_ID");
+		sql.append(" full outer join discount_type l on k.DISCOUNT_TYPE_ID=l.DISCOUNT_TYPE_ID");
+		sql.append(" where TO_CHAR(j.ORDER_TIME,'yyyy-mm-dd') = ?");
+		sql.append(" order by 매출액 asc");
 		System.out.println(sql);
-		
+
 		
 		day = today.getValue().toString();
 		// System.out.println("출력"+day);
@@ -107,19 +108,19 @@ public class DailySalesTable extends AbstractTableModel {
 			while (rs.next()) {
 				Vector<String> vec = new Vector<String>();
 
-				vec.add(rs.getString("type"));
+				vec.add(rs.getString("상품종류"));
 				vec.add(rs.getString("상품명"));
-				vec.add(rs.getString("total"));
-				vec.add(rs.getString("할인받은금액"));
-				vec.add(rs.getString("time"));
+				vec.add(rs.getString("매출액"));
+				vec.add(rs.getString("구매시간"));
+				vec.add(rs.getString("할인수단"));
 
-				if (rs.getString("type").equals("movie")) {
-					movie += rs.getInt("total");
-				} else if (rs.getString("type").equals("snack")) {
-					snack += rs.getInt("total");
+				if (rs.getString("상품종류").equals("movie")) {
+					movie += rs.getInt("매출액");
+				} else if (rs.getString("상품종류").equals("snack")) {
+					snack += rs.getInt("매출액");
 				}
 
-				total += rs.getInt("total");
+				total += rs.getInt("매출액");
 
 				movieTotal = movie;
 				snackTotal = snack;

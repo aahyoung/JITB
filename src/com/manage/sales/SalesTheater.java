@@ -45,12 +45,12 @@ public class SalesTheater extends JPanel implements ItemListener {
 		choice.add("Monthly, ¿ù º°");
 		choice.setPreferredSize(new Dimension(130, 30));
 
-		//p_north.setBackground(Color.ORANGE);
+		p_north.setBackground(Color.white);
 		p_north.add(choice);
 		p_north.setPreferredSize(new Dimension(1000, 50));
 
-		//p_center.setBackground(Color.ORANGE);
-		p_center.setPreferredSize(new Dimension(1000, 650));
+		p_center.setBackground(Color.white);
+		p_center.setPreferredSize(new Dimension(1000, 700));
 
 		p_center.add(p_daily);
 		p_center.add(p_weekly);

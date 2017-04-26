@@ -143,7 +143,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				String sales = String.format("%.1f", (double)price/period);
 				String booking = String.format("%.1f", (double)count/period);
 				
-				MovieItem item = new MovieItem(poster, name, sales, booking);
+				MovieItem item = new MovieItem(poster, name, sales, booking, con);
 				add(item);
 				
 			} catch (IOException e) {

@@ -70,8 +70,10 @@ public class DailySales extends JPanel implements ActionListener {
 		p_center.setPreferredSize(new Dimension(1000, 500));
 		p_south.setPreferredSize(new Dimension(1000, 100));
 		
-		p_north.setBackground(Color.pink);
-		p_south.setBackground(Color.pink);
+		//p_north.setBackground(Color.WHITE);
+		//p_south.setBackground(Color.WHITE);
+		//p_center.setBackground(Color.WHITE);
+		//scroll.setBackground(Color.WHITE);
 
 		// center에 붙이기
 		p_center.setLayout(new BorderLayout());

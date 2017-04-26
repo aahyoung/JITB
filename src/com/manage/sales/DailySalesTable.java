@@ -78,7 +78,7 @@ public class DailySalesTable extends AbstractTableModel {
 		sql.append(" full outer join discount_type l on k.DISCOUNT_TYPE_ID=l.DISCOUNT_TYPE_ID");
 		sql.append(" where TO_CHAR(j.ORDER_TIME,'yyyy-mm-dd') = ?");
 		sql.append(" order by 매출액 asc");
-		System.out.println(sql);
+		//System.out.println(sql);
 
 		
 		day = today.getValue().toString();
@@ -181,7 +181,7 @@ public class DailySalesTable extends AbstractTableModel {
 			sql.append("select type, sum(total) as total from dailysales");
 			sql.append(" where time = '" + day + "'");
 			sql.append(" group by type");
-			System.out.println(sql);
+			//System.out.println(sql);
 
 			pstmt = con.prepareStatement(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_READ_ONLY);
@@ -199,13 +199,13 @@ public class DailySalesTable extends AbstractTableModel {
 				chart.add(chartData);
 			}
 
-			System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + chart.size());
+			//System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + chart.size());
 
 			
-			 // LIST에 잘 담아져있는지 확인하기 
+			/* // LIST에 잘 담아져있는지 확인하기 
 			for (int a = 0; a < chart.size(); a++) {
 			 System.out.println(chart.get(a)[0] + "," + chart.get(a)[1]); 
-			}
+			}*/
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

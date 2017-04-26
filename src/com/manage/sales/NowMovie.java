@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,12 +21,16 @@ import java.util.GregorianCalendar;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import com.manage.main.Main;
+
 public class NowMovie extends JPanel implements ActionListener{
 	
 	private Connection con;
 	String path = "C:/project/JITB/res_manager/";
 	ArrayList <BuyMovie> list = new ArrayList<BuyMovie>();
 	
+	URL url_image;
+
 	GregorianCalendar date = new GregorianCalendar ( );
 	Calendar strDate = Calendar.getInstance();
 	Calendar today = Calendar.getInstance();
@@ -51,7 +56,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				+ " GROUP BY a.name, a.poster, a.END_DATE, a.START_DATE"
 				+ " HAVING a.END_DATE >= TO_CHAR (SYSDATE, 'YYYY-MM-DD')";
 		
-		System.out.println(sql);
+		//System.out.println(sql);
 
 		PreparedStatement pstmt= null;
 		ResultSet rs = null;
@@ -72,7 +77,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);
-				System.out.println(list);
+				//System.out.println(list);
 			}
 			init();
 
@@ -104,9 +109,17 @@ public class NowMovie extends JPanel implements ActionListener{
 	---------------------------------------*/
 	public void init() {
 		for(int i=0; i<list.size(); i++) {
+			Image poster;
 			BuyMovie buyMovie = list.get(i);
 			try {
-				Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
+				//http://172.20.10.4:9090/abouttime.jpg
+				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
+
+				//Image 경로에서 받아오기
+				url_image = new URL("http://172.20.10.4:9090/"+buyMovie.getPoster());
+				//System.out.println("img가 찍힌다"+buyMovie.getPoster());
+				poster=ImageIO.read(url_image);
+				
 				String name = buyMovie.getName();
 				int price = buyMovie.getPrice();
 				
@@ -119,7 +132,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				int str_month = Integer.parseInt(str.substring(5,7));
 				int str_date = Integer.parseInt(str.substring(8,10));
 
-				System.out.println(str_year+","+str_month+","+str_date);
+				//System.out.println(str_year+","+str_month+","+str_date);
 				
 				//영화 여러번 돌리기 때문에 startDate가 달라 초기화 시키기
 				int period = 0; 
@@ -138,8 +151,6 @@ public class NowMovie extends JPanel implements ActionListener{
 
 				period = (int)((today.getTimeInMillis()-strDate.getTimeInMillis())/(60*60*24*1000))+1;
 				
-				System.out.println("상영기간은" + period);
-
 				String sales = String.format("%.1f", (double)price/period);
 				String booking = String.format("%.1f", (double)count/period);
 				

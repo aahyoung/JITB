@@ -69,13 +69,12 @@ public class SalesTheater extends JPanel implements ItemListener {
 		setVisible(true);
 		setSize(1000, 650);
 		setBackground(Color.WHITE);
-
 	}
 
 	//일별, 주별, 월별 선택 choice
 	public void itemStateChanged(ItemEvent e) {
 		int index = choice.getSelectedIndex();
-		System.out.println(index);
+		//System.out.println(index);
 
 		if (index == 0) {
 			p_daily.setVisible(true);

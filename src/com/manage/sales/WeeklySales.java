@@ -92,19 +92,19 @@ public class WeeklySales extends JPanel implements ActionListener {
 		la_title.setText(yy+"-"+(mm+1));
 		//la_title.setText(yy + "-" + (cal.get(Calendar.MONTH)+1));
 		cal.set(yy, (mm+1), 0);
-		System.out.println("여기서 mm은"+cal.get(Calendar.MONTH));
+		//System.out.println("여기서 mm은"+cal.get(Calendar.MONTH));
 
 		int lastDay = cal.get(Calendar.DATE);
-		System.out.println("마지막 날은=" + lastDay);
+		//System.out.println("마지막 날은=" + lastDay);
 		
 		// 현재 선택한 달의 마지막 날짜를 구하기
 		int month = cal.get(Calendar.MONTH);
-		System.out.println("현재 월은" + (month+1));
+		//System.out.println("현재 월은" + (month+1));
 
 		int lastWeek = cal.get(Calendar.WEEK_OF_MONTH);
-		System.out.println("마지막 주는" + lastWeek);
+		//System.out.println("마지막 주는" + lastWeek);
 
-		System.out.println(DateUtil.getDateStr(Integer.toString(month+1)));
+		//System.out.println(DateUtil.getDateStr(Integer.toString(month+1)));
 
 		//for (int i = 1; i <= lastWeek; i++) {
 			//System.out.println("주가 찍힌다" + i);

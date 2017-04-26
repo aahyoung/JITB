@@ -94,7 +94,7 @@ public class WeeklySalesPanel extends JPanel {
 				}
 				Collections.addAll(list, table);
 			}
-			System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
+			//System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
 			
 			/*// LIST에 잘 담아져있는지 확인하기
 			for (int a = 0; a < list.size(); a++) {
@@ -149,7 +149,7 @@ public class WeeklySalesPanel extends JPanel {
 				dataset.addValue(0, "SNACK", Integer.toString(a+1)+" week");
 			}
 		}
-		System.out.println("dataset :" + dataset);
+		//System.out.println("dataset :" + dataset);
 		return dataset;
 	}
 

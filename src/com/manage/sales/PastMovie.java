@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +28,8 @@ public class PastMovie extends JPanel {
 	String path = "C:/project/JITB/res_manager/";
 	ArrayList<BuyMovie> list = new ArrayList<BuyMovie>();
 	ArrayList<String> max= new ArrayList<String>();
+	
+	URL url_image;
 	
 	/*---------------------------------------
 	Calendar를 사용해 strDate랑 endDate 만든다.
@@ -81,7 +84,7 @@ public class PastMovie extends JPanel {
 				dto.setCountBuy(rs.getInt("구매건수"));
 
 				list.add(dto);
-				System.out.println(list);
+				//System.out.println(list);
 			}
 			init();
 
@@ -112,9 +115,15 @@ public class PastMovie extends JPanel {
 	---------------------------------------*/
 	public void init() {
 		for(int i=0; i<list.size(); i++) {
+			Image poster;
 			BuyMovie buyMovie = list.get(i);
 			try {
-				Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
+				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
+				url_image = new URL("http://172.20.10.4:9090/"+buyMovie.getPoster());
+				//System.out.println("img가 찍힌다"+buyMovie.getPoster());
+				poster=ImageIO.read(url_image);
+
+				
 				String name = buyMovie.getName();
 				int price = buyMovie.getPrice();
 				
@@ -131,8 +140,8 @@ public class PastMovie extends JPanel {
 				int end_month = Integer.parseInt(end.substring(5,7));
 				int end_date = Integer.parseInt(end.substring(8,10));
 				
-				System.out.println(str_year+","+str_month+","+str_date);
-				System.out.println(end_year+","+end_month+","+end_date);
+				//System.out.println(str_year+","+str_month+","+str_date);
+				//System.out.println(end_year+","+end_month+","+end_date);
 				
 				//영화 여러번 돌리기 때문에 startDate가 달라 초기화 시키기
 				int period = 0;
@@ -144,12 +153,10 @@ public class PastMovie extends JPanel {
 				//end-date에서 영화 개봉일을 뺀 상영기간을 구해줌
 				//오늘날짜에서 끝난 날짜를 빼줘야한다.
 				period = (int)((endDate.getTimeInMillis()-strDate.getTimeInMillis())/(60*60*24*1000))+1;
-				System.out.println(period);
+				//System.out.println(period);
 				
 				String sales = String.format("%.1f", (double)price/period);
-				System.out.println(sales);
 				String booking = String.format("%.1f", (double)count/period);
-				System.out.println(booking);
 				
 				MovieItem item = new MovieItem(poster, name, sales, booking, con);
 				add(item);

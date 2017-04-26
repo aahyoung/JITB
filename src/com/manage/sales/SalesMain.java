@@ -88,7 +88,7 @@ public class SalesMain extends JPanel implements ItemListener {
 
 	public void itemStateChanged(ItemEvent e) {
 		int index = choice.getSelectedIndex();
-		System.out.println(index);
+		//System.out.println(index);
 		
 		if(index==0) {
 			p_nowMovie.setVisible(true);

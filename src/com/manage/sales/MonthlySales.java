@@ -83,7 +83,7 @@ public class MonthlySales extends JPanel implements ActionListener{
 		
 		//현재 날짜를 라벨에 출력
 		la_title.setText(Integer.toString(yy));
-		System.out.println(yy);
+		//System.out.println(yy);
 		monthlyChart.getData(DateUtil.getDateStr(Integer.toString(yy)));
 	}
 

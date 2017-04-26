@@ -69,7 +69,7 @@ public class SalesMovieTable extends AbstractTableModel {
 				vec.add(rs.getString("할인방법"));
 
 				data.add(vec);
-				System.out.println(data+"를 담았다");
+				//System.out.println(data+"를 담았다");
 			}
 
 		} catch (SQLException e) {
@@ -95,12 +95,10 @@ public class SalesMovieTable extends AbstractTableModel {
 	}
 
 	public int getRowCount() {
-		System.out.println("datasize는?" + data.size());
 		return data.size();
 	}
 
 	public int getColumnCount() {
-		System.out.println("컬럼 갯수는"+columName.size());
 		return columName.size();
 	}
 

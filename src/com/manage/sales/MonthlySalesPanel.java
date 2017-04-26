@@ -101,7 +101,7 @@ public class MonthlySalesPanel {
 				}
 				Collections.addAll(list, table);
 			}
-			System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
+			//System.out.println("최종적으로 구성된 그래프용 이차원 Vector는 " + list.size());
 			
 			/* LIST에 잘 담아져있는지 확인하기
 			for (int a = 0; a < list.size(); a++) {

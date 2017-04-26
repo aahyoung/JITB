@@ -1,4 +1,4 @@
-package com.manage.discountFinal;
+package com.manage.discount;
 
 public class DiscountFCategory {
 	private int discount_id;

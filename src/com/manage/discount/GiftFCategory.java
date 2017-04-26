@@ -1,4 +1,4 @@
-package com.manage.discountFinal;
+package com.manage.discount;
 
 public class GiftFCategory {
 	private int gift_id;

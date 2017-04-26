@@ -1,4 +1,4 @@
-package com.manage.discountFinal;
+package com.manage.discount;
 
 public class PointFSNCategory {
 	private int point_serial_id;

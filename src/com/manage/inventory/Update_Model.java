@@ -93,20 +93,23 @@ public class Update_Model{
 			}
 		}
 		else if(name.equals("sub_opt")){
-			if(col==1){
-				val="top_opt_size_id";
+			if(col==0){
+				val="sub_opt_id";
 			}
-			else if(col==2){
+			else if(col==1){
 				val="name";
 			}
-			else if(col==3){
+			else if(col==2){
 				val="price";
 			}
-			else if(col==4){
+			else if(col==3){
 				val="img";
 			}
-			else if(col==5){
+			else if(col==4){
 				val="stock";
+			}
+			else if(col==5){
+				val="top_opt_size_id";
 			}
 		}
 	}

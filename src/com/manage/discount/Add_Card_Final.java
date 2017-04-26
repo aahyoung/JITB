@@ -1,4 +1,4 @@
-package com.manage.discountFinal;
+package com.manage.discount;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -9,10 +9,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,8 +39,8 @@ import com.jitb.db.DBManager;
 public class Add_Card_Final extends JFrame implements ActionListener {
 	Canvas can;
 	JPanel p_center, p_img;
-	JTextField t_name,t_rate;
-	JLabel la_name,la_rate;
+	JTextField t_name, t_rate;
+	JLabel la_name, la_rate;
 	JButton bt;
 	Connection con;
 	DBManager manager = DBManager.getInstance();
@@ -43,6 +50,12 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 	int discount_type_id;
 	JTable table;
 	table_modelF tablemodel;
+	Socket socket;
+	FileInputStream fis;
+	FileOutputStream fos;
+	BufferedInputStream bis;
+	ImageThread it;
+
 	public Add_Card_Final(int discount_type_id, JTable table) {
 		this.discount_type_id = discount_type_id;
 		this.table = table;
@@ -59,7 +72,7 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 
 		chooser = new JFileChooser("/JITB/res_manager");
 		bt.addActionListener(this);
-		
+
 		try {
 			URL url = this.getClass().getResource("/default.png");
 			image = ImageIO.read(url);
@@ -78,7 +91,7 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		can.setPreferredSize(new Dimension(230, 130));
 
 		p_img.add(can);
-		
+
 		p_center.add(la_name);
 		p_center.add(t_name);
 		p_center.add(la_rate);
@@ -118,6 +131,10 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 
 	public void add() {
 		PreparedStatement pstmt = null;
+		String filePath =file.getAbsolutePath().toString();
+		System.out.println(filePath);
+		it=new ImageThread(socket,filePath);
+		it.start();
 		String sql = "insert into card(card_id,name,rate,img,discount_type_id)";
 		sql += "values(seq_card.nextval,?,?,?,?)";
 		try {
@@ -147,7 +164,7 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 				}
 			}
 		}
-		table.setModel(tablemodel=new table_modelF(con,"카드사"));
+		table.setModel(tablemodel = new table_modelF(con, "카드사"));
 	}
 
 	@Override

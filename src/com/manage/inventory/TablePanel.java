@@ -75,11 +75,11 @@ public class TablePanel extends AbstractTableModel{
 				while(rs.next()){
 					Vector vec=new Vector();
 					vec.add(rs.getInt("sub_opt_id"));
-					vec.add(rs.getInt("top_opt_size_id"));
 					vec.add(rs.getString("name"));
 					vec.add(rs.getInt("price"));
 					vec.add(rs.getString("img"));
 					vec.add(rs.getInt("stock"));
+					vec.add(rs.getInt("top_opt_size_id"));
 					data.add(vec);
 				}
 			}

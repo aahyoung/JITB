@@ -1,4 +1,4 @@
-package com.manage.discountFinal;
+package com.manage.discount;
 
 import java.awt.Checkbox;
 import java.sql.Connection;

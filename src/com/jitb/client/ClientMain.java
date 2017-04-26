@@ -20,8 +20,7 @@ import javax.swing.JFrame;
 
 import com.jitb.db.DBManager;
 
-public class ClientMain extends JFrame implements ActionListener{
-	JButton bt_load;
+public class ClientMain{
 	Socket socket;
 	//String ip="211.238.142.100";
 	String ip="localhost";
@@ -37,23 +36,10 @@ public class ClientMain extends JFrame implements ActionListener{
 	
 	JFileChooser chooser;
 	File file;
+	String filePath;
 	
 	ArrayList<String> path_movie=new ArrayList<String>();
 	ArrayList<String> path_snack;
-	
-	public ClientMain() {
-		bt_load=new JButton("파일 업로드");
-		bt_load.addActionListener(this);
-		
-		//getImage();
-		//connect();
-		//displayProduct();
-		
-		add(bt_load);
-		setVisible(true);
-		setSize(400, 300);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
 	
 	// DB 연결
 	public void DBConnect(){
@@ -94,8 +80,7 @@ public class ClientMain extends JFrame implements ActionListener{
 					e.printStackTrace();
 				}
 			}
-		}
-		
+		}	
 	}
 	
 	// 웹서버에서 상품 이미지를 가져오자!
@@ -107,8 +92,9 @@ public class ClientMain extends JFrame implements ActionListener{
 				// DB연동 시 담아와야 함
 				// -> DB에 이미지가 저장되어 있어야 함
 				// Oracle에 이미지명을 저장하고 stream으로 이미지 파일 자체를 myserver에 등록
-				url_movie = new URL("http://"+ip+":9090/jitb_server/image/"+path_movie.get(i));
-				url_buy_movie=new URL("http://"+ip+":9090/jitb_server/image/");
+				//url_movie = new URL("http://"+ip+":9090/jitb_server/image/"+path_movie.get(i));
+				//url_buy_movie=new URL("http://"+ip+":9090/jitb_server/image/");
+				url_movie = new URL("http://"+ip+":9090/"+path_movie.get(i));
 			}
 			
 		} catch (MalformedURLException e) {
@@ -132,23 +118,15 @@ public class ClientMain extends JFrame implements ActionListener{
 	}
 	
 	// 파일 업로드
-	public void uploadFile(){
-		int result=chooser.showOpenDialog(this);
-		if(result==JFileChooser.APPROVE_OPTION){
-			file=chooser.getSelectedFile();
-		}
+	public void uploadFile(String filePath){
+		file=new File(filePath);
+		connect();
 	}
-	
+/*	
 	public static void main(String[] args) {
 		new ClientMain();
 	}
+*/
 
-	public void actionPerformed(ActionEvent e) {
-		Object obj=e.getSource();
-		if(obj==bt_load){
-			file=new File("C:/Users/sist110/Pictures/images/cat5.jpg");
-			connect();
-		}
-	}
 
 }

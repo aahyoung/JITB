@@ -9,6 +9,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import com.manage.main.Main;
+
 // 영화관/영화 관리 패널
 public class MovieTheaterTab extends JPanel{
 	JTabbedPane tabbedPane;

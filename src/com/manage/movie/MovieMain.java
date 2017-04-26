@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -47,6 +44,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.jitb.db.DBManager;
 import com.jitb.file.FileUtil;
+import com.manage.main.Main;
 
 /*
  * 1. 레이아웃 구성
@@ -116,7 +114,8 @@ public class MovieMain extends JPanel implements ActionListener{
 	String path="res_manager/";
 	
 	//TheaterMain theaterMain;
-	// 최상위 main
+	
+	// 영화 상위 main	
 	MovieTheaterTab movieTheaterTab;
 	
 	// 지점 이름
@@ -134,6 +133,8 @@ public class MovieMain extends JPanel implements ActionListener{
 	
 	// 하나의 Excel파일 상영시간표를 담아놓을 collection framework
 	ArrayList<ArrayList> excelData=new ArrayList<ArrayList>();
+	
+	URL url_image;
 	
 	public MovieMain(MovieTheaterTab movieTheaterTab) {
 		this.movieTheaterTab=movieTheaterTab;
@@ -916,7 +917,12 @@ public class MovieMain extends JPanel implements ActionListener{
 		for(int i=0; i<movieList.size(); i++){				
 			Image img;
 			try {
-				img = ImageIO.read(new File(path+movieList.get(i).getPoster()));
+				//img = ImageIO.read(new File(path+movieList.get(i).getPoster()));
+				Main main=Main.getMain();
+				// Image 경로에서 받아오기
+				url_image = new URL("http://211.238.142.112:8989/data/"+movieList.get(i).getPoster());
+				System.out.println(movieList.get(i).getPoster());
+				img=ImageIO.read(url_image);
 				String name=movieList.get(i).getName();
 				String start_date=movieList.get(i).getStart_date();
 				String end_date=movieList.get(i).getEnd_date();

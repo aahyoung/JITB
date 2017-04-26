@@ -1,13 +1,23 @@
 package com.jitb.client;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+
+import org.omg.CORBA.Any;
+import org.omg.CORBA.DataOutputStream;
+import org.omg.CORBA.TypeCode;
 
 public class ClientThread extends Thread{
 	Socket socket;
@@ -15,9 +25,8 @@ public class ClientThread extends Thread{
 	ClientMain clientMain;
 	
 	FileInputStream fis;
-	FileOutputStream fos;
-	
-	OutputStream os;
+	BufferedWriter buffw;
+	OutputStream img_os;
 	
 	boolean sendFlag=true;
 	
@@ -27,6 +36,11 @@ public class ClientThread extends Thread{
 		this.clientMain=clientMain;
 		this.socket=socket;
 		
+		try {
+			buffw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 /*	
 	// 듣기
@@ -42,36 +56,25 @@ public class ClientThread extends Thread{
 */	
 	// 말하기
 	public void send(){
-
 		//fos=new FileOutputStream(clientMain.file);
 		//fos.write(b);
 		try {
-			BufferedImage img=ImageIO.read(clientMain.file);
-			/*
+			String fileName=clientMain.file.getName();
 			fis=new FileInputStream(clientMain.file);
-			System.out.println(clientMain.file.getName());
-			size=fis.available();
+			System.out.println("보내는 파일명 : "+fileName);
+			buffw.write(fileName+"\n");
+			buffw.flush();
 			
-			byte[] b=new byte[size];
-			int flag;
-			while(true){
-				flag=fis.read(b);
-				if(flag==-1){
-					sendFlag=false;
-					break;
-				}
-			}
-			*/
-			os=socket.getOutputStream();
-			ImageIO.write(img, "jpg", os);
+			img_os=socket.getOutputStream();
+			BufferedImage img=ImageIO.read(clientMain.file);
+			ImageIO.write(img, "jpg", img_os);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {
-			if(os!=null){
+			if(fis!=null){
 				try {
-					os.close();
-					sendFlag=false;
-					System.out.println("클라이언트 : 이미지 전송 완료");
+					fis.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -4,11 +4,14 @@
 package com.jitb.server;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -28,13 +31,15 @@ public class ServerThread extends Thread{
 	FileInputStream fis;
 	FileOutputStream fos;
 	
-	InputStream is;
+	BufferedReader buffr;
+	InputStream img_is;
 	OutputStream os;
 	
 	boolean listenFlag=true;
 	
 	String path="C:/Hyeona/myServer/data/";
 	
+	String fileName;
 	
 	boolean flag;
 	
@@ -45,28 +50,32 @@ public class ServerThread extends Thread{
 		flag = true;
 		
 		try {
-			is=socket.getInputStream();
+			buffr=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			img_is=socket.getInputStream();
 			os=socket.getOutputStream();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//buffr = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		//buffw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 	}
 	
 	// 클라이언트 측에서 보낸 이미지 파일 받기
 	public void listen(){
 		byte[] b=new byte[1024];
-		File file;
-		int length;
+		
 		try {
-			BufferedImage img=ImageIO.read(is);
-			fos=new FileOutputStream(path+"test.jpg");
+			fileName=buffr.readLine();
+			System.out.println("파일명 : "+fileName);
+			
+			BufferedImage img=ImageIO.read(img_is);
+
+			fos=new FileOutputStream(path+fileName);
 			ImageIO.write(img, "jpg", fos);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally{
+			
 			if(fos!=null){
 				try {
 					System.out.println("파일 읽기 완료");
@@ -76,6 +85,7 @@ public class ServerThread extends Thread{
 					e.printStackTrace();
 				}
 			}
+			
 			else{
 				listenFlag=true;
 			}

@@ -38,6 +38,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.HPos;
@@ -131,6 +132,8 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
  	LocalDate ori_end_date;
 
  	URL url;
+ 	
+ 	String filePath;
  	/*
  	 * 1. 수정
  	 * 과거 상영작 : 영화 상세 정보
@@ -321,44 +324,10 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 	
 	// 영화를 등록하면 포스터 저장
 	public void copyPoster(){
-		FileInputStream fis=null;
-		FileOutputStream fos=null;
-		
-		try {
-			fis=new FileInputStream(file);
-			fos=new FileOutputStream("http://localhost:9090/data/"+file.getName());
-			
-			byte[] b=new byte[1024];
-			int flag;
-			while(true){
-				flag=fis.read(b);
-				if(flag==-1){
-					break;
-				}
-				fos.write(b);
-			}
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			if(fos!=null){
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(fis!=null){
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
+		filePath=file.getAbsolutePath();
+		System.out.println(filePath);
+		Main main=Main.getMain();
+		main.upload(filePath);
 	}
 	
 	

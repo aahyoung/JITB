@@ -2,7 +2,6 @@ package com.manage.movie;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -12,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -24,10 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -40,8 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.jitb.client.ClientMain;
 import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 import javafx.embed.swing.JFXPanel;
 import javafx.geometry.HPos;
@@ -96,8 +91,11 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 	Toolkit kit=Toolkit.getDefaultToolkit();
 	Image img;
 	
+	Main main;
+	
 	File file;
 	JFileChooser chooser;
+	String filePath;
 	
 	// Date Picker
 	private Stage stage;
@@ -364,44 +362,10 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 	
 	// 영화를 등록하면 포스터 저장
 	public void copyPoster(){
-		FileInputStream fis=null;
-		FileOutputStream fos=null;
-		
-		try {
-			fis=new FileInputStream(file);
-			fos=new FileOutputStream("http://localhost:9090/data/"+file.getName());
-			
-			byte[] b=new byte[1024];
-			int flag;
-			while(true){
-				flag=fis.read(b);
-				if(flag==-1){
-					break;
-				}
-				fos.write(b);
-			}
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			if(fos!=null){
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(fis!=null){
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
+		filePath=file.getAbsolutePath();
+		System.out.println(filePath);
+		Main main=Main.getMain();
+		main.upload(filePath);
 	}
 	
 	

@@ -9,14 +9,14 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.manage.discountFinal.DiscountF;
-import com.manage.discountFinal.Discount_Final_Panel;
+import com.jitb.client.ClientMain;
 import com.manage.inventory.InventoryMain;
 import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
 
 
 public class Main extends JFrame implements ActionListener{
+	static Main main;
 	JPanel p_north, p_content;
 	//JButton bt_home, bt_movie, , bt_sales;
 	JButton bt_inventory, bt_discount;
@@ -32,7 +32,12 @@ public class Main extends JFrame implements ActionListener{
 	// 메뉴에 따른 여러 페이지 배열로 저장
 	JPanel[] page=new JPanel[5];
 	
+	ClientMain clientMain=new ClientMain();
+	
+	String filePath;
+	
 	public Main() {
+		main=this;
 		p_north=new JPanel();
 		p_content=new JPanel();
 		
@@ -71,13 +76,13 @@ public class Main extends JFrame implements ActionListener{
 		 * */
 		page[1]=new MovieTheaterTab();
 		page[2]=new InventoryMain();
-		page[3]=new DiscountF();
+		//page[3]=new DiscountF();
 		page[4]=new SalesMain();
 		
 		// Movie Panel 부착
 		p_content.add(page[1]);
 		p_content.add(page[2]);
-		p_content.add(page[3]);
+		//p_content.add(page[3]);
 		p_content.add(page[4]);
 		
 		// JTabbedPane을 사용하기 위해 GridLayout 1행1열 사용
@@ -101,6 +106,7 @@ public class Main extends JFrame implements ActionListener{
 		page[2].setVisible(false);
 		page[3].setVisible(false);
 		page[4].setVisible(false);
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -154,6 +160,14 @@ public class Main extends JFrame implements ActionListener{
 			page[3].setVisible(false);
 			page[4].setVisible(false);
 		}
+	}
+
+	public static Main getMain() {
+		return main;
+	}
+	
+	public void upload(String filePath){
+		clientMain.uploadFile(filePath);
 	}
 
 	public static void main(String[] args) {

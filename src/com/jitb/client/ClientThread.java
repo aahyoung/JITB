@@ -30,6 +30,8 @@ public class ClientThread extends Thread{
 	boolean img_send=false;
 	boolean file_send=false;
 	
+	String path=null;
+	
 	int size;
 	
 	public ClientThread(ClientMain clientMain, Socket socket) {
@@ -64,6 +66,7 @@ public class ClientThread extends Thread{
 			String fileName=clientMain.file.getName();
 			System.out.println("보내는 파일명 : "+fileName);
 			
+			// 파일명 보내기
 			buffw.write(fileName+"\n");
 			buffw.flush();
 			
@@ -79,6 +82,10 @@ public class ClientThread extends Thread{
 			buffw.write(size+"\n");
 			buffw.flush();
 			*/
+			
+			// 상위 폴더 내 하위 폴더 보내기
+			buffw.write(path+"\n");
+			buffw.flush();
 			
 			if(FileUtil.getOnlyFileName(fileName).equalsIgnoreCase(".jpg")){
 				fileType="jpg";

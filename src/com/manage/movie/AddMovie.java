@@ -369,7 +369,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 		filePath=file.getAbsolutePath();
 		System.out.println(filePath);
 		Main main=Main.getMain();
-		main.upload(filePath, "img");
+		main.upload(filePath, "img", "movie/");
 	}
 	
 	

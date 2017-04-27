@@ -118,10 +118,19 @@ public class ClientMain{
 	}
 	
 	// 파일 업로드
-	public void uploadFile(String filePath, String type){
+	public void uploadFile(String filePath, String type, String folderPath){
 		connect();
 		if(type.equals("img")){
 			ct.img_send=true;
+			if(folderPath.equalsIgnoreCase("movie/")){
+				ct.path=folderPath;
+			}
+			else if(folderPath.equalsIgnoreCase("discount/")){
+				ct.path=folderPath;
+			}
+			else if(folderPath.equalsIgnoreCase("snack/")){
+				ct.path=folderPath;
+			}
 			file=new File(filePath);
 		}
 		else if(type.equals("excel")){

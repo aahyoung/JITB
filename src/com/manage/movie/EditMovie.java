@@ -337,7 +337,7 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		filePath=file.getAbsolutePath();
 		//System.out.println(filePath);
 		Main main=Main.getMain();
-		main.upload(filePath, "img");
+		main.upload(filePath, "img", "movie/");
 		//System.out.println("영화 포스터 저장"+Calendar.getInstance().getTime());
 	}
 	

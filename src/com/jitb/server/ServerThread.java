@@ -46,7 +46,8 @@ public class ServerThread extends Thread{
 	//String path="C:/Hyeona/myServer/data/";
 	String path="C:/jitb_server/";
 	
-	String fileName;
+	String fileName, folder;
+	
 	int size;
 	boolean flag;
 	
@@ -79,8 +80,11 @@ public class ServerThread extends Thread{
 			//size=Integer.parseInt(buffr.readLine());
 			//System.out.println("파일 크기 : "+size);
 			
+			folder=buffr.readLine();
+			System.out.println("폴더명 : "+folder);
+			
 			BufferedImage img=ImageIO.read(img_is);
-			fos=new FileOutputStream(path+fileName);
+			fos=new FileOutputStream(path+"/image/"+folder+fileName);
 			ImageIO.write(img, "jpg", fos);
 			
 		} catch (IOException e) {

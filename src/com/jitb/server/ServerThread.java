@@ -20,6 +20,8 @@ import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 
+import com.jitb.file.FileUtil;
+
 public class ServerThread extends Thread{
 	Socket socket;
 	ServerMain serverMain;
@@ -72,6 +74,7 @@ public class ServerThread extends Thread{
 	// 클라이언트 측에서 보낸 이미지 파일 받기
 	public void image_listen(){
 		byte[] b=new byte[16384];
+		String fileType=null;
 		
 		try {
 			fileName=buffr.readLine();
@@ -82,10 +85,17 @@ public class ServerThread extends Thread{
 			
 			folder=buffr.readLine();
 			System.out.println("폴더명 : "+folder);
+
+			if(FileUtil.getOnlyFileName(fileName).equalsIgnoreCase(".jpg")){
+				fileType="jpg";
+			}
+			else if(FileUtil.getOnlyFileName(fileName).equalsIgnoreCase(".png")){
+				fileType="png";
+			}
 			
 			BufferedImage img=ImageIO.read(img_is);
 			fos=new FileOutputStream(path+"/image/"+folder+fileName);
-			ImageIO.write(img, "jpg", fos);
+			ImageIO.write(img, fileType, fos);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

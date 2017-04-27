@@ -81,7 +81,7 @@ public class Main extends JFrame implements ActionListener{
 		page[4]=new SalesMain();
 		
 		// Movie Panel ºÎÂø
-		p_content.add(page[1]);
+		//p_content.add(page[1]);
 		p_content.add(page[2]);
 		p_content.add(page[3]);
 		p_content.add(page[4]);

@@ -148,7 +148,7 @@ import com.manage.main.Main;
 					}
 				}
 				String filepath=file.getAbsolutePath();
-				Main.main.upload(filepath, "img");
+				Main.main.upload(filepath, "img","discount/");
 				table.setModel(tablemodel=new table_modelF(con,"ªÛ«∞±«"));
 			}
 		}

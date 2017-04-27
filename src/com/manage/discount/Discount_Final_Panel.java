@@ -76,8 +76,8 @@ package com.manage.discount;
 			bt_del.addActionListener(this);
 			bt_point.addActionListener(this);
 			bt_payway.addActionListener(this);
-			//setChoice();
-			//init();
+			setChoice();
+			init();
 			choice.addItemListener(this);
 			table.addMouseListener(new MouseAdapter() {
 				@Override

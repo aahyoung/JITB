@@ -49,6 +49,7 @@ public class table_modelF extends AbstractTableModel {
 		ResultSet rs=null;
 		StringBuffer sql=new StringBuffer();
 		sql.append("select * from "+table_name);
+		System.out.println(sql.toString());
 		try {
 			pstmt=con.prepareStatement(sql.toString());
 			rs=pstmt.executeQuery();

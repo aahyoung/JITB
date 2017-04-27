@@ -13,6 +13,8 @@ import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 
+import com.jitb.file.FileUtil;
+
 public class ClientThread extends Thread{
 	Socket socket;
 
@@ -57,6 +59,7 @@ public class ClientThread extends Thread{
 		//fos=new FileOutputStream(clientMain.file);
 		//fos.write(b);
 		byte[] b=new byte[16384];
+		String fileType=null;
 		try {
 			String fileName=clientMain.file.getName();
 			System.out.println("보내는 파일명 : "+fileName);
@@ -65,6 +68,7 @@ public class ClientThread extends Thread{
 			buffw.flush();
 			
 			fis=new FileInputStream(clientMain.file);
+			//System.out.println("보내는 경로 : "+clientMain.file);
 			/*
 			int size=(int) (clientMain.file.length()/b.length);
 			
@@ -76,9 +80,16 @@ public class ClientThread extends Thread{
 			buffw.flush();
 			*/
 			
+			if(FileUtil.getOnlyFileName(fileName).equalsIgnoreCase(".jpg")){
+				fileType="jpg";
+			}
+			else if(FileUtil.getOnlyFileName(fileName).equalsIgnoreCase(".png")){
+				fileType="png";
+			}
+			System.out.println("현재 파일 확장자 : "+fileType);
 			img_os=socket.getOutputStream();
 			BufferedImage img=ImageIO.read(clientMain.file);
-			ImageIO.write(img, "jpg", img_os);
+			ImageIO.write(img, fileType, img_os);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

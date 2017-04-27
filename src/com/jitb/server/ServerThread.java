@@ -44,7 +44,7 @@ public class ServerThread extends Thread{
 	boolean listenFlag=true;
 	
 	//String path="C:/Hyeona/myServer/data/";
-	String path="http://211.238.142.100:8989/image/movie/";
+	String path="C:/jitb_server/";
 	
 	String fileName;
 	int size;
@@ -70,14 +70,14 @@ public class ServerThread extends Thread{
 	
 	// 클라이언트 측에서 보낸 이미지 파일 받기
 	public void image_listen(){
-		byte[] b=new byte[1024];
+		byte[] b=new byte[16384];
 		
 		try {
 			fileName=buffr.readLine();
 			System.out.println("파일명 : "+fileName);
 			
-			size=Integer.parseInt(buffr.readLine());
-			System.out.println("파일 크기 : "+size);
+			//size=Integer.parseInt(buffr.readLine());
+			//System.out.println("파일 크기 : "+size);
 			
 			BufferedImage img=ImageIO.read(img_is);
 			fos=new FileOutputStream(path+fileName);
@@ -169,7 +169,7 @@ public class ServerThread extends Thread{
 	public void run() {
 		while(listenFlag){
 			image_listen();
-			file_listen();
+			//file_listen();
 		}
 	}
 }

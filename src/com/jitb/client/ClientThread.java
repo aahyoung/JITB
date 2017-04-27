@@ -56,7 +56,7 @@ public class ClientThread extends Thread{
 	public void sendImage(){
 		//fos=new FileOutputStream(clientMain.file);
 		//fos.write(b);
-		byte[] b=new byte[1024];
+		byte[] b=new byte[16384];
 		try {
 			String fileName=clientMain.file.getName();
 			System.out.println("보내는 파일명 : "+fileName);
@@ -65,6 +65,7 @@ public class ClientThread extends Thread{
 			buffw.flush();
 			
 			fis=new FileInputStream(clientMain.file);
+			/*
 			int size=(int) (clientMain.file.length()/b.length);
 			
 			if(clientMain.file.length()%b.length!=0){
@@ -73,7 +74,8 @@ public class ClientThread extends Thread{
 			System.out.println("보내는 파일 크기 : "+size);
 			buffw.write(size+"\n");
 			buffw.flush();
-
+			*/
+			
 			img_os=socket.getOutputStream();
 			BufferedImage img=ImageIO.read(clientMain.file);
 			ImageIO.write(img, "jpg", img_os);
@@ -112,6 +114,7 @@ public class ClientThread extends Thread{
 			buffw.flush();
 			
 			fis=new FileInputStream(clientMain.file);
+			/*
 			int size=(int) (clientMain.file.length()/b.length);
 			
 			if(clientMain.file.length()%b.length!=0){
@@ -121,6 +124,7 @@ public class ClientThread extends Thread{
 			System.out.println("보내는 파일 크기 : "+size);
 			buffw.write(size+"\n");
 			buffw.flush();
+			*/
 			
 			//is=fis;
 			file_os=socket.getOutputStream();

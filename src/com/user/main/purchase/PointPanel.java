@@ -93,8 +93,6 @@ public class PointPanel extends PurchasePanelFrame{
 						PointOutputMessage nextPanel = (PointOutputMessage)screen.content.get(3);
 						
 						nextPanel.discount_type_id = points.get(i).discount_type_id;
-						nextPanel.thread = new Thread(nextPanel);
-						nextPanel.thread.start();
 						
 						screen.setPanel(3);
 					}

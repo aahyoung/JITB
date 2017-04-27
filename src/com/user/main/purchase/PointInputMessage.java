@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -12,20 +14,22 @@ import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import com.user.frame.PurchasePanelFrame;
 import com.user.main.ClientMain;
 
-public class PointInputMessage extends PurchasePanelFrame implements Runnable{
+public class PointInputMessage extends PurchasePanelFrame{
 	JPanel content;
 	JPanel can_default;
 	Canvas bt_cancle;
+	JTextField hidden;
 	
-	Thread thread;
+	StringBuffer serialBuffr = new StringBuffer();
 	
 	long serial;
 	boolean isSerial;
@@ -33,6 +37,12 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 	
 	public PointInputMessage(ClientMain main) {
 		super(main);
+		
+		hidden = new JTextField(){
+			@Override
+			public void setBorder(Border border) {
+			}
+		};
 		
 		content = new JPanel(){
 			@Override
@@ -62,47 +72,51 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 		
 		bt_cancle.setBackground(Color.WHITE);
 		content.setBackground(new Color(33,33,33));
+		hidden.setBackground(new Color(33,33,33));
 		
 		can_default.setPreferredSize(new Dimension(550, 350));
 		bt_cancle.setPreferredSize(new Dimension(200, 50));
-		content.setPreferredSize(new Dimension(550, 700));
+		content.setPreferredSize(new Dimension(550, 450));
+		hidden.setPreferredSize(new Dimension(500, 300));
 		
 		bt_cancle.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				thread.interrupt();
 				PaymentScreen screen = (PaymentScreen)main.screen.get(12);
-				screen.setPanel(1);
+				screen.setPanel(5);
+			}
+		});
+		
+		hidden.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == e.VK_ENTER){
+					PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+					serialBuffr.delete(serialBuffr.length()-1, serialBuffr.length());
+					serial = Long.parseLong(serialBuffr.toString());
+					serialBuffr.delete(0, serialBuffr.length());
+							
+					selectSerialNum(serial);
+					
+					//시리얼 넘버가 있는 경우
+					if(isSerial){
+						//포인트 적립 후 결제완료 메시지
+						pointInput();
+						screen.setPanel(5);
+					}else{
+						screen.setPanel(9);
+					}
+				}else{
+					serialBuffr.append(e.getKeyChar());
+					System.out.println(serialBuffr.toString());
+				}
 			}
 		});
 		
 		content.add(can_default);
 		content.add(bt_cancle);
 		add(content);
-	}
-	
-	public void inputPointCard(){
-		Scanner scan = new Scanner(System.in);
-		serial = scan.nextLong();
-		
-		System.out.println(serial);
-		PaymentScreen screen = (PaymentScreen)main.screen.get(12);
-		
-		System.out.println("시리얼확인전");
-		selectSerialNum(serial);
-		System.out.println("시리얼확인후");
-		
-		//시리얼 넘버가 있는 경우
-		if(isSerial){
-			System.out.println("포인트적립전");
-			//포인트 적립 후 결제완료 메시지
-			pointInput();
-			System.out.println("포인트적립후");
-			screen.setPanel(5);
-		}else{
-			System.out.println("카드잘못됨");
-			screen.setPanel(9);
-		}
+		add(hidden);
 	}
 	
 	public void selectSerialNum(long serial_number){
@@ -140,7 +154,6 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 	}
 	
 	public void pointInput(){
-		System.out.println("포인트인풋");
 		PreparedStatement pstmt = null;
 		
 		PaymentScreen screen = (PaymentScreen)main.screen.get(12);
@@ -171,10 +184,5 @@ public class PointInputMessage extends PurchasePanelFrame implements Runnable{
 			}
 		}
 		
-	}
-	
-	@Override
-	public void run() {
-		inputPointCard();
 	}
 }

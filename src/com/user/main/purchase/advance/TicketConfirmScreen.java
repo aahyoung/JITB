@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 
 import com.user.frame.ScreenFrame;
 import com.user.main.ClientMain;
+import com.user.main.SelectCombo;
+import com.user.main.SelectList;
 
 public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListener{
 	JPanel panel;
@@ -129,6 +131,19 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 			
 		});
 		canvasFrame.addMouseMotionListener(this);
+		
+		print.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				main.removeScreen();
+				main.createScreen();
+				main.selectList = new SelectList();
+				main.selectCombo = new SelectCombo();
+				main.movie = false;
+				main.combo = false;
+				main.setPage(0);
+			}
+		});
 	}
 
 	@Override

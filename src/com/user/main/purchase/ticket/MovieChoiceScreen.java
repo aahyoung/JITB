@@ -245,15 +245,18 @@ public class MovieChoiceScreen extends ScreenFrame{
 			}
 		}
 		
+		System.out.println(movies.size());
 		InitScreen initScreen = (InitScreen)main.screen.get(0);
 		MenuChoiceScreen menuScreen = (MenuChoiceScreen)main.screen.get(1);
 		
 		String poster = movies.get(0).getPoster();
-		initScreen.poster_url = getClass().getResource("/"+poster);
-		initScreen.touch.repaint();
-		menuScreen.poster_url = getClass().getResource("/"+poster);
-		menuScreen.poster.repaint();
-		
+		if(poster!=null){
+			initScreen.poster_url = getClass().getResource("/"+poster);
+			initScreen.touch.repaint();
+			menuScreen.poster_url = getClass().getResource("/"+poster);
+			menuScreen.poster.repaint();
+		}
+	
 		int height = 300;
 		int y_point = 0;
 		

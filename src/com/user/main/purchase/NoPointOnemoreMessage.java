@@ -48,7 +48,7 @@ public class NoPointOnemoreMessage extends PurchasePanelFrame{
 				URL url = getClass().getResource("/bt_ok.png");
 				try {
 					Image img = ImageIO.read(url);
-					g.drawImage(img, -10, 0, 200, 50, this);
+					g.drawImage(img, 0, 0, 200, 50, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -61,7 +61,7 @@ public class NoPointOnemoreMessage extends PurchasePanelFrame{
 				URL url = getClass().getResource("/bt_cancle.png");
 				try {
 					Image img = ImageIO.read(url);
-					g.drawImage(img, -10, 0, 200, 50, this);
+					g.drawImage(img, 0, 0, 200, 50, this);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -81,6 +81,8 @@ public class NoPointOnemoreMessage extends PurchasePanelFrame{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				PaymentScreen screen = (PaymentScreen)main.screen.get(12);
+				PointInputMessage nextPage = (PointInputMessage)screen.content.get(4);
+				nextPage.serialBuffr.delete(0, nextPage.serialBuffr.length());
 				screen.setPanel(4);
 			}
 		});
@@ -89,7 +91,7 @@ public class NoPointOnemoreMessage extends PurchasePanelFrame{
 			public void mouseClicked(MouseEvent e) {
 				//초기화!!
 				PaymentScreen screen = (PaymentScreen)main.screen.get(12);
-				screen.setPanel(0); //쿠폰 선택화면으로 되돌려놓기
+				screen.setPanel(5); //쿠폰 선택화면으로 되돌려놓기
 				
 			}
 		});

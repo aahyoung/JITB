@@ -120,8 +120,6 @@ public class PurchasePanel extends PurchasePanelFrame{
 								purchaseSnack(discounts.get(i).getPayment_way_id());
 							}
 							PointInputMessage nextScreen = (PointInputMessage)screen.content.get(4);
-							nextScreen.thread = new Thread(nextScreen);
-							nextScreen.thread.start();
 							screen.setPanel(4);
 						}
 					}
@@ -134,8 +132,6 @@ public class PurchasePanel extends PurchasePanelFrame{
 								purchaseSnack(discounts.get(i).getPayment_way_id());
 							}
 							PointInputMessage nextScreen = (PointInputMessage)screen.content.get(4);
-							nextScreen.thread = new Thread(nextScreen);
-							nextScreen.thread.start();
 							screen.setPanel(4);
 						}
 					}

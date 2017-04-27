@@ -119,7 +119,7 @@ public class PastMovie extends JPanel {
 			BuyMovie buyMovie = list.get(i);
 			try {
 				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
-				url_image = new URL("http://211.238.142.100:8989/image/movie"+buyMovie.getPoster());
+				url_image = new URL("http://211.238.142.100:8989/image/movie/"+buyMovie.getPoster());
 				//System.out.println("img°¡ ÂïÈù´Ù"+buyMovie.getPoster());
 				poster=ImageIO.read(url_image);
 

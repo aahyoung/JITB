@@ -116,7 +116,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
 
 				//Image 경로에서 받아오기
-				url_image = new URL("http://211.238.142.100:8989/image/movie"+buyMovie.getPoster());
+				url_image = new URL("http://211.238.142.100:8989/image/movie/"+buyMovie.getPoster());
 				//System.out.println("img가 찍힌다"+buyMovie.getPoster());
 				poster=ImageIO.read(url_image);
 				

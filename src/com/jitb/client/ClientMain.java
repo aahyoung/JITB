@@ -103,11 +103,11 @@ public class ClientMain{
 	}
 	
 	// 접속 메소드 정의
-	public void connect(String add){
+	public void connect(){
 		try {
 			socket=new Socket(ip, port);
 			
-			ct=new ClientThread(this, socket,add);
+			ct=new ClientThread(this, socket);
 			ct.start();
 			
 		} catch (UnknownHostException e) {
@@ -118,8 +118,8 @@ public class ClientMain{
 	}
 	
 	// 파일 업로드
-	public void uploadFile(String filePath, String type,String add){
-		connect(add);
+	public void uploadFile(String filePath, String type){
+		connect();
 		if(type.equals("img")){
 			ct.img_send=true;
 			file=new File(filePath);

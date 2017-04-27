@@ -44,9 +44,9 @@ public class ServerThread extends Thread{
 	boolean listenFlag=true;
 	
 	//String path="C:/Hyeona/myServer/data/";
-	String path="C:/JITB_server/";
+	String path="http://211.238.142.100:8989/image/movie/";
 	
-	String fileName,add;
+	String fileName;
 	int size;
 	boolean flag;
 	
@@ -76,15 +76,11 @@ public class ServerThread extends Thread{
 			fileName=buffr.readLine();
 			System.out.println("颇老疙 : "+fileName);
 			
-			add=buffr.readLine();
-			System.out.println("林 家 : "+add);
-			
 			size=Integer.parseInt(buffr.readLine());
 			System.out.println("颇老 农扁 : "+size);
 			
 			BufferedImage img=ImageIO.read(img_is);
-			fos=new FileOutputStream(path+add+fileName);
-			System.out.println(path+add+fileName);
+			fos=new FileOutputStream(path+fileName);
 			ImageIO.write(img, "jpg", fos);
 			
 		} catch (IOException e) {
@@ -109,7 +105,7 @@ public class ServerThread extends Thread{
 	}
 	
 	public void file_listen(){
-		byte[] b=new byte[1024];
+		byte[] b=new byte[16384];
 		
 		try {
 			fileName=buffr.readLine();
@@ -122,7 +118,7 @@ public class ServerThread extends Thread{
 			file_is=socket.getInputStream();
 			//file_is=new BufferedInputStream(file_is);
 			
-			os=new BufferedOutputStream(fos);
+			//os=new BufferedOutputStream(fos);
 			
 			int readLength;
 			while(true){
@@ -130,7 +126,7 @@ public class ServerThread extends Thread{
 				if(readLength==-1){
 					break;
 				}
-				os.write(b, 0, readLength);
+				fos.write(b, 0, readLength);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

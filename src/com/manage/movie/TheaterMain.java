@@ -263,7 +263,7 @@ public class TheaterMain extends JPanel implements ActionListener{
 		}
 		FileOutputStream fos=null;
 		try {
-			fos=new FileOutputStream("res_manager/영화관 좌석표.xls");
+			fos=new FileOutputStream("res_manager/seat.xls");
 			workbook.write(fos);
 			JOptionPane.showMessageDialog(this, "좌석표 양식 다운 완료");
 			

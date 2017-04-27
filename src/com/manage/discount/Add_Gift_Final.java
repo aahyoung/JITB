@@ -147,10 +147,10 @@ import com.manage.main.Main;
 						e.printStackTrace();
 					}
 				}
+				String filepath=file.getAbsolutePath();
+				Main.main.upload(filepath, "img");
+				table.setModel(tablemodel=new table_modelF(con,"상품권"));
 			}
-			String filepath=file.getAbsolutePath();
-			Main.main.upload(filepath, "img");
-			table.setModel(tablemodel=new table_modelF(con,"상품권"));
 		}
 
 		@Override

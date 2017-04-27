@@ -253,9 +253,9 @@ public class MovieChoiceScreen extends ScreenFrame{
 		String poster = movies.get(0).getPoster();
 		if(poster!=null){
 			try {
-				initScreen.poster_url = new URL("http://localhost:9090/image/movie/"+poster);
+				initScreen.poster_url = new URL("http://211.238.142.100:8989/image/movie/"+poster);
 				initScreen.touch.repaint();
-				menuScreen.poster_url = new URL("http://localhost:9090/image/movie/"+poster);
+				menuScreen.poster_url = new URL("http://211.238.142.100:8989/image/movie/"+poster);
 				menuScreen.poster.repaint();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -347,7 +347,7 @@ public class MovieChoiceScreen extends ScreenFrame{
 					
 					URL url = null;
 					try {
-						url = new URL("http://localhost:9090/image/movie/"+movie.getPoster());
+						url = new URL("http://211.238.142.100:8989/image/movie/"+movie.getPoster());
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					}

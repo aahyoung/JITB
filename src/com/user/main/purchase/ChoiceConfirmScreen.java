@@ -172,7 +172,7 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 					
 					URL url = null;
 					try {
-						url = new URL("http://localhost:9090/image/movie/"+ticket.getPoster());
+						url = new URL("http://211.238.142.100:8989/image/movie/"+ticket.getPoster());
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					}
@@ -198,7 +198,7 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 						
 						URL comboUrl = null;
 						try {
-							comboUrl = new URL("http://localhost:9090/image/snack/"+combo.combo_img);
+							comboUrl = new URL("http://211.238.142.100:8989/image/snack/"+combo.combo_img);
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
@@ -229,7 +229,7 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 						
 						URL comboUrl = null;
 						try {
-							comboUrl = new URL("http://localhost:9090/image/snack/"+combo.combo_img);
+							comboUrl = new URL("http://211.238.142.100:8989/image/snack/"+combo.combo_img);
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}

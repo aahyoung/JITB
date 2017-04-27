@@ -55,7 +55,7 @@ public class CouponPanel extends PurchasePanelFrame{
 				for(int i=0; i<gifts.size(); i++){
 					URL url = null;
 					try {
-						url = new URL("http://localhost:9090/image/discount/"+gifts.get(i).getImg());
+						url = new URL("http://211.238.142.100:8989/image/discount/"+gifts.get(i).getImg());
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					}

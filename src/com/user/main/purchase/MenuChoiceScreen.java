@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -78,7 +79,12 @@ public class MenuChoiceScreen extends ScreenFrame {
 			}
 		};
 		
-		poster_url = getClass().getResource("/kingsman.png");
+		try {
+			poster_url = new URL("http://211.238.142.100:8989/image/movie/kingsman.png");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		//poster_url = getClass().getResource("/kingsman.png");
 		
 		poster = new Canvas(){
 			@Override

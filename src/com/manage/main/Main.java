@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.jitb.client.ClientMain;
+import com.manage.discount.DiscountF;
 import com.manage.inventory.InventoryMain;
 import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
@@ -76,13 +77,13 @@ public class Main extends JFrame implements ActionListener{
 		 * */
 		page[1]=new MovieTheaterTab();
 		page[2]=new InventoryMain();
-		//page[3]=new DiscountF();
+		page[3]=new DiscountF();
 		page[4]=new SalesMain();
 		
 		// Movie Panel 부착
 		p_content.add(page[1]);
 		p_content.add(page[2]);
-		//p_content.add(page[3]);
+		p_content.add(page[3]);
 		p_content.add(page[4]);
 		
 		// JTabbedPane을 사용하기 위해 GridLayout 1행1열 사용

@@ -129,7 +129,7 @@ public class table_modelF extends AbstractTableModel {
 		Vector vec = data.get(row);// row한 레코드를 반환!
 		vec.setElementAt(value, col);
 		int id = Integer.parseInt(vec.elementAt(0).toString());
-		new Table_UpdateF(con, column, row + 1, columnName.elementAt(col), value, id, "point_serial");
+		new Table_UpdateF(con, column, row + 1, columnName.elementAt(col), value, id, table_name);
 		this.fireTableCellUpdated(row + 1, col);
 	}
 }

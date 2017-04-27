@@ -58,7 +58,7 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 		bt=new JButton("Ãß°¡");
 		chooser=new JFileChooser("/JITB/res_manager");
 
-		
+		bt.addActionListener(this);
 
 		try {
 			URL url = this.getClass().getResource("/default.png");

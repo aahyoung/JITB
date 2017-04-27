@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 public class PastMovie extends JPanel {
 
 	private Connection con;
-	String path = "C:/project/JITB/res_manager/";
+	//String path = "C:/project/JITB/res_manager/";
 	ArrayList<BuyMovie> list = new ArrayList<BuyMovie>();
 	ArrayList<String> max= new ArrayList<String>();
 	
@@ -119,7 +119,7 @@ public class PastMovie extends JPanel {
 			BuyMovie buyMovie = list.get(i);
 			try {
 				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
-				url_image = new URL("http://172.20.10.4:9090/"+buyMovie.getPoster());
+				url_image = new URL("http://211.238.142.100:8989/"+buyMovie.getPoster());
 				//System.out.println("img°¡ ÂïÈù´Ù"+buyMovie.getPoster());
 				poster=ImageIO.read(url_image);
 

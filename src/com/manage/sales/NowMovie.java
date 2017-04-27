@@ -26,7 +26,7 @@ import com.manage.main.Main;
 public class NowMovie extends JPanel implements ActionListener{
 	
 	private Connection con;
-	String path = "C:/project/JITB/res_manager/";
+	//String path = "C:/project/JITB/res_manager/";
 	ArrayList <BuyMovie> list = new ArrayList<BuyMovie>();
 	
 	URL url_image;
@@ -116,7 +116,7 @@ public class NowMovie extends JPanel implements ActionListener{
 				//Image poster = ImageIO.read(new File(path+buyMovie.getPoster()));
 
 				//Image 경로에서 받아오기
-				url_image = new URL("http://172.20.10.4:9090/"+buyMovie.getPoster());
+				url_image = new URL("http://211.238.142.100:8989/"+buyMovie.getPoster());
 				//System.out.println("img가 찍힌다"+buyMovie.getPoster());
 				poster=ImageIO.read(url_image);
 				

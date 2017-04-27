@@ -14,6 +14,7 @@ import com.manage.discount.DiscountF;
 import com.manage.inventory.InventoryMain;
 import com.manage.movie.MovieTheaterTab;
 import com.manage.sales.SalesMain;
+import com.manage.ticket.Ticket;
 
 
 public class Main extends JFrame implements ActionListener{
@@ -22,16 +23,16 @@ public class Main extends JFrame implements ActionListener{
 	//JButton bt_home, bt_movie, , bt_sales;
 	JButton bt_inventory, bt_discount;
 	// 메뉴에 따른 여러 버튼 배열로 저장
-	JButton[] menu=new JButton[5];
+	JButton[] menu=new JButton[6];
 	
 	// 메뉴 이름 배열로 저장
-	String[] title={"홈","영화 관리","재고 관리","할인 관리","매출 관리"};
+	String[] title={"홈","영화 관리","재고 관리","할인 관리","매출 관리","티켓 가격"};
 	
 	// 각 메뉴 패널(여기에 각자 만든 패널을 가져와주시면 됩니다!)
 	MovieTheaterTab movie;
 	SalesMain salesMain;
 	// 메뉴에 따른 여러 페이지 배열로 저장
-	JPanel[] page=new JPanel[5];
+	JPanel[] page=new JPanel[6];
 	
 	ClientMain clientMain=new ClientMain();
 	
@@ -79,12 +80,14 @@ public class Main extends JFrame implements ActionListener{
 		page[2]=new InventoryMain();
 		page[3]=new DiscountF();
 		page[4]=new SalesMain();
+		page[5]=new Ticket();
 		
 		// Movie Panel 부착
-		//p_content.add(page[1]);
+		p_content.add(page[1]);
 		p_content.add(page[2]);
 		p_content.add(page[3]);
 		p_content.add(page[4]);
+		p_content.add(page[5]);
 		
 		// JTabbedPane을 사용하기 위해 GridLayout 1행1열 사용
 		// Grid 사용하니까 화면이 2개다 보여서 Grid 지웠습니다.
@@ -107,6 +110,7 @@ public class Main extends JFrame implements ActionListener{
 		page[2].setVisible(false);
 		page[3].setVisible(false);
 		page[4].setVisible(false);
+		page[5].setVisible(false);
 		
 	}
 
@@ -132,12 +136,14 @@ public class Main extends JFrame implements ActionListener{
 			page[2].setVisible(false);
 			page[3].setVisible(false);
 			page[4].setVisible(false);
+			page[5].setVisible(false);
 		}else if(bt==menu[2]){
 			System.out.println("재고 누름");
 			page[1].setVisible(false);
 			page[2].setVisible(true);
 			page[3].setVisible(false);
 			page[4].setVisible(false);
+			page[5].setVisible(false);
 		}
 		else if(bt==menu[3]) {
 			System.out.println("discount 누름");			
@@ -145,6 +151,7 @@ public class Main extends JFrame implements ActionListener{
 			page[2].setVisible(false);
 			page[3].setVisible(true);
 			page[4].setVisible(false);
+			page[5].setVisible(false);
 			
 		}
 		else if(bt==menu[4]) {
@@ -153,13 +160,14 @@ public class Main extends JFrame implements ActionListener{
 			page[2].setVisible(false);
 			page[3].setVisible(false);
 			page[4].setVisible(true);
-			
+			page[5].setVisible(false);
 		}
-		else{
+		else if(bt==menu[5]){
 			page[1].setVisible(false);
 			page[2].setVisible(false);
 			page[3].setVisible(false);
 			page[4].setVisible(false);
+			page[5].setVisible(true);
 		}
 	}
 

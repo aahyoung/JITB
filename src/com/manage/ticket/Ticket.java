@@ -1,174 +1,163 @@
 package com.manage.ticket;
 
-import java.awt.BorderLayout;
-
 import java.awt.Choice;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.TableModel;
 
 import com.jitb.db.DBManager;
 
-public class Ticket extends JFrame implements ActionListener, ItemListener {
+public class Ticket extends JPanel implements ActionListener, ItemListener {
 	DBManager manager;
 	Connection con;
-	JTextField txt, ticket_price, t_name;
-	JPanel p_west, p_north, p_south, p_center, p_up, p_down;
+	
+	Choice ch_type;
+	JTextField t_price;
 	JButton bt;
-	JLabel la1, la2;
-	Choice ch_type, ch_price;
-	JTable table_up, table_down;
-	JScrollPane scroll_up, scroll_down;
-
-	JFileChooser chooser;
-	File file;
+	JTable table;
+	JScrollPane scroll;
+	TableModel model;
+	
+	ArrayList<MoviePrice> moviePrices = new ArrayList<MoviePrice>();
+	int index;
 
 	public Ticket() {
 		init();
-		p_west = new JPanel();
-		p_north = new JPanel();
-		p_south = new JPanel();
-		p_center = new JPanel();
-		p_up = new JPanel();
-		p_down = new JPanel();
-		txt = new JTextField(10);
-		ticket_price = new JTextField(10);
-		la1 = new JLabel("type",JLabel.RIGHT);
-		la2 = new JLabel("가격");
-		bt = new JButton("등록");
+		
 		ch_type = new Choice();
-		ch_price = new Choice();
-		table_up = new JTable();
-		table_down = new JTable();
-		scroll_up = new JScrollPane(table_up);
-		scroll_down = new JScrollPane(table_down);
-
-		setLayout(new FlowLayout());
-		add(p_west);
-		add(la1);
-		add(txt);
-		add(la2);
-		add(ticket_price);
-		add(bt);
-
-		setPreferredSize(new Dimension(140, 45));
-		//ch_type.add("▼");
-		ch_price.add("가격");
-
-		bt.addActionListener(this);
-
-		p_north.setPreferredSize(new Dimension(250, 500));
-		p_west.setPreferredSize(new Dimension(250, 500));
-		la1.setPreferredSize(new Dimension(100, 60));
-		//p_center.setLayout(new GridLayout(2, 1));
-		add(p_center);
-		p_center.add(p_up);
-		p_center.add(p_down);
-
-		p_north.add(ch_type);
-		p_north.add(ch_price);
-		p_north.add(txt);
-		p_north.add(ticket_price);
-
-		p_south.add(bt);
-
-		add(p_north, BorderLayout.NORTH);
-		add(p_west, BorderLayout.WEST);
-		add(p_center);
-
+		t_price = new JTextField(10);
+		bt = new JButton("가격 변경");
+		
+		table = new JTable();
+		scroll = new JScrollPane(table);
+		
+		ch_type.setPreferredSize(new Dimension(100, 20));
+		scroll.setPreferredSize(new Dimension(900, 600));
+		
+		selectMoviePrice();
+		
+		ch_type.add("▼ 타입선택");
+		for(int i=0; i<moviePrices.size(); i++){
+			ch_type.add(moviePrices.get(i).getType());
+		}
+		
 		ch_type.addItemListener(this);
-
-		// 버튼과 리스너 연결
 		bt.addActionListener(this);
-
-		bt.addMouseListener(new MouseAdapter() {
-		});
-
-		setSize(500, 250);
-		setVisible(true);
-
-		init();
-		add();
+		
+		table.setModel(model = new MoviePriceModel(this));
+		table.updateUI();
+		
+		add(ch_type);
+		add(t_price);
+		add(bt);
+		add(scroll);
 	}
 
 	public void init() {
 		manager = DBManager.getInstance();
 		con = manager.getConnect();
 	}
-
-	public static void main(String[] args) {
-		new Ticket();
+	
+	public void setModel(){
+		((MoviePriceModel)model).selectMoviePrice();
+		table.updateUI();
 	}
-
-	public void add() {
-
+	
+	public void selectMoviePrice(){
 		PreparedStatement pstmt = null;
-		String sql = "insert into movie_price(type_id, type,ticket_price)";
-		sql += " values(seq_movie_price.nextval, ?, ?, ?, ?)";
-		System.out.println(sql);
+		ResultSet rs = null;
+		
+		String sql = "select * from movie_price";
 		try {
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, txt.getText());
-			pstmt.setInt(2, Integer.parseInt(ticket_price.getText()));
-
+			rs = pstmt.executeQuery();
+			while(rs.next()){
+				MoviePrice dto = new MoviePrice();
+				dto.setType_id(rs.getInt("type_id"));
+				dto.setType(rs.getString("type"));
+				dto.setTicket_price(rs.getInt("ticket_price"));
+				
+				moviePrices.add(dto);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(rs!=null){
+					rs.close();
+				}
+				if(pstmt!=null){
+					pstmt.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void updatePrice(int price){
+		PreparedStatement pstmt = null;
+		
+		String sql = "update movie_price set ticket_price = ? where type_id = ?";
+		
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, price);
+			pstmt.setInt(2, moviePrices.get(index-1).getType_id());
+			
 			int result = pstmt.executeUpdate();
-			if (result != 0) {
-				JOptionPane.showMessageDialog(this, "등록 성공");
-				table_up.updateUI();
-			} else {
-				JOptionPane.showMessageDialog(this, "등록 실패");
+			if(result != 0){
+				JOptionPane.showMessageDialog(this, "가격 변경 완료");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			if (pstmt != null) {
-				try {
+		} finally{
+			try {
+				if(pstmt!=null){
 					pstmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
 				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 
-	public void getDetail(Vector vec) {
-		txt.setText(vec.get(0).toString());
-		ticket_price.setText(vec.get(2).toString());
-		t_name.setText(vec.get(3).toString());
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		add();
+		Object obj = e.getSource();
+		
+		if(obj == bt){
+			String str_price = t_price.getText();
+			try {
+				if(index!=0){
+					int price = Integer.parseInt(str_price);
+					updatePrice(price);
+					setModel();
+				}
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(this, "숫자를 입력하세요");
+			}
+		}
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		getType();
+		index = ((Choice)e.getSource()).getSelectedIndex();
 	}
 }

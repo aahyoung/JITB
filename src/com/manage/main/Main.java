@@ -167,8 +167,8 @@ public class Main extends JFrame implements ActionListener{
 		return main;
 	}
 	
-	public void upload(String filePath, String type){
-		clientMain.uploadFile(filePath, type);
+	public void upload(String filePath, String type,String add){
+		clientMain.uploadFile(filePath, type,add);
 	}
 
 	public static void main(String[] args) {

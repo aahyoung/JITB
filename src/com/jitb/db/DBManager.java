@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBManager {
 	private String driver = "oracle.jdbc.driver.OracleDriver";
-	private String url = "jdbc:oracle:thin:@localhost:1521:XE";
+	private String url = "jdbc:oracle:thin:@211.238.142.100:1521:XE";
 	private String user = "jitb";
 	private String password = "jitb";
 	

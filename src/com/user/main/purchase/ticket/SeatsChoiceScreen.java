@@ -9,8 +9,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -50,6 +52,11 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	String[] locationImg = {
 			"A.png", "B.png", "C.png", "D.png", "E.png", "F.png", "G.png", "H.png", "I.png", "J.png"
 	};
+	
+	URL url;
+	FileOutputStream fos;
+	byte[] b = new byte[1024];
+	String filePath = "C:/JITB Java Project/JITB/res_manager/seat.xls";
 	
 	public SeatsChoiceScreen(ClientMain main) {
 		super(main);
@@ -265,10 +272,27 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	}
 	
 	public void exelSeatSetting(){
-		File file = new File("C:/JITB Java Project/JITB/res_manager/영화관 좌석표.xls");
-		FileInputStream fis;
+		InputStream is = null;
+		FileInputStream fis = null;
+		
 		try {
+			url = new URL("http://211.238.142.100:8989/exel/seat.xls");
+			is = url.openStream();
+			
+			fos = new FileOutputStream(new File(filePath));
+			
+			int data = -1;
+			while(true){
+				data = is.read(b);
+				if(data == -1){
+					break;
+				}
+				fos.write(b);
+			}
+			
 			DataFormatter df = new DataFormatter();
+			
+			File file = new File(filePath);
 			fis = new FileInputStream(file);
 			
 			HSSFWorkbook book = new HSSFWorkbook(fis);
@@ -284,10 +308,25 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				}
 			}
 			
-		} catch (FileNotFoundException e) {
+		}catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		}catch (IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		}finally{
+			if(is!=null){
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(fos!=null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -317,6 +356,17 @@ public class SeatsChoiceScreen extends ScreenFrame{
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally{
+				try {
+					if(pstmt != null){
+						pstmt.close();
+					}
+					if(rs != null){
+						rs.close();
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -340,6 +390,17 @@ public class SeatsChoiceScreen extends ScreenFrame{
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally{
+			try {
+				if(pstmt != null){
+					pstmt.close();
+				}
+				if(rs != null){
+					rs.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

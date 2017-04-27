@@ -244,6 +244,9 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 	// 설정한 영화 정보 저장
 	// -> movie 테이블에 데이터 저장
 	public void insertMovie(){
+		// 등록 완료했으면 포스터 파일 저장
+		copyPoster();
+		
 		PreparedStatement pstmt=null;
 		/*
 		// 입력값을 변수에 저장
@@ -299,7 +302,7 @@ public class AddMovie extends JDialog implements ActionListener, FocusListener{
 					//getMovieId();
 					
 					// 등록 완료했으면 포스터 파일 저장
-					copyPoster();
+					//copyPoster();
 				}
 				else{
 					JOptionPane.showMessageDialog(this, "영화 추가 실패");

@@ -134,7 +134,7 @@ public class MovieMain extends JPanel implements ActionListener{
 	// 하나의 Excel파일 상영시간표를 담아놓을 collection framework
 	ArrayList<ArrayList> excelData=new ArrayList<ArrayList>();
 	
-	//URL url_image;
+	URL url_image;
 	
 	public MovieMain(MovieTheaterTab movieTheaterTab) {
 		this.movieTheaterTab=movieTheaterTab;
@@ -250,7 +250,7 @@ public class MovieMain extends JPanel implements ActionListener{
 				dto.setRun_time(rs.getInt("run_time"));
 				
 				excelMovie.add(dto);
-				System.out.println(excelMovie.size());
+				//System.out.println(excelMovie.size());
 			}
 			
 			// product 테이블 정보 알아오기
@@ -327,7 +327,7 @@ public class MovieMain extends JPanel implements ActionListener{
 						dto.setRun_time(rs_result.getInt("run_time"));
 						
 						upcomingList.add(dto);
-						System.out.println(upcomingList.size());
+						//System.out.println(upcomingList.size());
 					}
 				}
 				
@@ -352,7 +352,7 @@ public class MovieMain extends JPanel implements ActionListener{
 						dto.setRun_time(rs_result.getInt("run_time"));
 						
 						presentList.add(dto);
-						System.out.println(presentList.size());
+						//System.out.println(presentList.size());
 					}
 				}
 				
@@ -394,7 +394,7 @@ public class MovieMain extends JPanel implements ActionListener{
 				p_present.setVisible(false);
 				//p_warning.setVisible(true);
 				
-				System.out.println("영화 없음");
+				//System.out.println("영화 없음");
 			}
 			
 		} catch (SQLException e) {
@@ -461,7 +461,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			while(rs_present.next()){			
 				presentId.add(rs_present.getInt("movie_id"));
 			}
-			System.out.println("presentId : "+presentId);
+			//System.out.println("presentId : "+presentId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -491,7 +491,7 @@ public class MovieMain extends JPanel implements ActionListener{
 		
 		StringBuffer past_sql=new StringBuffer();
 		past_sql.append("select movie_id from movie");
-		past_sql.append(" where end_date<to_char(sysdate, 'YYYY-MM-DD')");
+		past_sql.append(" where end_date<to_char(sysdate, 'YYYY-MM-DD') order by movie_id asc");
 		
 		try {
 			// 과거 상영작 id 저장
@@ -501,7 +501,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			while(rs_past.next()){
 				pastId.add(rs_past.getInt("movie_id"));
 			}
-			System.out.println("pastId : "+pastId);
+			//System.out.println("pastId : "+pastId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -524,7 +524,7 @@ public class MovieMain extends JPanel implements ActionListener{
 	
 	// 상영시간표 양식 저장 및 다운(일단은 저장만 가능한 상태, 서버 구축되면 서버에 올릴 예정)
 	public void saveExcelForm(){
-		System.out.println("상영시간표 양식");
+		//System.out.println("상영시간표 양식");
 		
 		if(present_movies.size()==0){
 			JOptionPane.showMessageDialog(this, "현재 상영중인 영화가 없습니다.");
@@ -618,8 +618,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			
 			FileOutputStream fos;
 			try {
-				fos=new FileOutputStream("res_manager/상영시간표.xls");
-				//fos=new FileOutputStream("http://192.168.0.8:8989/상영시간표.xls");
+				fos=new FileOutputStream("res_manager/TimeTable.xls");
 				workbook.write(fos);
 				fos.close();
 				
@@ -632,8 +631,6 @@ public class MovieMain extends JPanel implements ActionListener{
 				
 			}
 		}
-		Main main=Main.getMain();
-		main.upload("res_manager/상영시간표.xls", "excel");
 
 	}
 
@@ -663,7 +660,7 @@ public class MovieMain extends JPanel implements ActionListener{
 				
 				// 파일의 확장자가 xls인 경우
 				if(xls){
-					System.out.println("xls 확장자");
+					//System.out.println("xls 확장자");
 					HSSFWorkbook workbook=new HSSFWorkbook(fis);
 					
 					// 시트 수만큼
@@ -717,7 +714,7 @@ public class MovieMain extends JPanel implements ActionListener{
 									if(cell!=null){
 										excelRow.add(cell.getStringCellValue());
 									}
-									System.out.println("한 행 : "+excelRow);
+									//System.out.println("한 행 : "+excelRow);
 									excelSheet.add(excelRow);
 									//System.out.println(i+"번째 sheet : "+excelSheet);
 								}// 한 행(10-14열)
@@ -728,7 +725,7 @@ public class MovieMain extends JPanel implements ActionListener{
 						excelData.add(excelSheet);
 						//excelData.add(excelSheet);
 					}//sheet 개수
-					System.out.println("excel파일의 sheet 개수 : "+excelData.size());			
+					//System.out.println("excel파일의 sheet 개수 : "+excelData.size());			
 				}
 				// 파일의 확장자가 xlsx인 경우
 				else if(xlsx){
@@ -923,10 +920,10 @@ public class MovieMain extends JPanel implements ActionListener{
 			try {
 				//img = ImageIO.read(new File(path+movieList.get(i).getPoster()));
 				// Image 경로에서 받아오기
-				//url_image = new URL("http://211.238.142.112:8989/data/"+movieList.get(i).getPoster());
+				url_image = new URL("http://211.238.142.112:8989/data/"+movieList.get(i).getPoster());
 				//url_image = new URL("http://192.168.0.8:8989/"+movieList.get(i).getPoster());
-				System.out.println("영화 패널 설정"+Calendar.getInstance().getTime());
-				URL url_image = new URL("http://192.168.0.8:8989/"+movieList.get(i).getPoster());
+				//System.out.println("영화 패널 설정"+Calendar.getInstance().getTime());
+
 				img=ImageIO.read(url_image.openStream());
 				String name=movieList.get(i).getName();
 				String start_date=movieList.get(i).getStart_date();
@@ -995,18 +992,18 @@ public class MovieMain extends JPanel implements ActionListener{
 			} catch (ParseException e1) {
 				e1.printStackTrace();
 			}
-			System.out.println("상영시간표 등록");
+			//System.out.println("상영시간표 등록");
 		}
 		
 		else if(obj==bt_add){
 			addMovie=new AddMovie(this);
-			System.out.println("영화 추가");
+			//System.out.println("영화 추가");
 		}
 		else if(obj==list){	
 			
 			// 현재 상영작
 			if(list.getSelectedIndex()==0){
-				System.out.println(presentList.size());
+				//System.out.println(presentList.size());
 				//p_present.setVisible(true);
 				//p_past.setVisible(false);
 				p_content.remove(p_past);
@@ -1016,7 +1013,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			}
 			// 상영 예정작
 			else if(list.getSelectedIndex()==1){
-				System.out.println(upcomingList.size());
+				//System.out.println(upcomingList.size());
 				//p_present.setVisible(true);
 				//p_past.setVisible(false);
 				p_content.remove(p_past);
@@ -1026,7 +1023,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			}
 			// 과거 상영작
 			else if(list.getSelectedIndex()==2){
-				System.out.println(pastList.size());
+				//System.out.println(pastList.size());
 				//p_present.setVisible(false);
 				//p_past.setVisible(true);
 				p_content.remove(p_present);

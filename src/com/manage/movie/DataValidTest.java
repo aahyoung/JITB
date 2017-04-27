@@ -68,4 +68,11 @@ public class DataValidTest {
 			return false;
 		}
 	}
+	
+	// 파일 확장자만 추출
+	public static String getFileType(String value){
+		int identifier=value.lastIndexOf(".");
+		return value.substring(identifier, value.length());
+		
+	}
 }

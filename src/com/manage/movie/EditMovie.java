@@ -229,7 +229,7 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 		ori_start_date=startDatePicker.getValue();
 		ori_end_date=endDatePicker.getValue();
 		
-		System.out.println("현재 선택한 영화 id : "+movie_id);
+		//System.out.println("현재 선택한 영화 id : "+movie_id);
 	}
 	
 	// DB 연결
@@ -267,6 +267,8 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 	// 영화 정보 수정
 	// -> movie 테이블에 데이터 수정
 	public void updateMovie(){
+		// 등록 완료했으면 포스터 파일 저장
+		copyPoster();
 		PreparedStatement pstmt=null;
 		
 		//System.out.println(start_date.toString()+","+end_date.toString());
@@ -294,7 +296,7 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 				JOptionPane.showMessageDialog(this, "영화 수정 완료");
 				
 				// 등록 완료했으면 포스터 파일 저장
-				copyPoster();
+				//copyPoster();
 				
 				System.out.println("updateMovie()실행 완료");
 				movieMain.getMovieList();
@@ -332,10 +334,10 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 	// 영화를 등록하면 포스터 저장
 	public void copyPoster(){
 		filePath=file.getAbsolutePath();
-		System.out.println(filePath);
+		//System.out.println(filePath);
 		Main main=Main.getMain();
 		main.upload(filePath, "img");
-		System.out.println("영화 포스터 저장"+Calendar.getInstance().getTime());
+		//System.out.println("영화 포스터 저장"+Calendar.getInstance().getTime());
 	}
 	
 	
@@ -438,13 +440,13 @@ public class EditMovie extends JDialog implements ActionListener, FocusListener{
 			movieMain.p_upcoming.updateUI();
 			*/
 			//movieMain.p_present.setVisible(true);
-			System.out.println("영화 수정 확인");
+			//System.out.println("영화 수정 확인");
 		}
 		else if(bt==bt_cancel){
 			//this.dispose();
 			this.setVisible(false);
 			//movieMain.p_present.setVisible(true);
-			System.out.println("영화 수정 취소");
+			//System.out.println("영화 수정 취소");
 		}
 	}
 	

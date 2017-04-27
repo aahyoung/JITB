@@ -44,7 +44,7 @@ public class ServerThread extends Thread{
 	boolean listenFlag=true;
 	
 	//String path="C:/Hyeona/myServer/data/";
-	String path="C:/JITB_server/";
+	String path="C:/JITB_server/image/movie/";
 	
 	String fileName;
 	int size;

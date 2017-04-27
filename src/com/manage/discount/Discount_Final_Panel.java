@@ -35,6 +35,7 @@ package com.manage.discount;
 		Connection con;
 		DBManager manager=DBManager.getInstance();
 		Vector<DiscountFCategory> dst=new Vector<DiscountFCategory>();
+		
 		JFrame[] Add=new JFrame[4];
 		int index=0;
 		String column=null;
@@ -75,8 +76,8 @@ package com.manage.discount;
 			bt_del.addActionListener(this);
 			bt_point.addActionListener(this);
 			bt_payway.addActionListener(this);
-			setChoice();
-			init();
+			//setChoice();
+			//init();
 			choice.addItemListener(this);
 			table.addMouseListener(new MouseAdapter() {
 				@Override
@@ -119,7 +120,16 @@ package com.manage.discount;
 						e.printStackTrace();
 					}
 				}
+				else if(pstmt!=null){
+					try {
+						pstmt.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
+			
 			setName(dst.get(choice.getSelectedIndex()).getName());
 		}
 		public void setName(String name){

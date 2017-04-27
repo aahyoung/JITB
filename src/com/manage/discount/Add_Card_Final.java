@@ -163,7 +163,7 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 			}
 		}
 		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img","/image/discount/");
+		Main.main.upload(filepath, "img");
 		table.setModel(tablemodel = new table_modelF(con, "Ä«µå»ç"));
 	}
 

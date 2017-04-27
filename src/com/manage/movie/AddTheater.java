@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.check.DataValidTest;
 
 /*
  * 영화관 추가 Dialog

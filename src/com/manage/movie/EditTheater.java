@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.check.DataValidTest;
 
 public class EditTheater extends JDialog implements ActionListener{
 	JPanel p_outer;

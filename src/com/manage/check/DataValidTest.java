@@ -13,7 +13,7 @@
  * 						    종료 날짜 : 현재 날짜+8일부터 선택 가능 
  * 3) 영화 상영 시간	숫자만 허용
  * */
-package com.manage.movie;
+package com.manage.check;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.jfree.date.DateUtilities;
 
 public class DataValidTest {
-	static String yymmdd;
+	public static String yymmdd;
 	
 	// 상영 시간이 숫자인지 확인
 	public static boolean isNumber(String value) {

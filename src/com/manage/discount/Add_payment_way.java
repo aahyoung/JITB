@@ -2,6 +2,7 @@ package com.manage.discount;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -9,20 +10,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -35,43 +30,57 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.inventory.TablePanel;
 import com.manage.main.Main;
 
-public class Add_Card_Final extends JFrame implements ActionListener {
+import javafx.scene.layout.Border;
+
+public class Add_payment_way extends JFrame implements ActionListener {
+	JPanel p_west, p_center; // 기본 창
+	JPanel p_center_top, p_center_center, p_center_south;// 센터에 상세 분류
+	JLabel la_combo, la_info;
+	JLabel la_name;
+	JTextField t_name;
+	JButton bt_add;
 	Canvas can;
-	JPanel p_center, p_img;
-	JTextField t_name, t_rate;
-	JLabel la_name, la_rate;
-	JButton bt;
-	Connection con;
-	DBManager manager = DBManager.getInstance();
 	JFileChooser chooser;
 	BufferedImage image = null;
 	File file;
-	int discount_type_id;
-	JTable table;
 	table_modelF tablemodel;
-	Socket socket;
-	FileInputStream fis;
-	FileOutputStream fos;
-	BufferedInputStream bis;
+	DBManager manager;
+	Connection con;
+	JTable table_up;
 
-	public Add_Card_Final(int discount_type_id, JTable table) {
-		this.discount_type_id = discount_type_id;
-		this.table = table;
+	public Add_payment_way(JTable table_up) {
+		init(); // connect 받기
+		this.table_up = table_up;
+		p_west = new JPanel();// 이미지 넣어둘 패널
+		p_center = new JPanel();// 각종 옵션 넣어둘 패널
 
-		con = manager.getConnect();
-		p_center = new JPanel();
-		p_img = new JPanel();
+		p_center_top = new JPanel();
+		p_center_center = new JPanel();
+		p_center_south = new JPanel();
 
-		la_name = new JLabel("카드 이름 : ");
-		t_name = new JTextField(10);
-		la_rate = new JLabel("할 인 율   : ");
-		t_rate = new JTextField(10);
-		bt = new JButton("추가");
+		la_combo = new JLabel("결재 방식 추가");
+		la_name = new JLabel("결재 방식  :");
+		t_name = new JTextField(15);
+		bt_add = new JButton("추가");
 
+		p_center_top.add(la_name);
+		p_center_center.add(la_name);
+		p_center_center.add(t_name);
+		p_center_south.add(bt_add);
+
+		p_center_center.setBackground(Color.red);
+
+		p_center.setLayout(new BorderLayout());
+		p_center.add(p_center_top, BorderLayout.NORTH);
+		p_center.add(p_center_center);
+		p_center.add(p_center_south, BorderLayout.SOUTH);
+		
+		add(p_west, BorderLayout.WEST);
+		add(p_center);
 		chooser = new JFileChooser("/JITB/res_manager");
-		bt.addActionListener(this);
 
 		try {
 			URL url = this.getClass().getResource("/default.png");
@@ -85,21 +94,12 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		can = new Canvas() {
 			@Override
 			public void paint(Graphics g) {
-				g.drawImage(image, 0, 0, 230, 130, this);
+				g.drawImage(image, 0, 0, 135, 135, this);
 			}
 		};
-		can.setPreferredSize(new Dimension(230, 130));
 
-		p_img.add(can);
-
-		p_center.add(la_name);
-		p_center.add(t_name);
-		p_center.add(la_rate);
-		p_center.add(t_rate);
-		p_center.add(bt);
-
-		add(p_img, BorderLayout.NORTH);
-		add(p_center);
+		can.setPreferredSize(new Dimension(135, 135));
+		bt_add.addActionListener(this);
 
 		can.addMouseListener(new MouseAdapter() {
 
@@ -108,9 +108,10 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 				select();
 			}
 		});
-
+		p_west.add(can);
+		
+		setSize(400, 200);
 		setVisible(true);
-		setSize(250, 280);
 	}
 
 	public void select() {
@@ -129,20 +130,16 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		}
 	}
 
-	public void add() {
+	public void regist() {
 		PreparedStatement pstmt = null;
-		String filePath =file.getAbsolutePath().toString();
-		System.out.println(filePath);
-		String sql = "insert into card(card_id,name,rate,img,discount_type_id)";
-		sql += "values(seq_card.nextval,?,?,?,?)";
+		String sql = "insert into payment_way(payment_way_id,payment_way,img)";
+		sql += "values(seq_payment_way.nextval,?,?)";
 		try {
 			pstmt = con.prepareStatement(sql);
 
 			// 바인드 변수에 들어갈 값 설정!
 			pstmt.setString(1, t_name.getText());
-			pstmt.setDouble(2, Double.parseDouble(t_rate.getText()));
-			pstmt.setString(3, file.getName());
-			pstmt.setInt(4, discount_type_id);// discountFinalMain에서 받아옴
+			pstmt.setString(2, file.getName());
 
 			int rs = pstmt.executeUpdate();
 			if (rs != 0) {
@@ -164,11 +161,18 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		}
 		String filepath=file.getAbsolutePath();
 		Main.main.upload(filepath, "img","/image/discount/");
-		table.setModel(tablemodel = new table_modelF(con, "카드사"));
+		table_up.setModel(tablemodel = new table_modelF(con, "discount_type"));
 	}
 
+	// 추가 버튼
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		add();
+	public void actionPerformed(ActionEvent arg0) {
+		System.out.println("버튼을 누르셨다");
+		regist();
+	}
+
+	public void init() {
+		manager = DBManager.getInstance();
+		con = manager.getConnect();
 	}
 }

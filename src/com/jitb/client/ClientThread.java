@@ -24,17 +24,17 @@ public class ClientThread extends Thread{
 	OutputStream img_os;
 	OutputStream file_os;
 	BufferedOutputStream buffos;
-	
+	String add=null;;
 	
 	boolean img_send=false;
 	boolean file_send=false;
 	
 	int size;
 	
-	public ClientThread(ClientMain clientMain, Socket socket) {
+	public ClientThread(ClientMain clientMain, Socket socket,String add) {
 		this.clientMain=clientMain;
 		this.socket=socket;
-		
+		this.add=add;
 		try {
 			buffw=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			
@@ -65,6 +65,10 @@ public class ClientThread extends Thread{
 			
 			buffw.write(fileName+"\n");
 			buffw.flush();
+
+			buffw.write(add+"\n");
+			buffw.flush();
+			System.out.println("보내는 주소 : "+add);
 			
 			fis=new FileInputStream(clientMain.file);
 			int size=(int) (clientMain.file.length()/b.length);
@@ -119,6 +123,7 @@ public class ClientThread extends Thread{
 			if(clientMain.file.length()%b.length!=0){
 				size++;
 			}
+			
 			System.out.println("보내는 파일 크기 : "+size);
 			buffw.write(size+"\n");
 			buffw.flush();

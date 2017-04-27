@@ -28,7 +28,7 @@ package com.manage.discount;
 		Choice choice;
 		JTable table;
 		JScrollPane scroll;
-		JButton bt_add,bt_del,bt_discount,bt_point;
+		JButton bt_add,bt_del,bt_discount,bt_point,bt_payway;
 		
 		JPanel p_center,p_north,p_south;
 		
@@ -55,11 +55,12 @@ package com.manage.discount;
 			bt_point=new JButton("회원 관리");
 			bt_del=new JButton("삭제");
 			bt_discount=new JButton("할인종류 추가");
-			
+			bt_payway=new JButton("결재방식 추가");
 			
 			p_north.add(choice);
 			p_north.add(bt_point);
 			p_north.add(bt_discount);
+			p_north.add(bt_payway);
 			p_north.add(bt_add);
 			p_north.add(bt_del);
 			p_center.add(scroll);
@@ -73,6 +74,7 @@ package com.manage.discount;
 			bt_discount.addActionListener(this);
 			bt_del.addActionListener(this);
 			bt_point.addActionListener(this);
+			bt_payway.addActionListener(this);
 			setChoice();
 			init();
 			choice.addItemListener(this);
@@ -195,6 +197,9 @@ package com.manage.discount;
 
 			else if(obj==bt_point){
 				new Add_Point_SerialF(1);
+			}
+			else if(obj==bt_payway){
+				new Add_payment_way(table);
 			}
 
 		}

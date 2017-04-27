@@ -22,9 +22,9 @@ import com.jitb.db.DBManager;
 
 public class ClientMain{
 	Socket socket;
-	String ip="211.238.142.100";
-	//String ip="localhost";
-	int port=9090;
+	//String ip="211.238.142.100";
+	String ip="localhost";
+	int port=9090;//9090
 	
 	static URL url_movie;
 	static URL url_buy_movie;
@@ -103,11 +103,11 @@ public class ClientMain{
 	}
 	
 	// 접속 메소드 정의
-	public void connect(){
+	public void connect(String add){
 		try {
 			socket=new Socket(ip, port);
 			
-			ct=new ClientThread(this, socket);
+			ct=new ClientThread(this, socket,add);
 			ct.start();
 			
 		} catch (UnknownHostException e) {
@@ -118,8 +118,8 @@ public class ClientMain{
 	}
 	
 	// 파일 업로드
-	public void uploadFile(String filePath, String type){
-		connect();
+	public void uploadFile(String filePath, String type,String add){
+		connect(add);
 		if(type.equals("img")){
 			ct.img_send=true;
 			file=new File(filePath);

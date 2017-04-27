@@ -25,7 +25,7 @@ import com.manage.main.Main;
 //상품을 추가하는 패널
 public class Inventory extends JPanel implements ActionListener, ItemListener {
 
-	JButton bt_add, bt_del,bt_add_sub;
+	JButton bt_add, bt_del,bt_add_sub,bt_list;
 	Choice choice;
 	JPanel p_table, p_north;
 	TablePanel tablepanel;
@@ -42,12 +42,14 @@ public class Inventory extends JPanel implements ActionListener, ItemListener {
 		p_north = new JPanel();
 		bt_add = new JButton("추가");
 		bt_del = new JButton("삭제");
+		bt_list=new JButton("콤보리스트 추가");
 		bt_add_sub=new JButton("재고 추가");
 		choice = new Choice();
 
 		bt_add.addActionListener(this);
 		bt_del.addActionListener(this);
 		bt_add_sub.addActionListener(this);
+		bt_list.addActionListener(this);
 		setLayout(new BorderLayout());
 
 		choice.add("목록을 선택해 주세요");
@@ -61,6 +63,7 @@ public class Inventory extends JPanel implements ActionListener, ItemListener {
 		p_north.add(choice);
 		p_north.add(bt_add);
 		p_north.add(bt_del);
+		p_north.add(bt_list);
 		p_north.add(bt_add_sub);
 		add(p_north, BorderLayout.NORTH);
 		setBackground(Color.BLUE);
@@ -157,6 +160,8 @@ public class Inventory extends JPanel implements ActionListener, ItemListener {
 			del();
 		} else if (obj == bt_add_sub) {
 			addStack();
+		} else if(obj==bt_list){
+			new Add_comboList();
 		}
 	}
 }

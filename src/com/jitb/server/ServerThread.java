@@ -44,9 +44,9 @@ public class ServerThread extends Thread{
 	boolean listenFlag=true;
 	
 	//String path="C:/Hyeona/myServer/data/";
-	String path="C:/JITB_server/image/movie/";
+	String path="C:/JITB_server/";
 	
-	String fileName;
+	String fileName,add;
 	int size;
 	boolean flag;
 	
@@ -62,6 +62,7 @@ public class ServerThread extends Thread{
 			img_is=socket.getInputStream();
 			//os=socket.getOutputStream();
 			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -75,11 +76,15 @@ public class ServerThread extends Thread{
 			fileName=buffr.readLine();
 			System.out.println("颇老疙 : "+fileName);
 			
+			add=buffr.readLine();
+			System.out.println("林 家 : "+add);
+			
 			size=Integer.parseInt(buffr.readLine());
 			System.out.println("颇老 农扁 : "+size);
-
+			
 			BufferedImage img=ImageIO.read(img_is);
-			fos=new FileOutputStream(path+fileName);
+			fos=new FileOutputStream(path+add+fileName);
+			System.out.println(path+add+fileName);
 			ImageIO.write(img, "jpg", fos);
 			
 		} catch (IOException e) {

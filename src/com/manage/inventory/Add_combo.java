@@ -184,7 +184,7 @@ public class Add_combo extends JFrame implements ActionListener {
 				}
 			}
 			String filepath=file.getAbsolutePath();
-			Main.main.upload(filepath, "img");
+			Main.main.upload(filepath, "img","/image/snack/");
 			table_up.setModel(tablepanel = new TablePanel(con, "combo"));
 		}
 		else{

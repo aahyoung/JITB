@@ -14,6 +14,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
+import com.manage.main.Main;
+
 public class TablePanel extends AbstractTableModel{
 	Vector<String> columnName =new Vector<String>();
 	Vector<Vector> data =new Vector<Vector>();

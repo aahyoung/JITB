@@ -145,7 +145,7 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 			}
 		}
 		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img");
+		Main.main.upload(filepath, "img","/image/discount/");
 		//JTable 다시 채우기 코드 넣을곳
 		table.setModel(tablemodel=new table_modelF(con,"point"));
 	}

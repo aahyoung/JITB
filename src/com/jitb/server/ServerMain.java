@@ -27,7 +27,7 @@ public class ServerMain implements Runnable{
 	JScrollPane scroll;
 	
 	ServerSocket server;
-	int port = 7777;
+	int port = 9090;//9080
 	
 	// 다중 사용자 접속을 받는 용도
 	Thread connectThread;

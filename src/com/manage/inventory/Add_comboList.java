@@ -103,7 +103,6 @@ public class Add_comboList extends JFrame implements ActionListener, ItemListene
 		
 		setSize(400, 200);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		choice.add("종류를 선택하세요");
 		subchoice.add("사이즈를 골라주세요");
 		subchoice.add("상위옵션을 선택해주세요");

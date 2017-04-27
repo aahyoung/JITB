@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
@@ -27,7 +28,12 @@ public class InitScreen extends ScreenFrame{
 	public InitScreen(ClientMain main) {
 		super(main);
 		
-		poster_url = getClass().getResource("/eternal_sunshine.png");
+		try {
+			poster_url = new URL("http://localhost:9090/image/movie/eternal_sunshine.png");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		//poster_url = getClass().getResource("/eternal_sunshine.png");
 		URL touch_url_off = getClass().getResource("/touch_off.png");
 		URL touch_url_on = getClass().getResource("/touch_on.png");
 		

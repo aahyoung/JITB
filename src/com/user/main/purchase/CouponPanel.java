@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,7 +53,13 @@ public class CouponPanel extends PurchasePanelFrame{
 				g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 25));
 				
 				for(int i=0; i<gifts.size(); i++){
-					URL url = getClass().getResource("/"+gifts.get(i).getImg());
+					URL url = null;
+					try {
+						url = new URL("http://localhost:9090/image/discount/"+gifts.get(i).getImg());
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+					//URL url = getClass().getResource("/"+gifts.get(i).getImg());
 					try {
 						g2.setColor(Color.WHITE);
 						Image img = ImageIO.read(url);

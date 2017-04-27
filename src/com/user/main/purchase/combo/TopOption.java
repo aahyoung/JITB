@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -30,7 +31,13 @@ public class TopOption extends JPanel{
 		opt_img = new Canvas(){
 			@Override
 			public void paint(Graphics g) {
-				URL url = getClass().getResource("/"+comboList.getTop_opt_img());
+				URL url = null;
+				try {
+					url = new URL("http://localhost:9090/image/snack/"+comboList.getTop_opt_img());
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+				//URL url = getClass().getResource("/"+comboList.getTop_opt_img());
 				try {
 					Image img = ImageIO.read(url);
 					g.drawImage(img, 0, 0, 150, 180, this);

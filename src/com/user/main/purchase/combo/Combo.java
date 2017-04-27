@@ -39,7 +39,13 @@ public class Combo extends JPanel {
 			@Override
 			public void paint(Graphics g) {
 				try {
-					URL url = this.getClass().getResource("/" + img);
+					URL url = null;
+					try {
+						url = new URL("http://localhost:9090/image/snack/"+img);
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+					//URL url = this.getClass().getResource("/" + img);
 					Image image = ImageIO.read(url);
 					g.drawImage(image, 0, 0, 200, 250, this);
 				} catch (MalformedURLException e) {

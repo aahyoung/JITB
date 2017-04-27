@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -251,10 +252,17 @@ public class MovieChoiceScreen extends ScreenFrame{
 		
 		String poster = movies.get(0).getPoster();
 		if(poster!=null){
-			initScreen.poster_url = getClass().getResource("/"+poster);
-			initScreen.touch.repaint();
-			menuScreen.poster_url = getClass().getResource("/"+poster);
-			menuScreen.poster.repaint();
+			try {
+				initScreen.poster_url = new URL("http://localhost:9090/image/movie/"+poster);
+				initScreen.touch.repaint();
+				menuScreen.poster_url = new URL("http://localhost:9090/image/movie/"+poster);
+				menuScreen.poster.repaint();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			//initScreen.poster_url = getClass().getResource("/"+poster);
+			//menuScreen.poster_url = getClass().getResource("/"+poster);
+			
 		}
 	
 		int height = 300;
@@ -337,7 +345,13 @@ public class MovieChoiceScreen extends ScreenFrame{
 					}
 					movie.setSize(730, height);
 					
-					URL url = getClass().getResource("/"+movie.getPoster());
+					URL url = null;
+					try {
+						url = new URL("http://localhost:9090/image/movie/"+movie.getPoster());
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+					//URL url = getClass().getResource("/"+movie.getPoster());
 					Image img;
 					try {
 						img = ImageIO.read(url);

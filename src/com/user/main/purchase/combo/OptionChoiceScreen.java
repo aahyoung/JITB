@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +71,13 @@ public class OptionChoiceScreen extends ScreenFrame{
 					for(int i=0; i<subOpts.size(); i++){
 						SubOption subOpt = subOpts.get(i);
 						
-						URL url = getClass().getResource("/"+subOpt.getSub_opt_img());
+						URL url = null;
+						try {
+							url = new URL("http://localhost:9090/image/snack/"+subOpt.getSub_opt_img());
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}
+						//URL url = getClass().getResource("/"+subOpt.getSub_opt_img());
 						try {
 							Image img = ImageIO.read(url);
 							buffr.drawImage(img, subOpt.x+25, subOpt.y, subOpt.width-50, subOpt.height-50, this);

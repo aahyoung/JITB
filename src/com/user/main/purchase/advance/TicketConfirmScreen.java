@@ -12,9 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -67,14 +66,19 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 				buffr.drawString(rect.persons, rect.x+10, rect.y+150);
 				buffr.drawString(rect.movie_time, rect.x+10, rect.y+230);
 				
-				URL url = getClass().getResource("/"+rect.poster);
 				try {
-					Image img = ImageIO.read(url);
-					buffr.drawImage(img, rect.x+550, rect.y, 200, 250, this);
-				} catch (IOException e) {
+					URL url = new URL("http://localhost:9090/image/movie/"+rect.poster);
+					Image img;
+					try {
+						img = ImageIO.read(url);
+						buffr.drawImage(img, rect.x+550, rect.y, 200, 250, this);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
-				
+				//URL url = getClass().getResource("/"+rect.poster);
 				g.drawImage(buffrImg, 0, 0, 800, 800, this);
 			}
 			

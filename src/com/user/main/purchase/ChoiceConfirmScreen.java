@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -169,7 +170,13 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 					ticket.setBounds(25, 20, 650, 300);
 					g2.draw(ticket);
 					
-					URL url = getClass().getResource("/"+ticket.getPoster());
+					URL url = null;
+					try {
+						url = new URL("http://localhost:9090/image/movie/"+ticket.getPoster());
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+					//URL url = getClass().getResource("/"+ticket.getPoster());
 					Image img;
 					try {
 						img = ImageIO.read(url);
@@ -189,7 +196,13 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 						combo.setBounds(25, 330, 650, 300);
 						g2.draw(combo);
 						
-						URL comboUrl = getClass().getResource("/"+combo.combo_img);
+						URL comboUrl = null;
+						try {
+							comboUrl = new URL("http://localhost:9090/image/snack/"+combo.combo_img);
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}
+						//URL comboUrl = getClass().getResource("/"+combo.combo_img);
 						Image comboImg = null;
 						try {
 							comboImg = ImageIO.read(comboUrl);
@@ -198,14 +211,14 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 							e.printStackTrace();
 						}
 						g2.setFont(new Font("Malgun Gothic", Font.BOLD, 35));
-						g2.drawString(combo.getCombo_name(), combo.x+20, combo.y+80);
+						g2.drawString(combo.getCombo_name(), combo.x+20, combo.y+65);
 						
-						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 28));
+						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 25));
 						int count = 0;
 						Iterator it = combo.getAmount().keySet().iterator();
 						while(it.hasNext()){
 							String opt = (String)it.next();
-							g2.drawString(opt+"X"+combo.getAmount().get(opt), combo.x+20, combo.y+130+(count*35));
+							g2.drawString(opt+"X"+combo.getAmount().get(opt), combo.x+20, combo.y+115+(count*35));
 							count++;
 						}
 					}
@@ -214,7 +227,13 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 						combo.setBounds(25, 20, 650, 300);
 						g2.draw(combo);
 						
-						URL comboUrl = getClass().getResource("/"+combo.combo_img);
+						URL comboUrl = null;
+						try {
+							comboUrl = new URL("http://localhost:9090/image/snack/"+combo.combo_img);
+						} catch (MalformedURLException e) {
+							e.printStackTrace();
+						}
+						//URL comboUrl = getClass().getResource("/"+combo.combo_img);
 						Image comboImg = null;
 						try {
 							comboImg = ImageIO.read(comboUrl);
@@ -223,14 +242,14 @@ public class ChoiceConfirmScreen extends ScreenFrame{
 							e.printStackTrace();
 						}
 						g2.setFont(new Font("Malgun Gothic", Font.BOLD, 35));
-						g2.drawString(combo.getCombo_name(), combo.x+20, combo.y+80);
+						g2.drawString(combo.getCombo_name(), combo.x+20, combo.y+65);
 						
 						g2.setFont(new Font("Malgun Gothic", Font.PLAIN, 25));
 						int count = 0;
 						Iterator it = combo.getAmount().keySet().iterator();
 						while(it.hasNext()){
 							String opt = (String)it.next();
-							g2.drawString(opt+" X"+combo.getAmount().get(opt), combo.x+20, combo.y+130+(count*35));
+							g2.drawString(opt+" X"+combo.getAmount().get(opt), combo.x+20, combo.y+115+(count*35));
 							count++;
 						}
 					}

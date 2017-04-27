@@ -33,6 +33,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 import javafx.scene.layout.Border;
 
@@ -164,7 +165,7 @@ public class Add_combo extends JFrame implements ActionListener {
 				pstmt.setString(1, t_name.getText());
 				pstmt.setString(2, file.getName());
 				pstmt.setInt(3, Integer.parseInt(t_price.getText()));
-
+				System.out.println(file.getAbsolutePath());
 				int rs = pstmt.executeUpdate();
 				if (rs != 0) {
 					JOptionPane.showMessageDialog(this, "등록성공");
@@ -182,6 +183,8 @@ public class Add_combo extends JFrame implements ActionListener {
 					}
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img");
 			table_up.setModel(tablepanel = new TablePanel(con, "combo"));
 		}
 		else{

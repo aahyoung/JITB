@@ -30,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 import javafx.scene.layout.Border;
 
@@ -145,6 +146,8 @@ public class Add_top extends JFrame implements ActionListener {
 				}
 			}
 		}
+		String filepath=file.getAbsolutePath();
+		Main.main.upload(filepath, "img");
 		table_up.setModel(tablepanel=new TablePanel(con,"top_opt"));
 	}
 	

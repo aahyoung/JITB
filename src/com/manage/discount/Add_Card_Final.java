@@ -35,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 public class Add_Card_Final extends JFrame implements ActionListener {
 	Canvas can;
@@ -161,6 +162,8 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 				}
 			}
 		}
+		String filepath=file.getAbsolutePath();
+		Main.main.upload(filepath, "img");
 		table.setModel(tablemodel = new table_modelF(con, "Ä«µå»ç"));
 	}
 

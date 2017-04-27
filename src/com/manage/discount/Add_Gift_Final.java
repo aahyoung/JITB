@@ -27,6 +27,7 @@ import java.awt.BorderLayout;
 	import javax.swing.JTextField;
 
 	import com.jitb.db.DBManager;
+import com.manage.main.Main;
 
 	public class Add_Gift_Final extends JFrame implements ActionListener{
 		Canvas can;
@@ -147,6 +148,8 @@ import java.awt.BorderLayout;
 					}
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img");
 			table.setModel(tablemodel=new table_modelF(con,"ªÛ«∞±«"));
 		}
 

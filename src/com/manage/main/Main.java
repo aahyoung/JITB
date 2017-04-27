@@ -17,7 +17,7 @@ import com.manage.sales.SalesMain;
 
 
 public class Main extends JFrame implements ActionListener{
-	static Main main;
+	public static Main main;
 	JPanel p_north, p_content;
 	//JButton bt_home, bt_movie, , bt_sales;
 	JButton bt_inventory, bt_discount;

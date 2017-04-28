@@ -146,8 +146,9 @@ public class Add_top extends JFrame implements ActionListener {
 				}
 			}
 		}
-		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img", "snack/");
+		String path=file.getAbsolutePath();
+		Main main=Main.getMain();
+		main.upload(path, "img", "snack/");
 		table_up.setModel(tablepanel=new TablePanel(con,"top_opt"));
 	}
 	

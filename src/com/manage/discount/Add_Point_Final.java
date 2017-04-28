@@ -44,7 +44,7 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 	int discount_type_id;
 	JTable table;
 	table_modelF tablemodel;
-	
+	String path;
 	public Add_Point_Final(int discount_type_id,JTable table) {
 		this.discount_type_id=discount_type_id;
 		this.table=table;
@@ -143,8 +143,8 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 					e.printStackTrace();
 				}
 			}
-			String filepath=file.getAbsolutePath();
-			Main.main.upload(filepath, "img", "discount/");
+			path=file.getAbsolutePath();
+			Main.main.upload(path, "img", "discount/");
 		}
 		//JTable 다시 채우기 코드 넣을곳
 		table.setModel(tablemodel=new table_modelF(con,"포인트"));

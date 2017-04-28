@@ -183,15 +183,20 @@ public class Add_combo extends JFrame implements ActionListener {
 					}
 				}
 			}
-			String filepath=file.getAbsolutePath();
-			Main.main.upload(filepath, "img", "snack/");
+			copyImage();
 			table_up.setModel(tablepanel = new TablePanel(con, "combo"));
 		}
 		else{
 			JOptionPane.showMessageDialog(this, "콤보의 종류가 3개 이상입니다.");
 		}
 	}
-
+	
+	public void copyImage(){
+	String path=file.getAbsolutePath();
+	System.out.println(path);
+	Main.main.upload(path, "img", "snack/");
+	}
+	
 	public void select() {
 		int result = chooser.showOpenDialog(this);
 		if (result == JFileChooser.APPROVE_OPTION) {

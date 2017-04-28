@@ -3,7 +3,9 @@ import java.awt.BorderLayout;
 	import java.awt.Canvas;
 	import java.awt.Dimension;
 	import java.awt.Graphics;
-	import java.awt.event.ActionEvent;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 	import java.awt.event.ActionListener;
 	import java.awt.event.MouseAdapter;
 	import java.awt.event.MouseEvent;
@@ -29,6 +31,8 @@ import java.awt.BorderLayout;
 	import com.jitb.db.DBManager;
 import com.manage.main.Main;
 
+import sun.security.krb5.internal.tools.Kinit;
+
 	public class Add_Gift_Final extends JFrame implements ActionListener{
 		Canvas can;
 		JPanel p_center,p_img;
@@ -38,11 +42,13 @@ import com.manage.main.Main;
 		Connection con;
 		DBManager manager=DBManager.getInstance();
 		JFileChooser chooser;
-		BufferedImage image = null;
+		Image image = null;
+		Toolkit kit=Toolkit.getDefaultToolkit();
 		File file;
 		int discount_type_id;
 		JTable table;
 		table_modelF tablemodel;
+		String path=null;
 		public Add_Gift_Final(int discount_type_id,JTable table) {
 			this.discount_type_id=discount_type_id;
 			this.table=table;
@@ -108,12 +114,11 @@ import com.manage.main.Main;
 				file=chooser.getSelectedFile();
 				
 				//얻어진 파일을 기존의 이미지로 대체하기
-				try {
-					image=ImageIO.read(file);
+				
+					//image=ImageIO.read(file);
+					image=kit.getImage(file.getAbsolutePath());
 					can.repaint();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				
 			}
 		}
 		
@@ -147,12 +152,17 @@ import com.manage.main.Main;
 						e.printStackTrace();
 					}
 				}
-				String filepath=file.getAbsolutePath();
-				Main.main.upload(filepath, "img","discount/");
 			}
 			table.setModel(tablemodel=new table_modelF(con,"상품권"));
+			copyPoster();
 		}
-
+		public void copyPoster(){
+			path=file.getAbsolutePath();
+			//System.out.println(filePath);
+			Main main=Main.getMain();
+			main.upload(path, "img", "discount/");
+			//System.out.println("영화 포스터 저장"+Calendar.getInstance().getTime());
+		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			add();

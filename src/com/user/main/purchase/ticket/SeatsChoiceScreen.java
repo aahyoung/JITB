@@ -56,7 +56,7 @@ public class SeatsChoiceScreen extends ScreenFrame{
 	URL url;
 	FileOutputStream fos;
 	byte[] b = new byte[1024];
-	String filePath = "C:/JITB Java Project/JITB/res_manager/seat.xls";
+	String filePath = "C:/JITB Project/JITB/res_manager/seat.xls";
 	
 	public SeatsChoiceScreen(ClientMain main) {
 		super(main);

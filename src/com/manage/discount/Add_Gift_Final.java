@@ -156,6 +156,7 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 		}
 		table.setModel(tablemodel = new table_modelF(con, "ªÛ«∞±«"));
 		copyPoster();
+		this.dispose();
 	}
 
 	public void copyPoster() {

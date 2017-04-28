@@ -124,6 +124,8 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 	}
 
 	public void add() {
+		copyPoster();
+		
 		PreparedStatement pstmt = null;
 		String sql = "insert into gift(gift_id,name,rate,img,discount_type_id)";
 		sql += "values(seq_gift.nextval,?,?,?,?)";
@@ -155,7 +157,6 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 			}
 		}
 		table.setModel(tablemodel = new table_modelF(con, "ªÛ«∞±«"));
-		copyPoster();
 		this.dispose();
 	}
 

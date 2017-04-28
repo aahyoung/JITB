@@ -34,7 +34,7 @@ public class Add_Point_SerialF extends JFrame implements ActionListener{
 	String insert=null;
 	
 	public Add_Point_SerialF(int discount_type_id) {
-		this.discount_type_id=discount_type_id;
+		this.discount_type_id=2;
 		this.table=table;
 		con=manager.getConnect();
 		insert=init();
@@ -94,7 +94,7 @@ public class Add_Point_SerialF extends JFrame implements ActionListener{
 		PreparedStatement pstmt = null;
 		StringBuffer sql = new StringBuffer();
 		sql.append("insert into point_serial(point_serial_id,serial_number,point,point_id)");
-		sql.append("values(seq_point_serial.nextval,?,?,?)");
+		sql.append(" values(seq_point_serial.nextval,?,?,?)");
 		System.out.println("sql 받았습니다");
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -125,6 +125,7 @@ public class Add_Point_SerialF extends JFrame implements ActionListener{
 				}
 			}
 		}
+		this.dispose();
 	}
 	
 	@Override

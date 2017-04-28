@@ -62,13 +62,16 @@ public class PurchaseEndMessage extends PurchasePanelFrame{
 		bt_main.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				main.flag = false;
 				main.removeScreen();
 				main.createScreen();
 				main.selectList = new SelectList();
 				main.selectCombo = new SelectCombo();
 				main.movie = false;
 				main.combo = false;
+				main.flag = true;
 				main.setPage(0);
+				
 			}
 		});
 		

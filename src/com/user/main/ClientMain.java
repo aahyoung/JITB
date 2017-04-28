@@ -39,6 +39,7 @@ public class ClientMain extends JFrame implements Runnable{
 	public int yy, mm, dd, h, m, day;
 	String ap;
 	Thread thread;
+	public boolean flag = true;
 	
 	public SelectList selectList = new SelectList();
 	public SelectCombo selectCombo = new SelectCombo();
@@ -177,7 +178,7 @@ public class ClientMain extends JFrame implements Runnable{
 	
 	@Override
 	public void run() {
-		while(true){
+		while(flag){
 			setTime();
 			try {
 				thread.sleep(1000);

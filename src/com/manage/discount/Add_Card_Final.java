@@ -161,9 +161,9 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img", "discount/");
 		}
-		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img", "discount/");
 		table.setModel(tablemodel = new table_modelF(con, "Ä«µå»ç"));
 	}
 

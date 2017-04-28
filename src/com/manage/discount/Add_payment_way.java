@@ -158,9 +158,9 @@ public class Add_payment_way extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img", "discount/");
 		}
-		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img", "discount/");
 		table_up.setModel(tablemodel = new table_modelF(con, "discount_type"));
 	}
 

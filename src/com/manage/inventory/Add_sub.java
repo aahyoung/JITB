@@ -241,9 +241,9 @@ public class Add_sub extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img", "snack/");
 		}
-		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img", "snack/");
 		table_up.setModel(tablepanel=new TablePanel(con,"sub_opt"));
 	}
 

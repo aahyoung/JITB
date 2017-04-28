@@ -110,7 +110,6 @@ public class Add_Discount_Final extends JFrame implements ActionListener{
 				}
 			}
 		}
-		table_up.setModel(tablemodel=new table_modelF(con,"discount_type"));
 	}
 	
 	//추가 버튼

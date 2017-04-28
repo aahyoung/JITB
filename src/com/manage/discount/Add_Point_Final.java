@@ -116,7 +116,7 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 	
 	public void add(){
 		PreparedStatement pstmt = null;
-		String sql = "insert into point(point_id,name,img,discounttype_id)";
+		String sql = "insert into point(point_id,name,img,discount_type_id)";
 		sql += "values(seq_point.nextval,?,?,?)";
 		try {
 			pstmt = con.prepareStatement(sql);
@@ -143,11 +143,11 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 					e.printStackTrace();
 				}
 			}
+			String filepath=file.getAbsolutePath();
+			Main.main.upload(filepath, "img", "discount/");
 		}
-		String filepath=file.getAbsolutePath();
-		Main.main.upload(filepath, "img", "discount/");
 		//JTable 다시 채우기 코드 넣을곳
-		table.setModel(tablemodel=new table_modelF(con,"point"));
+		table.setModel(tablemodel=new table_modelF(con,"포인트"));
 	}
 
 	@Override

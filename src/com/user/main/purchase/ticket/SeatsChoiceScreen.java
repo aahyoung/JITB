@@ -276,7 +276,7 @@ public class SeatsChoiceScreen extends ScreenFrame{
 		FileInputStream fis = null;
 		
 		try {
-			url = new URL("http://211.238.142.100:8989/exel/seat.xls");
+			url = new URL("http://211.238.142.100:8989/excel/seat.xls");
 			is = url.openStream();
 			
 			fos = new FileOutputStream(new File(filePath));

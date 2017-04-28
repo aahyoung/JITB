@@ -51,11 +51,11 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 	table_modelF tablemodel;
 	String path;
 
-	public Add_Gift_Final(int discount_type_id, JTable table) {
+	public Add_Gift_Final(int discount_type_id, JTable table,Connection con) {
 		this.discount_type_id = discount_type_id;
 		this.table = table;
 
-		con = manager.getConnect();
+		this.con = con;
 		p_center = new JPanel();
 		p_img = new JPanel();
 
@@ -124,8 +124,6 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 	}
 
 	public void add() {
-		copyPoster();
-		
 		PreparedStatement pstmt = null;
 		String sql = "insert into gift(gift_id,name,rate,img,discount_type_id)";
 		sql += "values(seq_gift.nextval,?,?,?,?)";
@@ -157,6 +155,7 @@ public class Add_Gift_Final extends JFrame implements ActionListener {
 			}
 		}
 		table.setModel(tablemodel = new table_modelF(con, "ªÛ«∞±«"));
+		copyPoster();
 		this.dispose();
 	}
 

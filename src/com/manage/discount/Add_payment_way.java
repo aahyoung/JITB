@@ -162,6 +162,7 @@ public class Add_payment_way extends JFrame implements ActionListener {
 			Main.main.upload(filepath, "img", "discount/");
 		}
 		table_up.setModel(tablemodel = new table_modelF(con, "discount_type"));
+		this.dispose();
 	}
 
 	// 추가 버튼

@@ -163,7 +163,7 @@ package com.manage.discount;
 			
 			Add[0]=new Add_Point_Final(id,table);//Å×ÀÌºí,discount_type_id;
 			Add[0].setVisible(false);
-			Add[1]=new Add_Gift_Final(id,table);
+			Add[1]=new Add_Gift_Final(id,table,con);
 			Add[1].setVisible(false);
 			Add[2]=new Add_Card_Final(id,table);
 			Add[2].setVisible(false);

@@ -156,7 +156,7 @@ public class Add_comboList extends JFrame implements ActionListener, ItemListene
 			
 			pstmt.setInt(2, vo.getCombo_id());
 			
-			pstmt.setInt(3, dto.getTop_opt_id());
+			pstmt.setInt(3, dto.getTop_opt_size_id());
 			
 			
 			int rs = pstmt.executeUpdate();
@@ -177,6 +177,7 @@ public class Add_comboList extends JFrame implements ActionListener, ItemListene
 				}
 			}
 		}
+		this.dispose();
 	}
 	
 	public void setSubChoice() {
@@ -225,8 +226,5 @@ public class Add_comboList extends JFrame implements ActionListener, ItemListene
 	public void itemStateChanged(ItemEvent e) {
 		/// 하위 카테고리 구하기!
 		setSubChoice();
-	}
-	public static void main(String[] args){
-		new Add_comboList();
 	}
 }

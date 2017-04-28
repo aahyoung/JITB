@@ -110,6 +110,7 @@ public class Add_Discount_Final extends JFrame implements ActionListener{
 				}
 			}
 		}
+		this.dispose();
 	}
 	
 	//추가 버튼

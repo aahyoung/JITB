@@ -80,7 +80,7 @@ public class MenuChoiceScreen extends ScreenFrame {
 		};
 		
 		try {
-			poster_url = new URL("http://211.238.142.100:8989/image/movie/kingsman.png");
+			poster_url = new URL("http://localhost:8989/image/movie/kingsman.png");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

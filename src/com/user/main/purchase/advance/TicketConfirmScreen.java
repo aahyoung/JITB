@@ -67,7 +67,7 @@ public class TicketConfirmScreen extends ScreenFrame implements MouseMotionListe
 				buffr.drawString(rect.movie_time, rect.x+10, rect.y+230);
 				
 				try {
-					URL url = new URL("http://211.238.142.100:8989/image/movie/"+rect.poster);
+					URL url = new URL("http://localhost:8989/image/movie/"+rect.poster);
 					Image img;
 					try {
 						img = ImageIO.read(url);

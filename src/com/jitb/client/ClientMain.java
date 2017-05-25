@@ -18,7 +18,7 @@ import com.jitb.db.DBManager;
 
 public class ClientMain{
 	Socket socket;
-	String ip="211.238.142.100";
+	String ip="localhost";
 	//String ip="localhost";
 	int port=9090;//9090
 	

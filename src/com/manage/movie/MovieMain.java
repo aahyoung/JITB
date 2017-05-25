@@ -920,7 +920,7 @@ public class MovieMain extends JPanel implements ActionListener{
 			try {
 				//img = ImageIO.read(new File(path+movieList.get(i).getPoster()));
 				// Image 경로에서 받아오기
-				url_image = new URL("http://211.238.142.100:8989/image/movie/"+movieList.get(i).getPoster());
+				url_image = new URL("http://localhost:8989/image/movie/"+movieList.get(i).getPoster());
 				//url_image = new URL("http://192.168.0.8:8989/"+movieList.get(i).getPoster());
 				//System.out.println("영화 패널 설정"+Calendar.getInstance().getTime());
 

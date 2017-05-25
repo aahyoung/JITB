@@ -164,6 +164,7 @@ public class Add_Card_Final extends JFrame implements ActionListener {
 		}
 		table.setModel(tablemodel = new table_modelF(con, "Ä«µå»ç"));
 		copy();
+		this.dispose();
 	}
 	public void copy(){
 		String path=file.getAbsolutePath();

@@ -148,6 +148,7 @@ public class Add_Point_Final extends JFrame implements ActionListener{
 		}
 		//JTable 다시 채우기 코드 넣을곳
 		table.setModel(tablemodel=new table_modelF(con,"포인트"));
+		this.dispose();
 	}
 
 	@Override
